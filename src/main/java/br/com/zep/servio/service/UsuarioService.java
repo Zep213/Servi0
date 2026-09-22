@@ -6,8 +6,10 @@ import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.model.dto.UsuarioRequestDTO;
 import br.com.zep.servio.model.dto.UsuarioResponseDTO;
 import br.com.zep.servio.model.dto.UsuarioUpdateDTO;
+import br.com.zep.servio.model.enumerated.Perfil;
 import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
+import br.com.zep.servio.security.SessaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class UsuarioService extends CrudService<Usuario, UsuarioRequestDTO, Usua
     private final UsuarioRepository repository;
     private final UsuarioMapper mapper;
     private final PasswordEncoder passwordEncoder;
+    private final SessaoService sessaoService;
 
     @Override
     protected TenantRepository<Usuario> repository() {
@@ -59,12 +62,29 @@ public class UsuarioService extends CrudService<Usuario, UsuarioRequestDTO, Usua
     @Transactional
     public UsuarioResponseDTO atualizar(Long id, UsuarioUpdateDTO request) {
         Usuario usuario = obterAtivo(id);
+        String emailAntigo = usuario.getEmail();
+        Perfil perfilAntigo = usuario.getPerfil();
+
         mapper.updateEntity(request, usuario);
-        if (request.senha() != null && !request.senha().isBlank()) {
+        boolean senhaTrocada = request.senha() != null && !request.senha().isBlank();
+        if (senhaTrocada) {
             usuario.setSenha(passwordEncoder.encode(request.senha()));
         }
         validar(usuario);
-        return paraResposta(repository.save(usuario));
-        // etapa 3: encerrar as sessões quando perfil, e-mail ou senha mudarem
+        Usuario salvo = repository.save(usuario);
+
+        if (senhaTrocada || perfilAntigo != salvo.getPerfil() || !emailAntigo.equalsIgnoreCase(salvo.getEmail())) {
+            sessaoService.encerrarTodas(emailAntigo);
+        }
+        return paraResposta(salvo);
+    }
+
+    @Override
+    @Transactional
+    public void desativar(Long id) {
+        Usuario usuario = obterAtivo(id);
+        usuario.setActive(false);
+        repository.save(usuario);
+        sessaoService.encerrarTodas(usuario.getEmail());
     }
 }
