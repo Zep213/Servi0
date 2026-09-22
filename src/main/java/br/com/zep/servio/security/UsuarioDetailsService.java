@@ -3,7 +3,6 @@ package br.com.zep.servio.security;
 import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Autentica pelo e-mail do usuário. O e-mail é único apenas dentro de uma paróquia;
- * se o mesmo e-mail existir ativo em mais de uma, o login é recusado por ambiguidade.
+ * Autentica pelo e-mail do usuário. O e-mail ainda é único só por paróquia (até a etapa 2);
+ * se existir ativo em mais de uma, o login é recusado por ambiguidade.
  */
 @Service
 @RequiredArgsConstructor
@@ -30,9 +29,12 @@ public class UsuarioDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Credenciais inválidas");
         }
         Usuario usuario = usuarios.getFirst();
-        return User.withUsername(usuario.getEmail())
-                .password(usuario.getSenha())
-                .roles(usuario.getPerfil().name())
-                .build();
+        return new UsuarioPrincipal(
+                usuario.getId(),
+                usuario.getParoquia().getId(),
+                usuario.getNome(),
+                usuario.getEmail(),
+                usuario.getSenha(),
+                usuario.getPerfil());
     }
 }
