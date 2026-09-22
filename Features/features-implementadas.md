@@ -24,8 +24,8 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
 
 ### Segurança
 - `PasswordEncoder` BCrypt; a senha do usuário é gravada com hash.
-- **Basic Auth com a tabela `usuario`** (`UsuarioDetailsService` + `SecurityFilterChain`): login por e-mail, só usuários ativos, role derivada do `Perfil`, sessão stateless, CSRF desligado. Testado: login válido 200, inválido 401.
-  - Situação: commitado na branch `worktree-basic-auth` (`6f5ae18`); **falta copiar para o checkout principal e rebuildar o container**.
+- **Basic Auth com a tabela `usuario`** (`UsuarioDetailsService` + `SecurityFilterChain`): login por e-mail, só usuários ativos, role derivada do `Perfil`. Aplicado na `main`.
+  - Provisório: será substituído por login com sessão (Spring Session JDBC + cookie `HttpOnly` + CSRF) na etapa 3.
 
 ### Suporte
 - `AuditLogService.registrar(...)` e endpoints de leitura de auditoria (a gravação ainda não é acionada por nenhum service; ver `erros-conhecidos.md`).

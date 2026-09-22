@@ -6,9 +6,9 @@ Ordem sugerida por prioridade. Marcadas como (P1) bloqueia o uso, (P2) important
 - (P1) **Bootstrap do primeiro ADMIN**: seed via migration/variáveis de ambiente ou endpoint de setup, já que hoje ninguém consegue logar.
 - (P1) **Autorização por perfil**: restringir rotas por role (ADMIN, COORDENADOR, PADRE, SERVIDOR), por exemplo só ADMIN/COORDENADOR criam usuários e celebrações; SERVIDOR só edita as próprias indisponibilidades e pedidos de troca.
 - (P1) **Isolamento por paróquia (multi-tenant)**: toda consulta filtrada pela paróquia do usuário logado.
+- (P1) **Login com sessão no servidor**: Spring Session JDBC (sessões no próprio PostgreSQL), cookie `HttpOnly`/`Secure`/`SameSite=Lax`, CSRF para o front React, rate limit no login e encerramento imediato das sessões ao mudar perfil/senha. Redis só se houver várias instâncias no futuro.
 - (P2) **Login sem ambiguidade**: identificar o usuário por e-mail + paróquia (ou e-mail único global).
 - (P2) **Troca/recuperação de senha** e endpoint `GET /api/me` do usuário autenticado.
-- (P3) **JWT** (ou OAuth2) se houver front-end separado, substituindo o Basic Auth; CORS configurado.
 
 ## Regras de negócio da escala
 - (P1) **Fluxo de PedidoTroca**: transições de `StatusTroca` (ABERTO → ACEITO/RECUSADO/CANCELADO), só o solicitante cancela, só o destinatário aceita/recusa, e a troca efetiva a `Alocacao`.
