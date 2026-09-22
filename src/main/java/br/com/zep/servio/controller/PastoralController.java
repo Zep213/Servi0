@@ -1,0 +1,51 @@
+package br.com.zep.servio.controller;
+
+import br.com.zep.servio.model.dto.PastoralRequestDTO;
+import br.com.zep.servio.model.dto.PastoralResponseDTO;
+import br.com.zep.servio.service.PastoralService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/pastorais")
+@RequiredArgsConstructor
+public class PastoralController {
+
+    private final PastoralService service;
+
+    @GetMapping
+    public List<PastoralResponseDTO> listar() {
+        return service.listar();
+    }
+
+    @GetMapping("/{id}")
+    public PastoralResponseDTO buscar(@PathVariable Long id) {
+        return service.buscar(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<PastoralResponseDTO> criar(@Valid @RequestBody PastoralRequestDTO request) {
+        PastoralResponseDTO criado = service.criar(request);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(criado.id()).toUri();
+        return ResponseEntity.created(location).body(criado);
+    }
+
+    @PutMapping("/{id}")
+    public PastoralResponseDTO atualizar(@PathVariable Long id, @Valid @RequestBody PastoralRequestDTO request) {
+        return service.atualizar(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void desativar(@PathVariable Long id) {
+        service.desativar(id);
+    }
+}

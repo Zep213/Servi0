@@ -8,6 +8,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     Optional<Usuario> findByEmailAndParoquiaId(String email, Long paroquiaId);
 
+    List<Usuario> findByEmailAndActiveTrue(String email);
+
     boolean existsByEmailAndParoquiaId(String email, Long paroquiaId);
 
     List<Usuario> findByParoquiaIdAndActiveTrue(Long paroquiaId);
