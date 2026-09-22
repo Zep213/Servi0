@@ -15,7 +15,15 @@ public interface CompromissoAgendaMapper {
     @Mapping(source = "comunidade.id", target = "comunidadeId")
     CompromissoAgendaResponseDTO toResponse(CompromissoAgenda entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     CompromissoAgenda toEntity(CompromissoAgendaRequestDTO request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     void updateEntity(CompromissoAgendaRequestDTO request, @MappingTarget CompromissoAgenda entity);
 }

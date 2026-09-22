@@ -14,9 +14,17 @@ public interface CelebracaoMapper {
     @Mapping(source = "comunidade.id", target = "comunidadeId")
     CelebracaoResponseDTO toResponse(Celebracao entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     @Mapping(target = "tipoData", defaultValue = "NORMAL")
     Celebracao toEntity(CelebracaoRequestDTO request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     @Mapping(target = "tipoData", defaultValue = "NORMAL")
     void updateEntity(CelebracaoRequestDTO request, @MappingTarget Celebracao entity);
 }

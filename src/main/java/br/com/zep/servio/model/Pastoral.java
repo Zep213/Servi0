@@ -11,15 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "pastoral")
-public class Pastoral extends ActivatableEntity {
+public class Pastoral extends TenantEntity {
 
     @NotBlank
     @Size(max = 255)
     @Column(nullable = false)
     private String nome;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "paroquia_id", nullable = false)
-    private Paroquia paroquia;
 }

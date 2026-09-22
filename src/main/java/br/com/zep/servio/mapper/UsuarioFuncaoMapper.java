@@ -15,7 +15,15 @@ public interface UsuarioFuncaoMapper {
     @Mapping(source = "funcao.id", target = "funcaoId")
     UsuarioFuncaoResponseDTO toResponse(UsuarioFuncao entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     UsuarioFuncao toEntity(UsuarioFuncaoRequestDTO request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     void updateEntity(UsuarioFuncaoRequestDTO request, @MappingTarget UsuarioFuncao entity);
 }

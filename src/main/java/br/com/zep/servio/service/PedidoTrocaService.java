@@ -6,9 +6,9 @@ import br.com.zep.servio.model.dto.PedidoTrocaRequestDTO;
 import br.com.zep.servio.model.dto.PedidoTrocaResponseDTO;
 import br.com.zep.servio.repository.AlocacaoRepository;
 import br.com.zep.servio.repository.PedidoTrocaRepository;
+import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +21,7 @@ public class PedidoTrocaService extends CrudService<PedidoTroca, PedidoTrocaRequ
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    protected JpaRepository<PedidoTroca, Long> repository() {
+    protected TenantRepository<PedidoTroca> repository() {
         return repository;
     }
 
@@ -50,7 +50,7 @@ public class PedidoTrocaService extends CrudService<PedidoTroca, PedidoTrocaRequ
 
     private void resolverRelacoes(PedidoTrocaRequestDTO request, PedidoTroca entity) {
         entity.setAlocacao(referencia(alocacaoRepository, request.alocacaoId(), "Alocacao"));
-        entity.setSolicitante(referencia(usuarioRepository, request.solicitanteId(), "Usuario"));
+        entity.setSolicitante(referencia(usuarioRepository, usuarioId(), "Usuario"));
         entity.setDestinatario(referenciaOpcional(usuarioRepository, request.destinatarioId(), "Usuario"));
     }
 }

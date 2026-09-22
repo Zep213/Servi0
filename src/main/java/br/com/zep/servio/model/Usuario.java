@@ -11,9 +11,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "usuario",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"email", "paroquia_id"}))
-public class Usuario extends ActivatableEntity {
+@Table(name = "usuario")
+public class Usuario extends TenantEntity {
 
     @NotBlank
     @Size(max = 255)
@@ -29,15 +28,10 @@ public class Usuario extends ActivatableEntity {
     @NotBlank
     @Size(max = 255)
     @Column(nullable = false)
-    private String senha;
+    private String senha;     // aqui é o hash BCrypt: o limite de 72 vale no DTO, não aqui
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private Perfil perfil;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "paroquia_id", nullable = false)
-    private Paroquia paroquia;
 }

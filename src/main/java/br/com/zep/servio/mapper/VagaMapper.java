@@ -15,7 +15,15 @@ public interface VagaMapper {
     @Mapping(source = "funcao.id", target = "funcaoId")
     VagaResponseDTO toResponse(Vaga entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     Vaga toEntity(VagaRequestDTO request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     void updateEntity(VagaRequestDTO request, @MappingTarget Vaga entity);
 }

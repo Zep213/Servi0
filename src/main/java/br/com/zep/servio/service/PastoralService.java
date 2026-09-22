@@ -4,10 +4,9 @@ import br.com.zep.servio.mapper.PastoralMapper;
 import br.com.zep.servio.model.Pastoral;
 import br.com.zep.servio.model.dto.PastoralRequestDTO;
 import br.com.zep.servio.model.dto.PastoralResponseDTO;
-import br.com.zep.servio.repository.ParoquiaRepository;
 import br.com.zep.servio.repository.PastoralRepository;
+import br.com.zep.servio.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,10 +15,9 @@ public class PastoralService extends CrudService<Pastoral, PastoralRequestDTO, P
 
     private final PastoralRepository repository;
     private final PastoralMapper mapper;
-    private final ParoquiaRepository paroquiaRepository;
 
     @Override
-    protected JpaRepository<Pastoral, Long> repository() {
+    protected TenantRepository<Pastoral> repository() {
         return repository;
     }
 
@@ -35,18 +33,11 @@ public class PastoralService extends CrudService<Pastoral, PastoralRequestDTO, P
 
     @Override
     protected Pastoral paraEntidade(PastoralRequestDTO request) {
-        Pastoral entity = mapper.toEntity(request);
-        resolverRelacoes(request, entity);
-        return entity;
+        return mapper.toEntity(request);
     }
 
     @Override
     protected void atualizarEntidade(PastoralRequestDTO request, Pastoral entity) {
         mapper.updateEntity(request, entity);
-        resolverRelacoes(request, entity);
-    }
-
-    private void resolverRelacoes(PastoralRequestDTO request, Pastoral entity) {
-        entity.setParoquia(referencia(paroquiaRepository, request.paroquiaId(), "Paroquia"));
     }
 }

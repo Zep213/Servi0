@@ -5,13 +5,15 @@ import br.com.zep.servio.model.dto.AlocacaoResponseDTO;
 import br.com.zep.servio.service.AlocacaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/alocacoes")
@@ -21,8 +23,8 @@ public class AlocacaoController {
     private final AlocacaoService service;
 
     @GetMapping
-    public List<AlocacaoResponseDTO> listar() {
-        return service.listar();
+    public Page<AlocacaoResponseDTO> listar(@PageableDefault(size = 20, sort = "id") Pageable pageable) {
+        return service.listar(pageable);
     }
 
     @GetMapping("/{id}")

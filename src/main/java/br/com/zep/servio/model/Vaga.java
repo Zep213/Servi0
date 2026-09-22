@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "vaga")
-public class Vaga extends ActivatableEntity {
+public class Vaga extends TenantEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

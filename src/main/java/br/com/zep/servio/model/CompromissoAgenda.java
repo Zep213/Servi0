@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "compromisso_agenda")
-public class CompromissoAgenda extends ActivatableEntity {
+public class CompromissoAgenda extends TenantEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

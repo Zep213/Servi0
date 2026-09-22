@@ -64,7 +64,7 @@ public class BootstrapAdmin implements ApplicationRunner {
         admin.setEmail(email);
         admin.setSenha(passwordEncoder.encode(senha));
         admin.setPerfil(Perfil.ADMIN);
-        admin.setParoquia(paroquia);        // etapa 2: admin.setParoquiaId(paroquia.getId());
+        admin.setParoquiaId(paroquia.getId());
         usuarioRepository.save(admin);
 
         log.info("Primeiro ADMIN criado: {}", email);

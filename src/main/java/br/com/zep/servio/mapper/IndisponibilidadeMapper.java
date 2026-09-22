@@ -14,7 +14,15 @@ public interface IndisponibilidadeMapper {
     @Mapping(source = "usuario.id", target = "usuarioId")
     IndisponibilidadeResponseDTO toResponse(Indisponibilidade entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     Indisponibilidade toEntity(IndisponibilidadeRequestDTO request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     void updateEntity(IndisponibilidadeRequestDTO request, @MappingTarget Indisponibilidade entity);
 }

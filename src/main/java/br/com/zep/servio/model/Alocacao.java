@@ -11,9 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "alocacao",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"vaga_id", "usuario_id"}),
         indexes = @Index(name = "idx_alocacao_usuario", columnList = "usuario_id"))
-public class Alocacao extends ActivatableEntity {
+public class Alocacao extends TenantEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record CompromissoAgendaRequestDTO(
-    @NotNull
-    Long padreId,
     @NotBlank
     @Size(max = 255)
     String titulo,

@@ -16,7 +16,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "celebracao",
         indexes = @Index(name = "idx_celebracao_comunidade_data", columnList = "comunidade_id, data"))
-public class Celebracao extends ActivatableEntity {
+public class Celebracao extends TenantEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

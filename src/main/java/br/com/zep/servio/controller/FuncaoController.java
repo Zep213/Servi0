@@ -5,13 +5,15 @@ import br.com.zep.servio.model.dto.FuncaoResponseDTO;
 import br.com.zep.servio.service.FuncaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/funcoes")
@@ -21,8 +23,8 @@ public class FuncaoController {
     private final FuncaoService service;
 
     @GetMapping
-    public List<FuncaoResponseDTO> listar() {
-        return service.listar();
+    public Page<FuncaoResponseDTO> listar(@PageableDefault(size = 20, sort = "nome") Pageable pageable) {
+        return service.listar(pageable);
     }
 
     @GetMapping("/{id}")

@@ -1,9 +1,8 @@
 package br.com.zep.servio.repository;
 
 import br.com.zep.servio.model.UsuarioFuncao;
-import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
-public interface UsuarioFuncaoRepository extends JpaRepository<UsuarioFuncao, Long> {
+public interface UsuarioFuncaoRepository extends TenantRepository<UsuarioFuncao> {
 
     List<UsuarioFuncao> findByUsuarioIdAndActiveTrue(Long usuarioId);
 

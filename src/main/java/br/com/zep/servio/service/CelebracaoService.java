@@ -6,8 +6,8 @@ import br.com.zep.servio.model.dto.CelebracaoRequestDTO;
 import br.com.zep.servio.model.dto.CelebracaoResponseDTO;
 import br.com.zep.servio.repository.CelebracaoRepository;
 import br.com.zep.servio.repository.ComunidadeRepository;
+import br.com.zep.servio.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +19,7 @@ public class CelebracaoService extends CrudService<Celebracao, CelebracaoRequest
     private final ComunidadeRepository comunidadeRepository;
 
     @Override
-    protected JpaRepository<Celebracao, Long> repository() {
+    protected TenantRepository<Celebracao> repository() {
         return repository;
     }
 

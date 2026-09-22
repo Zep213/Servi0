@@ -16,7 +16,15 @@ public interface PedidoTrocaMapper {
     @Mapping(source = "destinatario.id", target = "destinatarioId")
     PedidoTrocaResponseDTO toResponse(PedidoTroca entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     PedidoTroca toEntity(PedidoTrocaRequestDTO request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     void updateEntity(PedidoTrocaRequestDTO request, @MappingTarget PedidoTroca entity);
 }

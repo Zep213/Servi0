@@ -10,9 +10,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "usuario_funcao",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id", "funcao_id"}))
-public class UsuarioFuncao extends ActivatableEntity {
+@Table(name = "usuario_funcao")
+public class UsuarioFuncao extends TenantEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

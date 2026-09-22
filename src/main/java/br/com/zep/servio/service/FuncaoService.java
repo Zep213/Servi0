@@ -6,8 +6,8 @@ import br.com.zep.servio.model.dto.FuncaoRequestDTO;
 import br.com.zep.servio.model.dto.FuncaoResponseDTO;
 import br.com.zep.servio.repository.FuncaoRepository;
 import br.com.zep.servio.repository.PastoralRepository;
+import br.com.zep.servio.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +19,7 @@ public class FuncaoService extends CrudService<Funcao, FuncaoRequestDTO, FuncaoR
     private final PastoralRepository pastoralRepository;
 
     @Override
-    protected JpaRepository<Funcao, Long> repository() {
+    protected TenantRepository<Funcao> repository() {
         return repository;
     }
 

@@ -24,4 +24,7 @@ public class AuditLog extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    @Column(name = "paroquia_id")
+    private Long paroquiaId;
 }

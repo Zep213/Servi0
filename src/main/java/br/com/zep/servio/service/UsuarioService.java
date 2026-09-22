@@ -5,12 +5,13 @@ import br.com.zep.servio.mapper.UsuarioMapper;
 import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.model.dto.UsuarioRequestDTO;
 import br.com.zep.servio.model.dto.UsuarioResponseDTO;
-import br.com.zep.servio.repository.ParoquiaRepository;
+import br.com.zep.servio.model.dto.UsuarioUpdateDTO;
+import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +19,10 @@ public class UsuarioService extends CrudService<Usuario, UsuarioRequestDTO, Usua
 
     private final UsuarioRepository repository;
     private final UsuarioMapper mapper;
-    private final ParoquiaRepository paroquiaRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    protected JpaRepository<Usuario, Long> repository() {
+    protected TenantRepository<Usuario> repository() {
         return repository;
     }
 
@@ -37,27 +37,34 @@ public class UsuarioService extends CrudService<Usuario, UsuarioRequestDTO, Usua
     }
 
     @Override
-    protected void validarCriacao(UsuarioRequestDTO request) {
-        if (repository.existsByEmailAndParoquiaId(request.email(), request.paroquiaId())) {
-            throw new ConflitoException("Já existe um usuário com este e-mail na paróquia");
-        }
-    }
-
-    @Override
     protected Usuario paraEntidade(UsuarioRequestDTO request) {
         Usuario entity = mapper.toEntity(request);
-        resolverRelacoes(request, entity);
+        entity.setSenha(passwordEncoder.encode(request.senha()));
         return entity;
     }
 
+    /** Não usado: o update tem DTO próprio (ver atualizar). */
     @Override
     protected void atualizarEntidade(UsuarioRequestDTO request, Usuario entity) {
-        mapper.updateEntity(request, entity);
-        resolverRelacoes(request, entity);
+        throw new UnsupportedOperationException("Use atualizar(id, UsuarioUpdateDTO)");
     }
 
-    private void resolverRelacoes(UsuarioRequestDTO request, Usuario entity) {
-        entity.setSenha(passwordEncoder.encode(request.senha()));
-        entity.setParoquia(referencia(paroquiaRepository, request.paroquiaId(), "Paroquia"));
+    @Override
+    protected void validar(Usuario entidade) {
+        if (repository.existsByEmailIgnoreCaseAndActiveTrueAndIdNot(entidade.getEmail(), idOuZero(entidade))) {
+            throw new ConflitoException("Já existe um usuário ativo com este e-mail");
+        }
+    }
+
+    @Transactional
+    public UsuarioResponseDTO atualizar(Long id, UsuarioUpdateDTO request) {
+        Usuario usuario = obterAtivo(id);
+        mapper.updateEntity(request, usuario);
+        if (request.senha() != null && !request.senha().isBlank()) {
+            usuario.setSenha(passwordEncoder.encode(request.senha()));
+        }
+        validar(usuario);
+        return paraResposta(repository.save(usuario));
+        // etapa 3: encerrar as sessões quando perfil, e-mail ou senha mudarem
     }
 }

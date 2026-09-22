@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "funcao")
-public class Funcao extends ActivatableEntity {
+public class Funcao extends TenantEntity {
 
     @NotBlank
     @Size(max = 255)

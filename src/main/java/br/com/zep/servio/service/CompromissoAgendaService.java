@@ -6,9 +6,9 @@ import br.com.zep.servio.model.dto.CompromissoAgendaRequestDTO;
 import br.com.zep.servio.model.dto.CompromissoAgendaResponseDTO;
 import br.com.zep.servio.repository.CompromissoAgendaRepository;
 import br.com.zep.servio.repository.ComunidadeRepository;
+import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +21,7 @@ public class CompromissoAgendaService extends CrudService<CompromissoAgenda, Com
     private final ComunidadeRepository comunidadeRepository;
 
     @Override
-    protected JpaRepository<CompromissoAgenda, Long> repository() {
+    protected TenantRepository<CompromissoAgenda> repository() {
         return repository;
     }
 
@@ -49,7 +49,7 @@ public class CompromissoAgendaService extends CrudService<CompromissoAgenda, Com
     }
 
     private void resolverRelacoes(CompromissoAgendaRequestDTO request, CompromissoAgenda entity) {
-        entity.setPadre(referencia(usuarioRepository, request.padreId(), "Usuario"));
+        entity.setPadre(referencia(usuarioRepository, usuarioId(), "Usuario"));
         entity.setComunidade(referenciaOpcional(comunidadeRepository, request.comunidadeId(), "Comunidade"));
     }
 }

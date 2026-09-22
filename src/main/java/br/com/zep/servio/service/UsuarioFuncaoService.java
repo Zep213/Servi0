@@ -6,10 +6,10 @@ import br.com.zep.servio.model.UsuarioFuncao;
 import br.com.zep.servio.model.dto.UsuarioFuncaoRequestDTO;
 import br.com.zep.servio.model.dto.UsuarioFuncaoResponseDTO;
 import br.com.zep.servio.repository.FuncaoRepository;
+import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioFuncaoRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +22,7 @@ public class UsuarioFuncaoService extends CrudService<UsuarioFuncao, UsuarioFunc
     private final FuncaoRepository funcaoRepository;
 
     @Override
-    protected JpaRepository<UsuarioFuncao, Long> repository() {
+    protected TenantRepository<UsuarioFuncao> repository() {
         return repository;
     }
 
@@ -37,8 +37,8 @@ public class UsuarioFuncaoService extends CrudService<UsuarioFuncao, UsuarioFunc
     }
 
     @Override
-    protected void validarCriacao(UsuarioFuncaoRequestDTO request) {
-        if (repository.existsByUsuarioIdAndFuncaoId(request.usuarioId(), request.funcaoId())) {
+    protected void validar(UsuarioFuncao entidade) {
+        if (repository.existsByUsuarioIdAndFuncaoId(entidade.getUsuario().getId(), entidade.getFuncao().getId())) {
             throw new ConflitoException("Usuário já possui esta função");
         }
     }

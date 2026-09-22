@@ -5,7 +5,5 @@ import jakarta.validation.constraints.*;
 public record ComunidadeRequestDTO(
     @NotBlank
     @Size(max = 255)
-    String nome,
-    @NotNull
-    Long paroquiaId
+    String nome
 ) {}

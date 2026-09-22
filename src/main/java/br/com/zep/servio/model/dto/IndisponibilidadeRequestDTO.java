@@ -5,7 +5,6 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public record IndisponibilidadeRequestDTO(
-    @NotNull
     Long usuarioId,
     @NotNull
     LocalDate dataInicio,

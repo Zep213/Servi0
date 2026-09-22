@@ -37,9 +37,23 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
 - `AuditLogService.registrar(...)` e endpoints de leitura de auditoria (a gravação ainda não é acionada por nenhum service; ver `erros-conhecidos.md`).
 - Interface `Notificador` e `EmailNotificador` (não envia se `spring.mail.host` não estiver configurado).
 
+### Multi-tenant e integridade (etapa 2)
+- **Migration `V2__multi_tenant_e_integridade.sql`**: adiciona `paroquia_id` às tabelas que ainda não tinham (`funcao`, `usuario_funcao`, `celebracao`, `vaga`, `alocacao`, `indisponibilidade`, `pedido_troca`, `compromisso_agenda`, `audit_log` opcional), populando os registros existentes; adiciona `version` (optimistic locking) em todas as entidades tenant + `Paroquia`; troca as `UNIQUE` constraints antigas por índices únicos parciais `WHERE is_active` (e-mail de usuário único entre ativos no sistema todo, usuário-função, alocação).
+- **`TenantEntity`** (`MappedSuperclass`, estende `ActivatableEntity`): campo `paroquia_id` controlado pelo servidor, nunca aceito do cliente (`updatable = false`).
+- **`TenantRepository<E>`**: base para os 11 repositories de entidades tenant, com `findByIdAndParoquiaIdAndActiveTrue` e `findByParoquiaIdAndActiveTrue(Pageable)` — toda consulta já nasce restrita à paróquia.
+- **`CrudService` reescrito**: `listar(Pageable)` retorna `Page<Res>` filtrado pela paróquia do usuário logado (`UsuarioLogado`, injetado por setter); `criar()` seta `paroquiaId` automaticamente; `validar(entidade)` roda no criar **e** no atualizar; `referencia()`/`referenciaOpcional()` só resolvem entidades da mesma paróquia (404 se forem de outra).
+- **Identidade sempre do usuário autenticado, nunca do JSON**: `paroquiaId` sumiu de todos os DTOs de request; `CompromissoAgendaService` usa `usuarioId()` como padre; `PedidoTrocaService` usa `usuarioId()` como solicitante; `IndisponibilidadeService` só deixa marcar indisponibilidade de outro usuário se o logado for ADMIN/COORDENADOR (senão 403).
+- **`UsuarioUpdateDTO`**: senha opcional na atualização (mantém a atual se vier em branco); `UsuarioRequestDTO`/`UsuarioUpdateDTO` limitam a senha a 72 caracteres (limite real do BCrypt).
+- **`ParoquiaService`/`ParoquiaController` viram "minha paróquia"**: só `GET`/`PUT /api/paroquias/minha` (resolvidos pelo `paroquiaId` do usuário logado); não há mais listar, buscar por id, criar ou desativar paróquia pela API.
+- **Paginação em todos os 11 controllers tenant**: `GET /api/<recurso>?page=&size=&sort=`, com `@PageableDefault` e sort por campo relevante da entidade (`nome`, `data`, `dataInicio` ou `id`).
+- **Concorrência otimista**: `GlobalHandleException` trata `ObjectOptimisticLockingFailureException` como 409 com mensagem amigável.
+- **`@EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)`** em `ServioApplication`, para serializar `Page<T>` de forma estável entre versões do Spring.
+- Testado ponta a ponta via `curl` com banco zerado: listagem paginada, criação de usuário sem `paroquiaId` no corpo (herdado do usuário logado), `GET /api/paroquias/minha`, e desativar+recriar usuário com o mesmo e-mail (antes dava 409, agora funciona).
+
 ## Em desenvolvimento
 - Aplicar a Basic Auth no checkout principal e no container.
-- Restringir rotas por perfil com `@PreAuthorize` (infraestrutura pronta, regras ainda não escritas).
+- Restringir rotas por perfil com `@PreAuthorize` (infraestrutura pronta; falta sobretudo impedir que qualquer usuário logado crie um `ADMIN`).
 - Ligar `AuditLogService` e `Notificador` às regras de negócio.
+- Fluxo de `PedidoTroca` (transições de status, só solicitante cancela, só destinatário aceita/recusa).
 
 Ver também: `features-futuras.md` e `erros-conhecidos.md`.

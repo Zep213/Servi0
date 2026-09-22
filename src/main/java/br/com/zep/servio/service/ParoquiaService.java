@@ -1,44 +1,40 @@
 package br.com.zep.servio.service;
 
+import br.com.zep.servio.exception.RecursoNaoEncontradoException;
 import br.com.zep.servio.mapper.ParoquiaMapper;
 import br.com.zep.servio.model.Paroquia;
 import br.com.zep.servio.model.dto.ParoquiaRequestDTO;
 import br.com.zep.servio.model.dto.ParoquiaResponseDTO;
 import br.com.zep.servio.repository.ParoquiaRepository;
+import br.com.zep.servio.security.UsuarioLogado;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ParoquiaService extends CrudService<Paroquia, ParoquiaRequestDTO, ParoquiaResponseDTO> {
+public class ParoquiaService {
 
     private final ParoquiaRepository repository;
     private final ParoquiaMapper mapper;
+    private final UsuarioLogado usuarioLogado;
 
-    @Override
-    protected JpaRepository<Paroquia, Long> repository() {
-        return repository;
+    @Transactional(readOnly = true)
+    public ParoquiaResponseDTO minha() {
+        return mapper.toResponse(obterMinha());
     }
 
-    @Override
-    protected String nomeRecurso() {
-        return "Paroquia";
+    @Transactional
+    public ParoquiaResponseDTO atualizarMinha(ParoquiaRequestDTO request) {
+        Paroquia paroquia = obterMinha();
+        mapper.updateEntity(request, paroquia);
+        return mapper.toResponse(repository.save(paroquia));
     }
 
-    @Override
-    protected ParoquiaResponseDTO paraResposta(Paroquia entity) {
-        return mapper.toResponse(entity);
-    }
-
-    @Override
-    protected Paroquia paraEntidade(ParoquiaRequestDTO request) {
-        Paroquia entity = mapper.toEntity(request);
-        return entity;
-    }
-
-    @Override
-    protected void atualizarEntidade(ParoquiaRequestDTO request, Paroquia entity) {
-        mapper.updateEntity(request, entity);
+    private Paroquia obterMinha() {
+        Long id = usuarioLogado.paroquiaId();
+        return repository.findById(id)
+                .filter(Paroquia::isActive)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Paroquia", id));
     }
 }

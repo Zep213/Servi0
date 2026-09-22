@@ -3,11 +3,10 @@
 Ordem sugerida por prioridade. Marcadas como (P1) bloqueia o uso, (P2) importante, (P3) desejável.
 
 ## Segurança e acesso
-- (P1) **Autorização por perfil**: restringir rotas por role (ADMIN, COORDENADOR, PADRE, SERVIDOR) com `@PreAuthorize` (infraestrutura já habilitada via `@EnableMethodSecurity`), por exemplo só ADMIN/COORDENADOR criam usuários e celebrações; SERVIDOR só edita as próprias indisponibilidades e pedidos de troca.
-- (P1) **Isolamento por paróquia (multi-tenant)**: toda consulta filtrada pela paróquia do usuário logado (`UsuarioLogado.paroquiaId()` já disponível para isso).
-- (P1) **Login com sessão no servidor**: Spring Session JDBC (sessões no próprio PostgreSQL), cookie `HttpOnly`/`Secure`/`SameSite=Lax`, CSRF para o front React, rate limit no login e encerramento imediato das sessões ao mudar perfil/senha. Redis só se houver várias instâncias no futuro.
-- (P2) **Login sem ambiguidade**: identificar o usuário por e-mail + paróquia (ou e-mail único global).
+- (P1) **Autorização por perfil**: restringir rotas por role (ADMIN, COORDENADOR, PADRE, SERVIDOR) com `@PreAuthorize` (infraestrutura já habilitada via `@EnableMethodSecurity`), por exemplo só ADMIN/COORDENADOR criam usuários e celebrações; SERVIDOR só edita as próprias indisponibilidades e pedidos de troca. Mais urgente agora: impedir que qualquer usuário logado crie um `ADMIN` (`perfil` ainda é livre em `UsuarioRequestDTO`).
+- (P1) **Login com sessão no servidor**: Spring Session JDBC (sessões no próprio PostgreSQL), cookie `HttpOnly`/`Secure`/`SameSite=Lax`, CSRF para o front React, rate limit no login e encerramento imediato das sessões ao mudar perfil/e-mail/senha (já há um comentário `// etapa 3` em `UsuarioService.atualizar` marcando onde entra). Redis só se houver várias instâncias no futuro.
 - (P2) **Troca/recuperação de senha** do usuário autenticado.
+- (P2) **Onboarding de novas paróquias**: hoje só existe a paróquia criada pelo `BootstrapAdmin` na primeira subida; `ParoquiaController` só expõe `GET`/`PUT /api/paroquias/minha`. Se o produto for atender várias paróquias de forma contínua (não só a inicial), precisa de um fluxo de criação (provavelmente restrito a um super-admin fora do escopo de tenant).
 
 ## Regras de negócio da escala
 - (P1) **Fluxo de PedidoTroca**: transições de `StatusTroca` (ABERTO → ACEITO/RECUSADO/CANCELADO), só o solicitante cancela, só o destinatário aceita/recusa, e a troca efetiva a `Alocacao`.
@@ -22,7 +21,7 @@ Ordem sugerida por prioridade. Marcadas como (P1) bloqueia o uso, (P2) important
 - (P3) Outros canais (WhatsApp/push) atrás da mesma interface `Notificador`.
 
 ## API e qualidade
-- (P2) **Paginação e filtros** nas listagens (hoje retornam tudo).
+- (P2) **Filtros** nas listagens (a paginação já está implementada em todos os recursos tenant; falta filtrar por campos como data, status, perfil etc.).
 - (P2) **Testes**: unitários dos services (use `/gen-tests`), integração com Testcontainers/PostgreSQL e testes de segurança.
 - (P2) **Documentação OpenAPI/Swagger** (springdoc).
 - (P3) Actuator (`/health`) e logs estruturados; healthcheck do container `app` no compose.

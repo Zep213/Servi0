@@ -14,7 +14,15 @@ public interface FuncaoMapper {
     @Mapping(source = "pastoral.id", target = "pastoralId")
     FuncaoResponseDTO toResponse(Funcao entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     Funcao toEntity(FuncaoRequestDTO request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     void updateEntity(FuncaoRequestDTO request, @MappingTarget Funcao entity);
 }

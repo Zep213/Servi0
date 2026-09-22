@@ -11,10 +11,17 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PastoralMapper {
 
-    @Mapping(source = "paroquia.id", target = "paroquiaId")
     PastoralResponseDTO toResponse(Pastoral entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     Pastoral toEntity(PastoralRequestDTO request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "paroquiaId", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "active", ignore = true)
     void updateEntity(PastoralRequestDTO request, @MappingTarget Pastoral entity);
 }

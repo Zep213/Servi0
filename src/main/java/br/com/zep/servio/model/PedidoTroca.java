@@ -13,7 +13,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "pedido_troca",
         indexes = @Index(name = "idx_pedido_troca_status", columnList = "status"))
-public class PedidoTroca extends ActivatableEntity {
+public class PedidoTroca extends TenantEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

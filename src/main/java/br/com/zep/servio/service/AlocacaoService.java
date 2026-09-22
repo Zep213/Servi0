@@ -6,10 +6,10 @@ import br.com.zep.servio.model.Alocacao;
 import br.com.zep.servio.model.dto.AlocacaoRequestDTO;
 import br.com.zep.servio.model.dto.AlocacaoResponseDTO;
 import br.com.zep.servio.repository.AlocacaoRepository;
+import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.repository.VagaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +22,7 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    protected JpaRepository<Alocacao, Long> repository() {
+    protected TenantRepository<Alocacao> repository() {
         return repository;
     }
 
@@ -37,8 +37,8 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     }
 
     @Override
-    protected void validarCriacao(AlocacaoRequestDTO request) {
-        if (repository.existsByVagaIdAndUsuarioId(request.vagaId(), request.usuarioId())) {
+    protected void validar(Alocacao entidade) {
+        if (repository.existsByVagaIdAndUsuarioId(entidade.getVaga().getId(), entidade.getUsuario().getId())) {
             throw new ConflitoException("Usuário já alocado nesta vaga");
         }
     }

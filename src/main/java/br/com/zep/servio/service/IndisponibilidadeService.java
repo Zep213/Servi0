@@ -4,10 +4,12 @@ import br.com.zep.servio.mapper.IndisponibilidadeMapper;
 import br.com.zep.servio.model.Indisponibilidade;
 import br.com.zep.servio.model.dto.IndisponibilidadeRequestDTO;
 import br.com.zep.servio.model.dto.IndisponibilidadeResponseDTO;
+import br.com.zep.servio.model.enumerated.Perfil;
 import br.com.zep.servio.repository.IndisponibilidadeRepository;
+import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +21,7 @@ public class IndisponibilidadeService extends CrudService<Indisponibilidade, Ind
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    protected JpaRepository<Indisponibilidade, Long> repository() {
+    protected TenantRepository<Indisponibilidade> repository() {
         return repository;
     }
 
@@ -47,6 +49,11 @@ public class IndisponibilidadeService extends CrudService<Indisponibilidade, Ind
     }
 
     private void resolverRelacoes(IndisponibilidadeRequestDTO request, Indisponibilidade entity) {
-        entity.setUsuario(referencia(usuarioRepository, request.usuarioId(), "Usuario"));
+        Long alvo = request.usuarioId();
+        if (alvo != null && !alvo.equals(usuarioId())
+                && usuario().getPerfil() != Perfil.ADMIN && usuario().getPerfil() != Perfil.COORDENADOR) {
+            throw new AccessDeniedException("Você só pode marcar a própria indisponibilidade");
+        }
+        entity.setUsuario(referencia(usuarioRepository, alvo != null ? alvo : usuarioId(), "Usuario"));
     }
 }

@@ -6,9 +6,9 @@ import br.com.zep.servio.model.dto.VagaRequestDTO;
 import br.com.zep.servio.model.dto.VagaResponseDTO;
 import br.com.zep.servio.repository.CelebracaoRepository;
 import br.com.zep.servio.repository.FuncaoRepository;
+import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.VagaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +21,7 @@ public class VagaService extends CrudService<Vaga, VagaRequestDTO, VagaResponseD
     private final FuncaoRepository funcaoRepository;
 
     @Override
-    protected JpaRepository<Vaga, Long> repository() {
+    protected TenantRepository<Vaga> repository() {
         return repository;
     }
 

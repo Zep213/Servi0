@@ -3,9 +3,10 @@ package br.com.zep.servio.model.dto;
 import br.com.zep.servio.model.enumerated.Perfil;
 import jakarta.validation.constraints.*;
 
-public record UsuarioRequestDTO(
+/** Update: a senha é opcional; se vier em branco ou nula, a senha atual é mantida. */
+public record UsuarioUpdateDTO(
     @NotBlank @Size(max = 255) String nome,
     @NotBlank @Email @Size(max = 255) String email,
-    @NotBlank @Size(min = 8, max = 72) String senha,   // 72 = limite real do BCrypt
+    @Size(min = 8, max = 72) String senha,
     @NotNull Perfil perfil
 ) {}

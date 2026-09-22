@@ -1,19 +1,30 @@
 package br.com.zep.servio.service;
 
 import br.com.zep.servio.exception.RecursoNaoEncontradoException;
-import br.com.zep.servio.model.ActivatableEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import br.com.zep.servio.model.TenantEntity;
+import br.com.zep.servio.repository.TenantRepository;
+import br.com.zep.servio.security.UsuarioLogado;
+import br.com.zep.servio.security.UsuarioPrincipal;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
- * CRUD com exclusão lógica. As subclasses resolvem os relacionamentos (ids do DTO -> entidades)
- * em {@link #paraEntidade} e {@link #atualizarEntidade}.
+ * CRUD com exclusão lógica, sempre restrito à paróquia do usuário logado.
+ * As subclasses resolvem relacionamentos em paraEntidade/atualizarEntidade e
+ * implementam regras de negócio em validar(), que roda no criar E no atualizar.
  */
-public abstract class CrudService<E extends ActivatableEntity, Req, Res> {
+public abstract class CrudService<E extends TenantEntity, Req, Res> {
 
-    protected abstract JpaRepository<E, Long> repository();
+    private UsuarioLogado usuarioLogado;
+
+    @Autowired
+    void setUsuarioLogado(UsuarioLogado usuarioLogado) {
+        this.usuarioLogado = usuarioLogado;
+    }
+
+    protected abstract TenantRepository<E> repository();
 
     protected abstract String nomeRecurso();
 
@@ -23,13 +34,30 @@ public abstract class CrudService<E extends ActivatableEntity, Req, Res> {
 
     protected abstract void atualizarEntidade(Req request, E entidade);
 
-    /** Regras de unicidade/negócio antes de criar. */
-    protected void validarCriacao(Req request) {
+    /** Regras de unicidade e de negócio. Roda no criar e no atualizar. */
+    protected void validar(E entidade) {
+    }
+
+    protected UsuarioPrincipal usuario() {
+        return usuarioLogado.get();
+    }
+
+    protected Long usuarioId() {
+        return usuarioLogado.id();
+    }
+
+    protected Long paroquiaId() {
+        return usuarioLogado.paroquiaId();
+    }
+
+    /** Id a usar nas consultas de unicidade quando a entidade ainda não foi salva. */
+    protected Long idOuZero(E entidade) {
+        return entidade.getId() == null ? 0L : entidade.getId();
     }
 
     @Transactional(readOnly = true)
-    public List<Res> listar() {
-        return repository().findAll().stream().filter(E::isActive).map(this::paraResposta).toList();
+    public Page<Res> listar(Pageable pageable) {
+        return repository().findByParoquiaIdAndActiveTrue(paroquiaId(), pageable).map(this::paraResposta);
     }
 
     @Transactional(readOnly = true)
@@ -39,14 +67,17 @@ public abstract class CrudService<E extends ActivatableEntity, Req, Res> {
 
     @Transactional
     public Res criar(Req request) {
-        validarCriacao(request);
-        return paraResposta(repository().save(paraEntidade(request)));
+        E entidade = paraEntidade(request);
+        entidade.setParoquiaId(paroquiaId());
+        validar(entidade);
+        return paraResposta(repository().save(entidade));
     }
 
     @Transactional
     public Res atualizar(Long id, Req request) {
         E entidade = obterAtivo(id);
         atualizarEntidade(request, entidade);
+        validar(entidade);
         return paraResposta(repository().save(entidade));
     }
 
@@ -58,18 +89,17 @@ public abstract class CrudService<E extends ActivatableEntity, Req, Res> {
     }
 
     protected E obterAtivo(Long id) {
-        return repository().findById(id)
-                .filter(E::isActive)
+        return repository().findByIdAndParoquiaIdAndActiveTrue(id, paroquiaId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException(nomeRecurso(), id));
     }
 
-    /** Busca uma entidade referenciada pelo DTO; 404 se não existir. */
-    protected <T> T referencia(JpaRepository<T, Long> repo, Long id, String recurso) {
-        return repo.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException(recurso, id));
+    /** Referência vinda do DTO: 404 se não existir OU se for de outra paróquia. */
+    protected <T extends TenantEntity> T referencia(TenantRepository<T> repo, Long id, String recurso) {
+        return repo.findByIdAndParoquiaIdAndActiveTrue(id, paroquiaId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(recurso, id));
     }
 
-    /** Igual a {@link #referencia}, mas aceita id nulo (relacionamento opcional). */
-    protected <T> T referenciaOpcional(JpaRepository<T, Long> repo, Long id, String recurso) {
+    protected <T extends TenantEntity> T referenciaOpcional(TenantRepository<T> repo, Long id, String recurso) {
         return id == null ? null : referencia(repo, id, recurso);
     }
 }

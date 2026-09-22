@@ -1,9 +1,8 @@
 package br.com.zep.servio.repository;
 
 import br.com.zep.servio.model.Alocacao;
-import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
-public interface AlocacaoRepository extends JpaRepository<Alocacao, Long> {
+public interface AlocacaoRepository extends TenantRepository<Alocacao> {
 
     List<Alocacao> findByUsuarioIdAndActiveTrue(Long usuarioId);
 

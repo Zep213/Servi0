@@ -2,6 +2,7 @@ package br.com.zep.servio.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,4 +14,8 @@ public abstract class ActivatableEntity extends BaseEntity {
 
     @Column(name = "is_active", nullable = false)
     private boolean active = true;
+
+    @Version
+    @Column(nullable = false)
+    private Long version;
 }

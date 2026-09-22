@@ -5,13 +5,15 @@ import br.com.zep.servio.model.dto.PastoralResponseDTO;
 import br.com.zep.servio.service.PastoralService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/pastorais")
@@ -21,8 +23,8 @@ public class PastoralController {
     private final PastoralService service;
 
     @GetMapping
-    public List<PastoralResponseDTO> listar() {
-        return service.listar();
+    public Page<PastoralResponseDTO> listar(@PageableDefault(size = 20, sort = "nome") Pageable pageable) {
+        return service.listar(pageable);
     }
 
     @GetMapping("/{id}")
