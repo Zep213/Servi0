@@ -26,6 +26,10 @@ services:
       DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-servio}
       DB_USER: ${POSTGRES_USER:-servio}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-servio}
+      SERVIO_ADMIN_EMAIL: ${SERVIO_ADMIN_EMAIL:-}
+      SERVIO_ADMIN_SENHA: ${SERVIO_ADMIN_SENHA:-}
+      SERVIO_ADMIN_NOME: ${SERVIO_ADMIN_NOME:-Administrador}
+      SERVIO_PAROQUIA_NOME: ${SERVIO_PAROQUIA_NOME:-Paróquia Inicial}
     ports:
       - "${APP_PORT:-8080}:8080"
 
