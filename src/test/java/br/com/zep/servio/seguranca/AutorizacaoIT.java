@@ -35,11 +35,13 @@ class AutorizacaoIT {
         return new UsuarioPrincipal(1L, 1L, "Teste", "teste@servio.dev", null, perfil);
     }
 
+    // /api/alocacoes e /api/usuarios-pastorais não entram aqui: a escrita neles só exige login
+    // no SecurityConfig (GESTAO_POR_PASTORAL) e quem decide é o papel dentro da pastoral
+    // (PastoraisPermissao), checado no service — ou seja, depois da validação do DTO, não antes.
     static Stream<Arguments> escritasProibidas() {
         return Stream.of(
                 Arguments.of(Perfil.SERVIDOR, "/api/usuarios"),
                 Arguments.of(Perfil.SERVIDOR, "/api/celebracoes"),
-                Arguments.of(Perfil.SERVIDOR, "/api/alocacoes"),
                 Arguments.of(Perfil.SERVIDOR, "/api/paroquias/minha"),
                 Arguments.of(Perfil.PADRE, "/api/usuarios"),
                 Arguments.of(Perfil.COORDENADOR, "/api/compromissos-agenda"));

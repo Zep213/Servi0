@@ -1,15 +1,14 @@
 package br.com.zep.servio.model.dto;
 
-import br.com.zep.servio.model.enumerated.StatusConvite;
+import br.com.zep.servio.model.enumerated.PapelPastoral;
 
 import java.time.LocalDateTime;
 
-public record AlocacaoResponseDTO(
+public record UsuarioPastoralResponseDTO(
     Long id,
-    Long vagaId,
     Long usuarioId,
-    StatusConvite status,
-    LocalDateTime dataLimiteResposta,
+    Long pastoralId,
+    PapelPastoral papel,
     boolean active,
     LocalDateTime createdAt,
     LocalDateTime updatedAt

@@ -1,8 +1,8 @@
 package br.com.zep.servio.controller;
 
-import br.com.zep.servio.model.dto.AlocacaoRequestDTO;
-import br.com.zep.servio.model.dto.AlocacaoResponseDTO;
-import br.com.zep.servio.service.AlocacaoService;
+import br.com.zep.servio.model.dto.UsuarioPastoralRequestDTO;
+import br.com.zep.servio.model.dto.UsuarioPastoralResponseDTO;
+import br.com.zep.servio.service.UsuarioPastoralService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,32 +16,32 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/alocacoes")
+@RequestMapping("/api/usuarios-pastorais")
 @RequiredArgsConstructor
-public class AlocacaoController {
+public class UsuarioPastoralController {
 
-    private final AlocacaoService service;
+    private final UsuarioPastoralService service;
 
     @GetMapping
-    public Page<AlocacaoResponseDTO> listar(@PageableDefault(size = 20, sort = "id") Pageable pageable) {
+    public Page<UsuarioPastoralResponseDTO> listar(@PageableDefault(size = 20, sort = "id") Pageable pageable) {
         return service.listar(pageable);
     }
 
     @GetMapping("/{id}")
-    public AlocacaoResponseDTO buscar(@PathVariable Long id) {
+    public UsuarioPastoralResponseDTO buscar(@PathVariable Long id) {
         return service.buscar(id);
     }
 
     @PostMapping
-    public ResponseEntity<AlocacaoResponseDTO> criar(@Valid @RequestBody AlocacaoRequestDTO request) {
-        AlocacaoResponseDTO criado = service.criar(request);
+    public ResponseEntity<UsuarioPastoralResponseDTO> criar(@Valid @RequestBody UsuarioPastoralRequestDTO request) {
+        UsuarioPastoralResponseDTO criado = service.criar(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(criado.id()).toUri();
         return ResponseEntity.created(location).body(criado);
     }
 
     @PutMapping("/{id}")
-    public AlocacaoResponseDTO atualizar(@PathVariable Long id, @Valid @RequestBody AlocacaoRequestDTO request) {
+    public UsuarioPastoralResponseDTO atualizar(@PathVariable Long id, @Valid @RequestBody UsuarioPastoralRequestDTO request) {
         return service.atualizar(id, request);
     }
 
@@ -49,10 +49,5 @@ public class AlocacaoController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void desativar(@PathVariable Long id) {
         service.desativar(id);
-    }
-
-    @PostMapping("/{id}/responder")
-    public AlocacaoResponseDTO responder(@PathVariable Long id, @RequestParam boolean aceitar) {
-        return service.responder(id, aceitar);
     }
 }

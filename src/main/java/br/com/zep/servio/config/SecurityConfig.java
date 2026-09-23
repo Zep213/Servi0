@@ -28,8 +28,17 @@ public class SecurityConfig {
 
     /** Cadastros com a mesma regra: leitura para qualquer logado, escrita para ADMIN/COORDENADOR. */
     private static final String[] CADASTROS = {
-            "/api/pastorais/**", "/api/comunidades/**", "/api/funcoes/**", "/api/usuarios-funcoes/**",
-            "/api/celebracoes/**", "/api/vagas/**", "/api/alocacoes/**"
+            "/api/pastorais", "/api/pastorais/*", "/api/comunidades/**", "/api/funcoes/**",
+            "/api/usuarios-funcoes/**", "/api/celebracoes/**", "/api/vagas/**"
+    };
+
+    /**
+     * Recursos onde o gate fino é por papel DENTRO da pastoral (PastoraisPermissao), não pelo
+     * Perfil global do usuário: o gate aqui só exige login, quem decide é o service/@PreAuthorize.
+     */
+    private static final String[] GESTAO_POR_PASTORAL = {
+            "/api/pastorais/*/config/**", "/api/pastorais/*/financeiro/**", "/api/pastorais/*/reunioes/**",
+            "/api/alocacoes/**", "/api/usuarios-pastorais/**"
     };
 
     private final TentativasLogin tentativasLogin;
@@ -84,10 +93,18 @@ public class SecurityConfig {
                         // qualquer usuário logado
                         .requestMatchers("/api/me/**").authenticated()
                         .requestMatchers("/api/indisponibilidades/**", "/api/pedidos-troca/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/regras/**").authenticated()
+                        // alterações pendentes do vice: quem pode confirmar/desfazer é checado no service
+                        .requestMatchers("/api/alteracoes-pendentes/**").authenticated()
 
                         // usuários (a primeira regra que casar vence: GET antes das escritas)
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasAnyRole("ADMIN", "COORDENADOR", "PADRE")
                         .requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // hierarquia por pastoral: papel dentro da pastoral quem decide (PastoraisPermissao
+                        // no service/@PreAuthorize), não o Perfil global — inclui o convidado respondendo
+                        // à própria escalação, cuja checagem de dono também é no service
+                        .requestMatchers(GESTAO_POR_PASTORAL).authenticated()
 
                         // cadastros da escala
                         .requestMatchers(HttpMethod.GET, CADASTROS).authenticated()

@@ -19,11 +19,15 @@ public interface AlocacaoMapper {
     @Mapping(target = "paroquiaId", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "active", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "dataLimiteResposta", ignore = true)
     Alocacao toEntity(AlocacaoRequestDTO request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "paroquiaId", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "active", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "dataLimiteResposta", ignore = true)
     void updateEntity(AlocacaoRequestDTO request, @MappingTarget Alocacao entity);
 }
