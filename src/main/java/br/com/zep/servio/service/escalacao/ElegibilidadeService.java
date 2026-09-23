@@ -18,10 +18,14 @@ public class ElegibilidadeService {
 
     private final ConfiguracaoPastoralService configuracaoPastoralService;
 
-    /** Motivos de impedimento do candidato para a vaga; lista vazia = candidato elegível. */
-    public List<String> impedimentos(Usuario candidato, Vaga vaga) {
+    /**
+     * Motivos de impedimento do candidato para a vaga; lista vazia = candidato elegível.
+     * alocacaoIgnoradaId: a própria alocação sendo editada (0 numa criação), para as
+     * regras não considerarem o registro que está sendo validado como um conflito consigo mesmo.
+     */
+    public List<String> impedimentos(Usuario candidato, Vaga vaga, Long alocacaoIgnoradaId) {
         Long pastoralId = vaga.getFuncao().getPastoral().getId();
-        ContextoElegibilidade contexto = new ContextoElegibilidade(vaga);
+        ContextoElegibilidade contexto = new ContextoElegibilidade(vaga, alocacaoIgnoradaId);
 
         List<String> impedimentos = new ArrayList<>();
         for (RegraElegibilidade regra : configuracaoPastoralService.catalogo()) {

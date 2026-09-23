@@ -2,6 +2,7 @@ package br.com.zep.servio.service.escalacao.regra;
 
 import br.com.zep.servio.model.Alocacao;
 import br.com.zep.servio.model.Usuario;
+import br.com.zep.servio.model.enumerated.StatusConvite;
 import br.com.zep.servio.repository.AlocacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,8 @@ public class IntervaloMinimoRegra implements RegraElegibilidade {
         long horasMinimas = numero(parametros.getOrDefault(PARAM_HORAS, PADRAO_HORAS));
         LocalDateTime dataHoraVaga = LocalDateTime.of(contexto.celebracao().getData(), contexto.celebracao().getHora());
 
-        for (Alocacao alocacao : alocacaoRepository.findByUsuarioIdAndActiveTrue(candidato.getId())) {
+        for (Alocacao alocacao : alocacaoRepository.findByUsuarioIdAndActiveTrueAndStatusInAndIdNot(
+                candidato.getId(), StatusConvite.OCUPANTES, contexto.alocacaoIgnoradaId())) {
             var celebracaoExistente = alocacao.getVaga().getCelebracao();
             LocalDateTime dataHoraExistente = LocalDateTime.of(celebracaoExistente.getData(), celebracaoExistente.getHora());
             long horasEntre = Math.abs(ChronoUnit.HOURS.between(dataHoraExistente, dataHoraVaga));

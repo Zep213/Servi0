@@ -2,6 +2,7 @@ package br.com.zep.servio.service.escalacao.regra;
 
 import br.com.zep.servio.model.Alocacao;
 import br.com.zep.servio.model.Usuario;
+import br.com.zep.servio.model.enumerated.StatusConvite;
 import br.com.zep.servio.repository.AlocacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -42,7 +43,8 @@ public class DomingosSeguidosRegra implements RegraElegibilidade {
         LocalDate domingoAnterior = dataVaga.minusDays(7);
         LocalDate domingoSeguinte = dataVaga.plusDays(7);
 
-        for (Alocacao alocacao : alocacaoRepository.findByUsuarioIdAndActiveTrue(candidato.getId())) {
+        for (Alocacao alocacao : alocacaoRepository.findByUsuarioIdAndActiveTrueAndStatusInAndIdNot(
+                candidato.getId(), StatusConvite.OCUPANTES, contexto.alocacaoIgnoradaId())) {
             LocalDate dataExistente = alocacao.getVaga().getCelebracao().getData();
             if (dataExistente.equals(domingoAnterior) || dataExistente.equals(domingoSeguinte)) {
                 return Optional.of("Candidato já está escalado no domingo seguido");

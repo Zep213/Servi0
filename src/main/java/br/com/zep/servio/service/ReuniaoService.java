@@ -1,6 +1,7 @@
 package br.com.zep.servio.service;
 
 import br.com.zep.servio.exception.RecursoNaoEncontradoException;
+import br.com.zep.servio.exception.RegraNegocioException;
 import br.com.zep.servio.mapper.ReuniaoMapper;
 import br.com.zep.servio.model.Pastoral;
 import br.com.zep.servio.model.Reuniao;
@@ -59,10 +60,17 @@ public class ReuniaoService {
     }
 
     /** Vice/secretário/tesoureiro pedem reunião ao coordenador em vez de marcar direto. */
-    @Transactional(readOnly = true)
+    @Transactional
     public void solicitar(Long pastoralId, SolicitacaoReuniaoRequestDTO request) {
         Pastoral pastoral = pastoral(pastoralId);
         UsuarioPrincipal autor = usuarioLogado.get();
+
+        UsuarioPastoral participacao = usuarioPastoralRepository
+                .findByUsuarioIdAndPastoralIdAndActiveTrue(autor.getId(), pastoralId)
+                .orElseThrow(() -> new AccessDeniedException("Só quem tem papel nesta pastoral pode solicitar reunião"));
+        if (participacao.getPapel() == PapelPastoral.COORDENADOR) {
+            throw new RegraNegocioException("Você já é coordenador desta pastoral: marque a reunião diretamente");
+        }
 
         var coordenadores = usuarioPastoralRepository.findByPastoralIdAndPapelAndActiveTrue(pastoralId, PapelPastoral.COORDENADOR);
         if (coordenadores.isEmpty()) {

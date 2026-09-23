@@ -2,6 +2,7 @@ package br.com.zep.servio.service.escalacao.regra;
 
 import br.com.zep.servio.model.Alocacao;
 import br.com.zep.servio.model.Usuario;
+import br.com.zep.servio.model.enumerated.StatusConvite;
 import br.com.zep.servio.repository.AlocacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,8 @@ public class UmaVagaPorCelebracaoRegra implements RegraElegibilidade {
     @Override
     public Optional<String> impedimento(Usuario candidato, ContextoElegibilidade contexto, Map<String, Object> parametros) {
         Long celebracaoId = contexto.celebracao().getId();
-        for (Alocacao alocacao : alocacaoRepository.findByUsuarioIdAndActiveTrue(candidato.getId())) {
+        for (Alocacao alocacao : alocacaoRepository.findByUsuarioIdAndActiveTrueAndStatusInAndIdNot(
+                candidato.getId(), StatusConvite.OCUPANTES, contexto.alocacaoIgnoradaId())) {
             if (alocacao.getVaga().getCelebracao().getId().equals(celebracaoId)) {
                 return Optional.of("Candidato já ocupa uma vaga nesta celebração");
             }

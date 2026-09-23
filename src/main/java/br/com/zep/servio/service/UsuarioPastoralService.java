@@ -81,6 +81,19 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         }
     }
 
+    /** A pastoral de uma participação é imutável: só o papel muda; mover para outra pastoral é 422. */
+    @Override
+    @Transactional
+    public UsuarioPastoralResponseDTO atualizar(Long id, UsuarioPastoralRequestDTO request) {
+        UsuarioPastoral entidade = obterAtivo(id);
+        if (!entidade.getPastoral().getId().equals(request.pastoralId())) {
+            throw new RegraNegocioException("A pastoral desta participação não pode ser alterada");
+        }
+        atualizarEntidade(request, entidade);
+        validar(entidade);
+        return paraResposta(repository.save(entidade));
+    }
+
     /** Atribuir/remover papel é decisão de gestão da pastoral: só o coordenador dela ou o ADMIN. */
     @Override
     @Transactional

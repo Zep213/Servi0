@@ -61,15 +61,33 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
         Long pastoralId = entidade.getVaga().getFuncao().getPastoral().getId();
         exigirGestorPastoral(pastoralId);
 
-        if (repository.existsByVagaIdAndUsuarioId(entidade.getVaga().getId(), entidade.getUsuario().getId())) {
+        Long id = idOuZero(entidade);
+        Long vagaId = entidade.getVaga().getId();
+        Long usuarioId = entidade.getUsuario().getId();
+
+        if (repository.existsByVagaIdAndUsuarioIdAndActiveTrueAndStatusInAndIdNot(
+                vagaId, usuarioId, StatusConvite.OCUPANTES, id)) {
             throw new ConflitoException("Usuário já alocado nesta vaga");
         }
 
-        List<String> impedimentos = elegibilidadeService.impedimentos(entidade.getUsuario(), entidade.getVaga());
+        List<String> impedimentos = elegibilidadeService.impedimentos(entidade.getUsuario(), entidade.getVaga(), id);
         if (!impedimentos.isEmpty()) {
             throw new RegraNegocioException(String.join("; ", impedimentos));
         }
 
+        long ocupantes = repository.countByVagaIdAndActiveTrueAndStatusInAndIdNot(vagaId, StatusConvite.OCUPANTES, id);
+        if (ocupantes >= entidade.getVaga().getQuantidade()) {
+            throw new RegraNegocioException("Vaga já está com todas as posições preenchidas");
+        }
+
+        // Numa criação (id nulo) o convite sempre começa do zero; numa edição, o
+        // atualizar() abaixo decide se a escalação de fato mudou antes de reiniciar o prazo.
+        if (entidade.getId() == null) {
+            reiniciarConvite(entidade, pastoralId);
+        }
+    }
+
+    private void reiniciarConvite(Alocacao entidade, Long pastoralId) {
         long prazoHoras = configuracaoPastoralService.prazoRespostaHoras(pastoralId);
         entidade.setStatus(StatusConvite.PENDENTE);
         entidade.setDataLimiteResposta(LocalDateTime.now().plusHours(prazoHoras));
@@ -103,17 +121,27 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
         Alocacao entidade = obterAtivo(id);
         Vaga vagaAnterior = entidade.getVaga();
         Usuario usuarioAnterior = entidade.getUsuario();
-        Pastoral pastoral = vagaAnterior.getFuncao().getPastoral();
+        Pastoral pastoralAnterior = vagaAnterior.getFuncao().getPastoral();
+        boolean mudouEscalacao = !vagaAnterior.getId().equals(request.vagaId())
+                || !usuarioAnterior.getId().equals(request.usuarioId());
+
+        // 1.1: exige gestão tanto na pastoral de origem quanto na de destino (validar()
+        // abaixo checa a de destino, já com a vaga/usuário novos aplicados).
+        exigirGestorPastoral(pastoralAnterior.getId());
 
         atualizarEntidade(request, entidade);
         validar(entidade);
+        if (mudouEscalacao) {
+            Long pastoralNovaId = entidade.getVaga().getFuncao().getPastoral().getId();
+            reiniciarConvite(entidade, pastoralNovaId);
+        }
         Alocacao salva = repository.save(entidade);
 
-        boolean isVice = pastoraisPermissao.temPapel(pastoral.getId(), PapelPastoral.VICE.name());
-        boolean isCoordenador = pastoraisPermissao.temPapel(pastoral.getId(), PapelPastoral.COORDENADOR.name());
+        boolean isVice = pastoraisPermissao.temPapel(pastoralAnterior.getId(), PapelPastoral.VICE.name());
+        boolean isCoordenador = pastoraisPermissao.temPapel(pastoralAnterior.getId(), PapelPastoral.COORDENADOR.name());
         if (isVice && !isCoordenador) {
             Usuario autor = referencia(usuarioRepository, usuarioId(), "Usuario");
-            alteracaoPendenteService.registrar(salva, pastoral, autor, vagaAnterior, usuarioAnterior);
+            alteracaoPendenteService.registrar(salva, pastoralAnterior, autor, vagaAnterior, usuarioAnterior);
         }
 
         return paraResposta(salva);
@@ -135,8 +163,11 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
         }
     }
 
-    /** O convidado aceita ou recusa a própria escalação, dentro do prazo configurado pela pastoral. */
-    @Transactional
+    /**
+     * O convidado aceita ou recusa a própria escalação, dentro do prazo configurado pela pastoral.
+     * noRollbackFor: a expiração gravada abaixo tem que valer mesmo a chamada terminando em erro.
+     */
+    @Transactional(noRollbackFor = RegraNegocioException.class)
     public AlocacaoResponseDTO responder(Long id, boolean aceitar) {
         Alocacao entidade = obterAtivo(id);
         if (!entidade.getUsuario().getId().equals(usuarioId())) {
