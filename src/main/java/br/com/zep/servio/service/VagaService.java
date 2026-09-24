@@ -1,5 +1,6 @@
 package br.com.zep.servio.service;
 
+import br.com.zep.servio.exception.RecursoNaoEncontradoException;
 import br.com.zep.servio.mapper.VagaMapper;
 import br.com.zep.servio.model.Vaga;
 import br.com.zep.servio.model.dto.VagaRequestDTO;
@@ -11,9 +12,14 @@ import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.VagaRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -89,6 +95,39 @@ public class VagaService extends CrudService<Vaga, VagaRequestDTO, VagaResponseD
         validar(entidade);
         entidade.setActive(false);
         repository.save(entidade);
+    }
+
+    /** Parte 4: vagas visíveis a quem não é PADRE/ADMIN são só as de funções de pastorais do usuário. */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<VagaResponseDTO> listar(Pageable pageable) {
+        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
+        if (visiveis.isEmpty()) {
+            return super.listar(pageable);
+        }
+        if (visiveis.get().isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return repository.findByParoquiaIdAndFuncaoPastoralIdInAndActiveTrue(paroquiaId(), visiveis.get(), pageable)
+                .map(this::paraResposta);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public VagaResponseDTO buscar(Long id) {
+        Vaga entidade = obterAtivo(id);
+        exigirVisivel(entidade);
+        return paraResposta(entidade);
+    }
+
+    private void exigirVisivel(Vaga entidade) {
+        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
+        if (visiveis.isEmpty()) {
+            return;
+        }
+        if (!visiveis.get().contains(entidade.getFuncao().getPastoral().getId())) {
+            throw new RecursoNaoEncontradoException(nomeRecurso(), entidade.getId());
+        }
     }
 
     private void resolverRelacoes(VagaRequestDTO request, Vaga entity) {

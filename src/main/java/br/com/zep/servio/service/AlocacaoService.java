@@ -1,6 +1,7 @@
 package br.com.zep.servio.service;
 
 import br.com.zep.servio.exception.ConflitoException;
+import br.com.zep.servio.exception.RecursoNaoEncontradoException;
 import br.com.zep.servio.exception.RegraNegocioException;
 import br.com.zep.servio.exception.ServioException;
 import br.com.zep.servio.mapper.AlocacaoMapper;
@@ -20,6 +21,8 @@ import br.com.zep.servio.security.PastoraisPermissao;
 import br.com.zep.servio.service.escalacao.ConfiguracaoPastoralService;
 import br.com.zep.servio.service.escalacao.ElegibilidadeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -159,6 +163,39 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
         exigirGestorPastoral(entidade.getVaga().getFuncao().getPastoral().getId());
         entidade.setActive(false);
         repository.save(entidade);
+    }
+
+    /** Parte 4: alocações visíveis a quem não é PADRE/ADMIN são só as de funções de pastorais do usuário. */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AlocacaoResponseDTO> listar(Pageable pageable) {
+        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
+        if (visiveis.isEmpty()) {
+            return super.listar(pageable);
+        }
+        if (visiveis.get().isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return repository.findByParoquiaIdAndVagaFuncaoPastoralIdInAndActiveTrue(paroquiaId(), visiveis.get(), pageable)
+                .map(this::paraResposta);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AlocacaoResponseDTO buscar(Long id) {
+        Alocacao entidade = obterAtivo(id);
+        exigirVisivel(entidade);
+        return paraResposta(entidade);
+    }
+
+    private void exigirVisivel(Alocacao entidade) {
+        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
+        if (visiveis.isEmpty()) {
+            return;
+        }
+        if (!visiveis.get().contains(entidade.getVaga().getFuncao().getPastoral().getId())) {
+            throw new RecursoNaoEncontradoException(nomeRecurso(), entidade.getId());
+        }
     }
 
     private void exigirGestorPastoral(Long pastoralId) {

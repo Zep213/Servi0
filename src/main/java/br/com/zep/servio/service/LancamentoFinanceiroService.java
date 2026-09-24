@@ -6,7 +6,9 @@ import br.com.zep.servio.model.LancamentoFinanceiro;
 import br.com.zep.servio.model.Pastoral;
 import br.com.zep.servio.model.dto.LancamentoFinanceiroRequestDTO;
 import br.com.zep.servio.model.dto.LancamentoFinanceiroResponseDTO;
+import br.com.zep.servio.model.dto.ResumoFinanceiroDTO;
 import br.com.zep.servio.model.dto.SaldoPastoralDTO;
+import br.com.zep.servio.model.dto.SaldoPorPastoralDTO;
 import br.com.zep.servio.model.enumerated.TipoLancamento;
 import br.com.zep.servio.repository.LancamentoFinanceiroRepository;
 import br.com.zep.servio.repository.PastoralRepository;
@@ -20,7 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Caixa de cada pastoral. Leitura: tesoureiro/coordenador da pastoral, padre ou ADMIN.
@@ -67,6 +72,32 @@ public class LancamentoFinanceiroService {
         LancamentoFinanceiro entidade = obter(pastoralId, id);
         entidade.setActive(false);
         repository.save(entidade);
+    }
+
+    /** Dashboard do padre (Parte 4): consolidado da paróquia e o mesmo por pastoral. Só PADRE/ADMIN, gate no SecurityConfig. */
+    @Transactional(readOnly = true)
+    public ResumoFinanceiroDTO resumoConsolidado(LocalDate de, LocalDate ate) {
+        List<LancamentoFinanceiro> lancamentos = repository.findByParoquiaIdAndDataLancamentoBetweenAndActiveTrue(
+                usuarioLogado.paroquiaId(), de, ate);
+
+        Map<Pastoral, List<LancamentoFinanceiro>> porPastoral = lancamentos.stream()
+                .collect(Collectors.groupingBy(LancamentoFinanceiro::getPastoral));
+        List<SaldoPorPastoralDTO> resumoPorPastoral = porPastoral.entrySet().stream()
+                .map(entry -> {
+                    BigDecimal entradas = somarPorTipo(entry.getValue(), TipoLancamento.ENTRADA);
+                    BigDecimal saidas = somarPorTipo(entry.getValue(), TipoLancamento.SAIDA);
+                    return new SaldoPorPastoralDTO(entry.getKey().getId(), entry.getKey().getNome(),
+                            entradas, saidas, entradas.subtract(saidas));
+                })
+                .toList();
+
+        BigDecimal totalEntradas = somarPorTipo(lancamentos, TipoLancamento.ENTRADA);
+        BigDecimal totalSaidas = somarPorTipo(lancamentos, TipoLancamento.SAIDA);
+        return new ResumoFinanceiroDTO(totalEntradas, totalSaidas, totalEntradas.subtract(totalSaidas), resumoPorPastoral);
+    }
+
+    private BigDecimal somarPorTipo(List<LancamentoFinanceiro> lancamentos, TipoLancamento tipo) {
+        return somar(lancamentos.stream().filter(l -> l.getTipo() == tipo).toList());
     }
 
     private BigDecimal somar(List<LancamentoFinanceiro> lancamentos) {

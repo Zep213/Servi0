@@ -24,6 +24,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Só o coordenador da pastoral marca reunião diretamente. Os demais papéis
  * (vice/secretário/tesoureiro/membro) só podem solicitar por e-mail ao coordenador.
@@ -40,10 +43,19 @@ public class ReuniaoService {
     private final UsuarioLogado usuarioLogado;
     private final Notificador notificador;
 
+    /** Parte 4: só quem tem papel na pastoral lê as reuniões dela; PADRE lê; ADMIN, todas. */
     @Transactional(readOnly = true)
     public Page<ReuniaoResponseDTO> listar(Long pastoralId, Pageable pageable) {
         pastoral(pastoralId);
+        exigirLeitura(pastoralId);
         return repository.findByPastoralIdAndActiveTrue(pastoralId, pageable).map(mapper::toResponse);
+    }
+
+    private void exigirLeitura(Long pastoralId) {
+        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
+        if (visiveis.isPresent() && !visiveis.get().contains(pastoralId)) {
+            throw new AccessDeniedException("Você não tem acesso às reuniões desta pastoral");
+        }
     }
 
     @Transactional

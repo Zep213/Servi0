@@ -134,6 +134,9 @@ public class SecurityConfig {
                         // agenda do padre: ADMIN também escreve (2.2: "pode ver e alterar tudo")
                         .requestMatchers("/api/compromissos-agenda/**").hasAnyRole("PADRE", "ADMIN")
 
+                        // dashboard financeiro consolidado da paróquia (Parte 4): só PADRE/ADMIN
+                        .requestMatchers("/api/financeiro/**").hasAnyRole("PADRE", "ADMIN")
+
                         // auditoria: leitura apenas; quem grava é o próprio sistema
                         .requestMatchers(HttpMethod.GET, "/api/audit-logs/**").hasAnyRole("ADMIN", "PADRE")
 

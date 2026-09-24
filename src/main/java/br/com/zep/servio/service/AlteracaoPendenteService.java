@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Alterações de escala feitas pelo vice: a mudança já foi aplicada na Alocacao (e o
@@ -57,9 +59,18 @@ public class AlteracaoPendenteService {
         repository.save(pendente);
     }
 
+    /** Parte 4: só das pastorais que o usuário gerencia (COORDENADOR/VICE); todas para PADRE/ADMIN. */
     @Transactional(readOnly = true)
     public Page<AlteracaoPendenteResponseDTO> listar(Pageable pageable) {
-        return repository.findByParoquiaIdAndActiveTrue(usuarioLogado.paroquiaId(), pageable).map(mapper::toResponse);
+        Optional<List<Long>> gerenciadas = pastoraisPermissao.pastoraisGerenciadas();
+        if (gerenciadas.isEmpty()) {
+            return repository.findByParoquiaIdAndActiveTrue(usuarioLogado.paroquiaId(), pageable).map(mapper::toResponse);
+        }
+        if (gerenciadas.get().isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return repository.findByParoquiaIdAndPastoralIdInAndActiveTrue(usuarioLogado.paroquiaId(), gerenciadas.get(), pageable)
+                .map(mapper::toResponse);
     }
 
     @Transactional

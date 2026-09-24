@@ -83,6 +83,21 @@ public class PastoraisPermissao {
         return usuarioPastoralRepository.existsByUsuarioIdAndPapelAndActiveTrue(usuarioLogado.id(), PapelPastoral.COORDENADOR);
     }
 
+    /**
+     * Ids das pastorais que o usuário GERENCIA (COORDENADOR ou VICE) — mais estrito que
+     * pastoraisVisiveis() (Parte 4: alterações pendentes só aparecem para quem pode agir
+     * nelas). Vazio (Optional.empty) significa "sem restrição": PADRE/ADMIN.
+     */
+    public Optional<List<Long>> pastoraisGerenciadas() {
+        if (ehAdmin() || ehPadre()) {
+            return Optional.empty();
+        }
+        List<Long> ids = usuarioPastoralRepository.findByUsuarioIdAndActiveTrue(usuarioLogado.id()).stream()
+                .filter(up -> up.getPapel() == PapelPastoral.COORDENADOR || up.getPapel() == PapelPastoral.VICE)
+                .map(up -> up.getPastoral().getId()).distinct().toList();
+        return Optional.of(ids);
+    }
+
     private boolean temPapelReal(Long pastoralId, PapelPastoral papel) {
         return usuarioPastoralRepository.findByUsuarioIdAndPastoralIdAndActiveTrue(usuarioLogado.id(), pastoralId)
                 .map(UsuarioPastoral::getPapel)

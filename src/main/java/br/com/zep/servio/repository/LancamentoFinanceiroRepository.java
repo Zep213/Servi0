@@ -5,6 +5,7 @@ import br.com.zep.servio.model.enumerated.TipoLancamento;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface LancamentoFinanceiroRepository extends TenantRepository<LancamentoFinanceiro> {
@@ -12,4 +13,8 @@ public interface LancamentoFinanceiroRepository extends TenantRepository<Lancame
     Page<LancamentoFinanceiro> findByPastoralIdAndActiveTrue(Long pastoralId, Pageable pageable);
 
     List<LancamentoFinanceiro> findByPastoralIdAndTipoAndActiveTrue(Long pastoralId, TipoLancamento tipo);
+
+    /** Parte 4: dashboard financeiro consolidado do padre/admin. */
+    List<LancamentoFinanceiro> findByParoquiaIdAndDataLancamentoBetweenAndActiveTrue(
+            Long paroquiaId, LocalDate de, LocalDate ate);
 }
