@@ -59,17 +59,23 @@ public class ReuniaoService {
         return mapper.toResponse(repository.save(entidade));
     }
 
-    /** Vice/secretário/tesoureiro pedem reunião ao coordenador em vez de marcar direto. */
+    /**
+     * Vice/secretário/tesoureiro/membro pedem reunião ao coordenador em vez de marcar
+     * direto. Exige participação ativa na pastoral (ADMIN dispensa, já que ele pode agir
+     * em qualquer uma); quem já pode marcar direto (coordenador, padre ou ADMIN) é 422.
+     */
     @Transactional
     public void solicitar(Long pastoralId, SolicitacaoReuniaoRequestDTO request) {
         Pastoral pastoral = pastoral(pastoralId);
         UsuarioPrincipal autor = usuarioLogado.get();
 
-        UsuarioPastoral participacao = usuarioPastoralRepository
-                .findByUsuarioIdAndPastoralIdAndActiveTrue(autor.getId(), pastoralId)
-                .orElseThrow(() -> new AccessDeniedException("Só quem tem papel nesta pastoral pode solicitar reunião"));
-        if (participacao.getPapel() == PapelPastoral.COORDENADOR) {
-            throw new RegraNegocioException("Você já é coordenador desta pastoral: marque a reunião diretamente");
+        boolean participaAtiva = usuarioPastoralRepository
+                .findByUsuarioIdAndPastoralIdAndActiveTrue(autor.getId(), pastoralId).isPresent();
+        if (!participaAtiva && !pastoraisPermissao.ehAdmin()) {
+            throw new AccessDeniedException("Só quem tem papel nesta pastoral pode solicitar reunião");
+        }
+        if (pastoraisPermissao.temPapel(pastoralId, PapelPastoral.COORDENADOR.name())) {
+            throw new RegraNegocioException("Você já pode marcar a reunião diretamente");
         }
 
         var coordenadores = usuarioPastoralRepository.findByPastoralIdAndPapelAndActiveTrue(pastoralId, PapelPastoral.COORDENADOR);

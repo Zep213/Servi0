@@ -51,7 +51,7 @@ public class IndisponibilidadeService extends CrudService<Indisponibilidade, Ind
     private void resolverRelacoes(IndisponibilidadeRequestDTO request, Indisponibilidade entity) {
         Long alvo = request.usuarioId();
         if (alvo != null && !alvo.equals(usuarioId())
-                && usuario().getPerfil() != Perfil.ADMIN && usuario().getPerfil() != Perfil.COORDENADOR) {
+                && usuario().getPerfil() != Perfil.ADMIN && usuario().getPerfil() != Perfil.PADRE) {
             throw new AccessDeniedException("Você só pode marcar a própria indisponibilidade");
         }
         entity.setUsuario(referencia(usuarioRepository, alvo != null ? alvo : usuarioId(), "Usuario"));

@@ -6,4 +6,6 @@ import java.util.List;
 public interface CelebracaoRepository extends TenantRepository<Celebracao> {
 
     List<Celebracao> findByComunidadeIdAndDataBetweenAndActiveTrue(Long comunidadeId, LocalDate inicio, LocalDate fim);
+
+    long countByDataBetweenAndActiveTrue(LocalDate inicio, LocalDate fim);
 }

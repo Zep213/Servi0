@@ -7,6 +7,8 @@ public record AuditLogResponseDTO(
     String tipoEvento,
     Long referenciaId,
     Long usuarioId,
+    Long paroquiaId,
+    String detalhe,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
 ) {}

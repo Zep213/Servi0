@@ -7,7 +7,6 @@ import br.com.zep.servio.model.UsuarioPastoral;
 import br.com.zep.servio.model.dto.UsuarioPastoralRequestDTO;
 import br.com.zep.servio.model.dto.UsuarioPastoralResponseDTO;
 import br.com.zep.servio.model.enumerated.PapelPastoral;
-import br.com.zep.servio.model.enumerated.Perfil;
 import br.com.zep.servio.repository.PastoralRepository;
 import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioPastoralRepository;
@@ -67,7 +66,7 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
     @Override
     protected void validar(UsuarioPastoral entidade) {
         Long pastoralId = entidade.getPastoral().getId();
-        exigirGestor(pastoralId);
+        exigirGestor(pastoralId, entidade.getPapel());
 
         Long id = idOuZero(entidade);
         if (repository.existsByUsuarioIdAndPastoralIdAndActiveTrueAndIdNot(
@@ -94,20 +93,26 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         return paraResposta(repository.save(entidade));
     }
 
-    /** Atribuir/remover papel é decisão de gestão da pastoral: só o coordenador dela ou o ADMIN. */
+    /** Atribuir/remover papel é decisão de gestão da pastoral: só o coordenador dela, o padre ou o ADMIN. */
     @Override
     @Transactional
     public void desativar(Long id) {
         UsuarioPastoral entidade = obterAtivo(id);
-        exigirGestor(entidade.getPastoral().getId());
+        exigirGestor(entidade.getPastoral().getId(), entidade.getPapel());
         entidade.setActive(false);
         repository.save(entidade);
     }
 
-    private void exigirGestor(Long pastoralId) {
-        boolean admin = usuario().getPerfil() == Perfil.ADMIN;
-        if (!admin && !pastoraisPermissao.temPapel(pastoralId, PapelPastoral.COORDENADOR.name())) {
-            throw new AccessDeniedException("Só o coordenador desta pastoral (ou o ADMIN) atribui papéis nela");
+    /** Só padre ou ADMIN atribuem o papel COORDENADOR; os demais papéis, o coordenador da pastoral também pode. */
+    private void exigirGestor(Long pastoralId, PapelPastoral papelAlvo) {
+        if (papelAlvo == PapelPastoral.COORDENADOR) {
+            if (!pastoraisPermissao.ehAdmin() && !pastoraisPermissao.ehPadre()) {
+                throw new AccessDeniedException("Só o padre ou o ADMIN atribuem o papel de coordenador");
+            }
+            return;
+        }
+        if (!pastoraisPermissao.temPapel(pastoralId, PapelPastoral.COORDENADOR.name())) {
+            throw new AccessDeniedException("Só o coordenador desta pastoral (ou padre/ADMIN) atribui papéis nela");
         }
     }
 

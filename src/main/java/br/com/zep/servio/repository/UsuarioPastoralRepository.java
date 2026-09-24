@@ -14,7 +14,11 @@ public interface UsuarioPastoralRepository extends TenantRepository<UsuarioPasto
 
     Optional<UsuarioPastoral> findByUsuarioIdAndPastoralIdAndActiveTrue(Long usuarioId, Long pastoralId);
 
+    List<UsuarioPastoral> findByUsuarioIdAndActiveTrue(Long usuarioId);
+
     boolean existsByUsuarioIdAndPastoralIdAndActiveTrueAndIdNot(Long usuarioId, Long pastoralId, Long id);
+
+    boolean existsByUsuarioIdAndPapelAndActiveTrue(Long usuarioId, PapelPastoral papel);
 
     long countByPastoralIdAndPapelAndActiveTrueAndIdNot(Long pastoralId, PapelPastoral papel, Long id);
 }

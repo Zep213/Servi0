@@ -1,8 +1,12 @@
 package br.com.zep.servio.config;
 
+import br.com.zep.servio.repository.UsuarioRepository;
+import br.com.zep.servio.security.AuditoriaAdminAssumidoFilter;
 import br.com.zep.servio.security.LoginHandlers;
 import br.com.zep.servio.security.LoginRateLimitFilter;
 import br.com.zep.servio.security.TentativasLogin;
+import br.com.zep.servio.security.UsuarioLogado;
+import br.com.zep.servio.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.session.autoconfigure.DefaultCookieSerializerCustomizer;
@@ -26,7 +30,7 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    /** Cadastros com a mesma regra: leitura para qualquer logado, escrita para ADMIN/COORDENADOR. */
+    /** Cadastros com a mesma regra: leitura para qualquer logado, escrita para ADMIN/PADRE. */
     private static final String[] CADASTROS = {
             "/api/pastorais", "/api/pastorais/*", "/api/comunidades/**", "/api/funcoes/**",
             "/api/usuarios-funcoes/**", "/api/celebracoes/**", "/api/vagas/**"
@@ -43,6 +47,9 @@ public class SecurityConfig {
 
     private final TentativasLogin tentativasLogin;
     private final LoginHandlers loginHandlers;
+    private final UsuarioLogado usuarioLogado;
+    private final AuditLogService auditLogService;
+    private final UsuarioRepository usuarioRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -97,9 +104,16 @@ public class SecurityConfig {
                         // alterações pendentes do vice: quem pode confirmar/desfazer é checado no service
                         .requestMatchers("/api/alteracoes-pendentes/**").authenticated()
 
-                        // usuários (a primeira regra que casar vence: GET antes das escritas)
-                        .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasAnyRole("ADMIN", "COORDENADOR", "PADRE")
-                        .requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN", "COORDENADOR")
+                        // plataforma: só ADMIN, sem filtro de tenant (2.2)
+                        .requestMatchers("/api/plataforma/**").hasRole("ADMIN")
+
+                        // usuários (a primeira regra que casar vence: mais específica antes da geral).
+                        // Busca resumida e criação têm regra fina no service (perfil-alvo pedido,
+                        // coordenador de pastoral só cria SERVIDOR); editar/desativar e a listagem
+                        // completa são só PADRE/ADMIN (2.4).
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/busca").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios").authenticated()
+                        .requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN", "PADRE")
 
                         // hierarquia por pastoral: papel dentro da pastoral quem decide (PastoraisPermissao
                         // no service/@PreAuthorize), não o Perfil global — inclui o convidado respondendo
@@ -108,15 +122,14 @@ public class SecurityConfig {
 
                         // cadastros da escala
                         .requestMatchers(HttpMethod.GET, CADASTROS).authenticated()
-                        .requestMatchers(CADASTROS).hasAnyRole("ADMIN", "COORDENADOR")
+                        .requestMatchers(CADASTROS).hasAnyRole("ADMIN", "PADRE")
 
                         // paróquia
                         .requestMatchers(HttpMethod.GET, "/api/paroquias/**").authenticated()
                         .requestMatchers("/api/paroquias/**").hasRole("ADMIN")
 
-                        // agenda do padre
-                        .requestMatchers(HttpMethod.GET, "/api/compromissos-agenda/**").hasAnyRole("PADRE", "ADMIN", "COORDENADOR")
-                        .requestMatchers("/api/compromissos-agenda/**").hasRole("PADRE")
+                        // agenda do padre: ADMIN também escreve (2.2: "pode ver e alterar tudo")
+                        .requestMatchers("/api/compromissos-agenda/**").hasAnyRole("PADRE", "ADMIN")
 
                         // auditoria: leitura apenas; quem grava é o próprio sistema
                         .requestMatchers(HttpMethod.GET, "/api/audit-logs/**").hasAnyRole("ADMIN", "PADRE")
@@ -128,6 +141,8 @@ public class SecurityConfig {
                         .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny))
                 .addFilterBefore(new LoginRateLimitFilter(tentativasLogin), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new AuditoriaAdminAssumidoFilter(usuarioLogado, auditLogService, usuarioRepository),
+                        UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

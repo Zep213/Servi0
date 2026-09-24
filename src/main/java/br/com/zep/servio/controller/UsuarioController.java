@@ -2,6 +2,7 @@ package br.com.zep.servio.controller;
 
 import br.com.zep.servio.model.dto.UsuarioRequestDTO;
 import br.com.zep.servio.model.dto.UsuarioResponseDTO;
+import br.com.zep.servio.model.dto.UsuarioResumoDTO;
 import br.com.zep.servio.model.dto.UsuarioUpdateDTO;
 import br.com.zep.servio.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -26,6 +27,12 @@ public class UsuarioController {
     @GetMapping
     public Page<UsuarioResponseDTO> listar(@PageableDefault(size = 20, sort = "nome") Pageable pageable) {
         return service.listar(pageable);
+    }
+
+    /** Para achar quem adicionar a uma pastoral: id, nome e e-mail, nada sensível. */
+    @GetMapping("/busca")
+    public Page<UsuarioResumoDTO> buscar(@PageableDefault(size = 20, sort = "nome") Pageable pageable) {
+        return service.buscarResumo(pageable);
     }
 
     @GetMapping("/{id}")

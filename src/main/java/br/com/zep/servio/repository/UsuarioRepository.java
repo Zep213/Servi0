@@ -11,4 +11,6 @@ public interface UsuarioRepository extends TenantRepository<Usuario> {
 
     /** Unicidade no criar e no atualizar (o id atual não conta como duplicata). */
     boolean existsByEmailIgnoreCaseAndActiveTrueAndIdNot(String email, Long id);
+
+    long countByParoquiaIdAndActiveTrue(Long paroquiaId);
 }

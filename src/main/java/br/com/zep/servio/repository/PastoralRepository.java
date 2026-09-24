@@ -5,4 +5,6 @@ import java.util.List;
 public interface PastoralRepository extends TenantRepository<Pastoral> {
 
     List<Pastoral> findByParoquiaIdAndActiveTrue(Long paroquiaId);
+
+    long countByParoquiaIdAndActiveTrue(Long paroquiaId);
 }

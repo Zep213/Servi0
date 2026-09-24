@@ -56,7 +56,7 @@ class SessaoIT {
 
         Cookie sessaoDoAdmin = ApoioTeste.login(mvc, "admin.sessao@servio.dev", "senha12345");
         String corpo = objectMapper.writeValueAsString(
-                new UsuarioUpdateDTO(alvo.getNome(), alvo.getEmail(), null, Perfil.COORDENADOR));
+                new UsuarioUpdateDTO(alvo.getNome(), alvo.getEmail(), null, Perfil.PADRE));
 
         mvc.perform(put("/api/usuarios/" + alvo.getId()).cookie(sessaoDoAdmin).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)

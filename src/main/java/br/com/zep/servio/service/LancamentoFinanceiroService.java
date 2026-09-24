@@ -7,7 +7,6 @@ import br.com.zep.servio.model.Pastoral;
 import br.com.zep.servio.model.dto.LancamentoFinanceiroRequestDTO;
 import br.com.zep.servio.model.dto.LancamentoFinanceiroResponseDTO;
 import br.com.zep.servio.model.dto.SaldoPastoralDTO;
-import br.com.zep.servio.model.enumerated.PapelPastoral;
 import br.com.zep.servio.model.enumerated.TipoLancamento;
 import br.com.zep.servio.repository.LancamentoFinanceiroRepository;
 import br.com.zep.servio.repository.PastoralRepository;
@@ -24,8 +23,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Caixa de cada pastoral: acesso restrito a tesoureiro/coordenador daquela pastoral
- * (não do global Perfil da paróquia), checado via PastoraisPermissao.
+ * Caixa de cada pastoral. Leitura: tesoureiro/coordenador da pastoral, padre ou ADMIN.
+ * Escrita: só tesoureiro da pastoral ou ADMIN — padre só lê (PastoraisPermissao 2.3).
  */
 @Service
 @RequiredArgsConstructor
@@ -39,13 +38,13 @@ public class LancamentoFinanceiroService {
 
     @Transactional(readOnly = true)
     public Page<LancamentoFinanceiroResponseDTO> listar(Long pastoralId, Pageable pageable) {
-        exigirAcesso(pastoralId);
+        exigirLeitura(pastoralId);
         return repository.findByPastoralIdAndActiveTrue(pastoralId, pageable).map(mapper::toResponse);
     }
 
     @Transactional(readOnly = true)
     public SaldoPastoralDTO saldo(Long pastoralId) {
-        exigirAcesso(pastoralId);
+        exigirLeitura(pastoralId);
         BigDecimal entradas = somar(repository.findByPastoralIdAndTipoAndActiveTrue(pastoralId, TipoLancamento.ENTRADA));
         BigDecimal saidas = somar(repository.findByPastoralIdAndTipoAndActiveTrue(pastoralId, TipoLancamento.SAIDA));
         return new SaldoPastoralDTO(entradas, saidas, entradas.subtract(saidas));
@@ -53,7 +52,7 @@ public class LancamentoFinanceiroService {
 
     @Transactional
     public LancamentoFinanceiroResponseDTO criar(Long pastoralId, LancamentoFinanceiroRequestDTO request) {
-        exigirAcesso(pastoralId);
+        exigirEscrita(pastoralId);
         Pastoral pastoral = pastoral(pastoralId);
 
         LancamentoFinanceiro entidade = mapper.toEntity(request);
@@ -64,7 +63,7 @@ public class LancamentoFinanceiroService {
 
     @Transactional
     public void desativar(Long pastoralId, Long id) {
-        exigirAcesso(pastoralId);
+        exigirEscrita(pastoralId);
         LancamentoFinanceiro entidade = obter(pastoralId, id);
         entidade.setActive(false);
         repository.save(entidade);
@@ -88,9 +87,15 @@ public class LancamentoFinanceiroService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pastoral", pastoralId));
     }
 
-    private void exigirAcesso(Long pastoralId) {
-        if (!pastoraisPermissao.temQualquerPapel(pastoralId, PapelPastoral.TESOUREIRO.name(), PapelPastoral.COORDENADOR.name())) {
-            throw new AccessDeniedException("Só o tesoureiro ou coordenador desta pastoral acessa o financeiro");
+    private void exigirLeitura(Long pastoralId) {
+        if (!pastoraisPermissao.podeLerFinanceiro(pastoralId)) {
+            throw new AccessDeniedException("Você não tem acesso ao financeiro desta pastoral");
+        }
+    }
+
+    private void exigirEscrita(Long pastoralId) {
+        if (!pastoraisPermissao.podeEscreverFinanceiro(pastoralId)) {
+            throw new AccessDeniedException("Só o tesoureiro desta pastoral lança no financeiro");
         }
     }
 }
