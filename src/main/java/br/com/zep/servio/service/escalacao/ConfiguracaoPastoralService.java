@@ -21,6 +21,7 @@ import java.util.Optional;
 public class ConfiguracaoPastoralService {
 
     public static final String CHAVE_PRAZO_RESPOSTA = "PRAZO_RESPOSTA";
+    public static final String CHAVE_COBERTURA_AUTOMATICA = "COBERTURA_AUTOMATICA";
     private static final int PRAZO_RESPOSTA_PADRAO_HORAS = 24;
 
     private final List<RegraElegibilidade> regras;
@@ -49,6 +50,15 @@ public class ConfiguracaoPastoralService {
                 .map(p -> p.get("horas"))
                 .map(v -> v instanceof Number n ? n.longValue() : Long.parseLong(v.toString()))
                 .orElse((long) PRAZO_RESPOSTA_PADRAO_HORAS);
+    }
+
+    /**
+     * Cobertura automática de vagas por modelo (Parte 3.3): ao contrário das regras de
+     * elegibilidade e do PRAZO_RESPOSTA, o padrão aqui é DESLIGADA — só liga quem configurou
+     * explicitamente uma linha ativa em pastoral_config.
+     */
+    public boolean coberturaAutomaticaLigada(Long pastoralId) {
+        return configuracao(pastoralId, CHAVE_COBERTURA_AUTOMATICA).map(PastoralConfig::isAtiva).orElse(false);
     }
 
     private Optional<PastoralConfig> configuracao(Long pastoralId, String chave) {

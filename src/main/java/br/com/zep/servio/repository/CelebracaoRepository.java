@@ -8,4 +8,6 @@ public interface CelebracaoRepository extends TenantRepository<Celebracao> {
     List<Celebracao> findByComunidadeIdAndDataBetweenAndActiveTrue(Long comunidadeId, LocalDate inicio, LocalDate fim);
 
     long countByDataBetweenAndActiveTrue(LocalDate inicio, LocalDate fim);
+
+    List<Celebracao> findByParoquiaIdAndDataGreaterThanEqualAndActiveTrue(Long paroquiaId, LocalDate data);
 }

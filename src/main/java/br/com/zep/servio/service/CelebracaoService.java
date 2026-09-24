@@ -7,8 +7,11 @@ import br.com.zep.servio.model.dto.CelebracaoResponseDTO;
 import br.com.zep.servio.repository.CelebracaoRepository;
 import br.com.zep.servio.repository.ComunidadeRepository;
 import br.com.zep.servio.repository.TenantRepository;
+import br.com.zep.servio.security.PastoraisPermissao;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +20,8 @@ public class CelebracaoService extends CrudService<Celebracao, CelebracaoRequest
     private final CelebracaoRepository repository;
     private final CelebracaoMapper mapper;
     private final ComunidadeRepository comunidadeRepository;
+    private final PastoraisPermissao pastoraisPermissao;
+    private final CoberturaAutomaticaService coberturaAutomaticaService;
 
     @Override
     protected TenantRepository<Celebracao> repository() {
@@ -44,6 +49,33 @@ public class CelebracaoService extends CrudService<Celebracao, CelebracaoRequest
     protected void atualizarEntidade(CelebracaoRequestDTO request, Celebracao entity) {
         mapper.updateEntity(request, entity);
         resolverRelacoes(request, entity);
+    }
+
+    /** Criar/editar/excluir celebração: só PADRE ou ADMIN (Parte 3.2). */
+    @Override
+    protected void validar(Celebracao entidade) {
+        exigirPadreOuAdmin();
+    }
+
+    @Override
+    @Transactional
+    public CelebracaoResponseDTO criar(CelebracaoRequestDTO request) {
+        CelebracaoResponseDTO criada = super.criar(request);
+        coberturaAutomaticaService.aplicarNaCriacao(obterAtivo(criada.id()), paroquiaId());
+        return criada;
+    }
+
+    @Override
+    @Transactional
+    public void desativar(Long id) {
+        exigirPadreOuAdmin();
+        super.desativar(id);
+    }
+
+    private void exigirPadreOuAdmin() {
+        if (!pastoraisPermissao.ehAdmin() && !pastoraisPermissao.ehPadre()) {
+            throw new AccessDeniedException("Só padre ou admin gerencia celebrações");
+        }
     }
 
     private void resolverRelacoes(CelebracaoRequestDTO request, Celebracao entity) {

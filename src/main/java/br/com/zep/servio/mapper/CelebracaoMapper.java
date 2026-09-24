@@ -19,6 +19,7 @@ public interface CelebracaoMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "tipoData", defaultValue = "NORMAL")
+    @Mapping(target = "tipo", defaultValue = "MISSA_DOMINICAL")
     Celebracao toEntity(CelebracaoRequestDTO request);
 
     @Mapping(target = "id", ignore = true)
@@ -26,5 +27,6 @@ public interface CelebracaoMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "tipoData", defaultValue = "NORMAL")
+    @Mapping(target = "tipo", defaultValue = "MISSA_DOMINICAL")
     void updateEntity(CelebracaoRequestDTO request, @MappingTarget Celebracao entity);
 }

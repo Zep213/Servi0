@@ -75,8 +75,12 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
             throw new RegraNegocioException(String.join("; ", impedimentos));
         }
 
+        Integer quantidade = entidade.getVaga().getQuantidade();
+        if (quantidade == null) {
+            throw new RegraNegocioException("Defina a quantidade da vaga primeiro");
+        }
         long ocupantes = repository.countByVagaIdAndActiveTrueAndStatusInAndIdNot(vagaId, StatusConvite.OCUPANTES, id);
-        if (ocupantes >= entidade.getVaga().getQuantidade()) {
+        if (ocupantes >= quantidade) {
             throw new RegraNegocioException("Vaga já está com todas as posições preenchidas");
         }
 

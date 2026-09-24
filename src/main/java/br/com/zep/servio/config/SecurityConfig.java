@@ -33,16 +33,19 @@ public class SecurityConfig {
     /** Cadastros com a mesma regra: leitura para qualquer logado, escrita para ADMIN/PADRE. */
     private static final String[] CADASTROS = {
             "/api/pastorais", "/api/pastorais/*", "/api/comunidades/**", "/api/funcoes/**",
-            "/api/usuarios-funcoes/**", "/api/celebracoes/**", "/api/vagas/**"
+            "/api/usuarios-funcoes/**"
     };
 
     /**
      * Recursos onde o gate fino é por papel DENTRO da pastoral (PastoraisPermissao), não pelo
      * Perfil global do usuário: o gate aqui só exige login, quem decide é o service/@PreAuthorize.
+     * Celebrações e vagas entram aqui desde a Parte 3.2: PADRE/ADMIN têm sempre acesso, mas
+     * COORDENADOR/VICE/SECRETARIO também mexem em vaga da própria pastoral.
      */
     private static final String[] GESTAO_POR_PASTORAL = {
             "/api/pastorais/*/config/**", "/api/pastorais/*/financeiro/**", "/api/pastorais/*/reunioes/**",
-            "/api/alocacoes/**", "/api/usuarios-pastorais/**"
+            "/api/pastorais/*/modelos-vaga/**", "/api/alocacoes/**", "/api/usuarios-pastorais/**",
+            "/api/celebracoes/**", "/api/vagas/**"
     };
 
     private final TentativasLogin tentativasLogin;

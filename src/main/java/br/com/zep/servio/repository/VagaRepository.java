@@ -5,4 +5,8 @@ import java.util.List;
 public interface VagaRepository extends TenantRepository<Vaga> {
 
     List<Vaga> findByCelebracaoIdAndActiveTrue(Long celebracaoId);
+
+    boolean existsByCelebracaoIdAndFuncaoIdAndActiveTrue(Long celebracaoId, Long funcaoId);
+
+    boolean existsByCelebracaoIdAndFuncaoPastoralIdAndActiveTrue(Long celebracaoId, Long pastoralId);
 }

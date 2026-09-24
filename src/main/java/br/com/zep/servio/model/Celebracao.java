@@ -1,5 +1,6 @@
 package br.com.zep.servio.model;
 
+import br.com.zep.servio.model.enumerated.TipoCelebracao;
 import br.com.zep.servio.model.enumerated.TipoData;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -35,4 +36,13 @@ public class Celebracao extends TenantEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_data", nullable = false, length = 20)
     private TipoData tipoData = TipoData.NORMAL;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private TipoCelebracao tipo = TipoCelebracao.MISSA_DOMINICAL;
+
+    @Size(max = 120)
+    @Column(length = 120)
+    private String titulo;
 }
