@@ -1,6 +1,7 @@
 package br.com.zep.servio.service;
 
 import br.com.zep.servio.exception.ConflitoException;
+import br.com.zep.servio.exception.RecursoNaoEncontradoException;
 import br.com.zep.servio.exception.RegraNegocioException;
 import br.com.zep.servio.mapper.UsuarioPastoralMapper;
 import br.com.zep.servio.model.UsuarioPastoral;
@@ -103,13 +104,20 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         repository.save(entidade);
     }
 
-    /** Só padre ou ADMIN atribuem o papel COORDENADOR; os demais papéis, o coordenador da pastoral também pode. */
+    /**
+     * Só padre ou ADMIN atribuem o papel COORDENADOR (gate de Perfil puro, vale pra qualquer
+     * pastoral). Os demais papéis, o coordenador da pastoral também pode — mas pastoral fora
+     * do alcance do usuário (Parte 4) dá 404 em vez de 403.
+     */
     private void exigirGestor(Long pastoralId, PapelPastoral papelAlvo) {
         if (papelAlvo == PapelPastoral.COORDENADOR) {
             if (!pastoraisPermissao.ehAdmin() && !pastoraisPermissao.ehPadre()) {
                 throw new AccessDeniedException("Só o padre ou o ADMIN atribuem o papel de coordenador");
             }
             return;
+        }
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException("Pastoral", pastoralId);
         }
         if (!pastoraisPermissao.temPapel(pastoralId, PapelPastoral.COORDENADOR.name())) {
             throw new AccessDeniedException("Só o coordenador desta pastoral (ou padre/ADMIN) atribui papéis nela");

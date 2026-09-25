@@ -63,6 +63,7 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     @Override
     protected void validar(Alocacao entidade) {
         Long pastoralId = entidade.getVaga().getFuncao().getPastoral().getId();
+        exigirVisivel(pastoralId, idOuZero(entidade));
         exigirGestorPastoral(pastoralId);
 
         Long id = idOuZero(entidade);
@@ -135,6 +136,7 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
 
         // 1.1: exige gestão tanto na pastoral de origem quanto na de destino (validar()
         // abaixo checa a de destino, já com a vaga/usuário novos aplicados).
+        exigirVisivel(pastoralAnterior.getId(), id);
         exigirGestorPastoral(pastoralAnterior.getId());
 
         atualizarEntidade(request, entidade);
@@ -160,7 +162,9 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     @Transactional
     public void desativar(Long id) {
         Alocacao entidade = obterAtivo(id);
-        exigirGestorPastoral(entidade.getVaga().getFuncao().getPastoral().getId());
+        Long pastoralId = entidade.getVaga().getFuncao().getPastoral().getId();
+        exigirVisivel(pastoralId, id);
+        exigirGestorPastoral(pastoralId);
         entidade.setActive(false);
         repository.save(entidade);
     }
@@ -184,17 +188,14 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     @Transactional(readOnly = true)
     public AlocacaoResponseDTO buscar(Long id) {
         Alocacao entidade = obterAtivo(id);
-        exigirVisivel(entidade);
+        exigirVisivel(entidade.getVaga().getFuncao().getPastoral().getId(), id);
         return paraResposta(entidade);
     }
 
-    private void exigirVisivel(Alocacao entidade) {
-        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
-        if (visiveis.isEmpty()) {
-            return;
-        }
-        if (!visiveis.get().contains(entidade.getVaga().getFuncao().getPastoral().getId())) {
-            throw new RecursoNaoEncontradoException(nomeRecurso(), entidade.getId());
+    /** Pastoral fora do alcance do usuário (Parte 4): 404, pra não revelar nem a existência do recurso. */
+    private void exigirVisivel(Long pastoralId, Long id) {
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException(nomeRecurso(), id);
         }
     }
 

@@ -118,13 +118,20 @@ public class LancamentoFinanceiroService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pastoral", pastoralId));
     }
 
+    /** Pastoral fora do alcance do usuário (Parte 4) dá 404 antes mesmo de checar o papel. */
     private void exigirLeitura(Long pastoralId) {
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException("Pastoral", pastoralId);
+        }
         if (!pastoraisPermissao.podeLerFinanceiro(pastoralId)) {
             throw new AccessDeniedException("Você não tem acesso ao financeiro desta pastoral");
         }
     }
 
     private void exigirEscrita(Long pastoralId) {
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException("Pastoral", pastoralId);
+        }
         if (!pastoraisPermissao.podeEscreverFinanceiro(pastoralId)) {
             throw new AccessDeniedException("Só o tesoureiro desta pastoral lança no financeiro");
         }

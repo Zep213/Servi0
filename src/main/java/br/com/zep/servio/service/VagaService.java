@@ -60,26 +60,34 @@ public class VagaService extends CrudService<Vaga, VagaRequestDTO, VagaResponseD
     }
 
     /**
-     * Parte 3.2: PADRE/ADMIN mexem em qualquer vaga, inclusive "responsabilizando" a pastoral
-     * (quantidade vazia). COORDENADOR/VICE/SECRETARIO só na própria pastoral, e só criam vaga
-     * adicional (sem quantidade ainda não existir) num evento onde a pastoral já é responsável.
+     * Parte 3.2 + Parte 5.2: PADRE/ADMIN mexem em qualquer vaga, inclusive "responsabilizando"
+     * a pastoral (quantidade vazia) — este é um gate de Perfil puro, vale pra qualquer pastoral,
+     * por isso é checado ANTES de qualquer coisa específica da pastoral. COORDENADOR/VICE/
+     * SECRETARIO só na própria pastoral, e só criam vaga adicional (sem quantidade ainda não
+     * existir) num evento onde a pastoral já é responsável. Pastoral fora do alcance do usuário
+     * (Parte 4) dá 404 em vez de 403 — checado depois do gate de Perfil, mas antes do de papel,
+     * pra não revelar nem a existência da vaga.
      */
     @Override
     protected void validar(Vaga entidade) {
         if (pastoraisPermissao.ehAdmin() || pastoraisPermissao.ehPadre()) {
             return;
         }
+        boolean criando = entidade.getId() == null;
+        if (criando && entidade.getQuantidade() == null) {
+            throw new AccessDeniedException("Só padre ou admin responsabiliza uma pastoral sem definir quantidade");
+        }
+
         Long pastoralId = entidade.getFuncao().getPastoral().getId();
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException(nomeRecurso(), idOuZero(entidade));
+        }
         boolean gestorPastoral = pastoraisPermissao.temQualquerPapel(pastoralId,
                 PapelPastoral.COORDENADOR.name(), PapelPastoral.VICE.name(), PapelPastoral.SECRETARIO.name());
         if (!gestorPastoral) {
             throw new AccessDeniedException("Só coordenador, vice ou secretário da pastoral gerencia vagas");
         }
-        boolean criando = entidade.getId() == null;
         if (criando) {
-            if (entidade.getQuantidade() == null) {
-                throw new AccessDeniedException("Só padre ou admin responsabiliza uma pastoral sem definir quantidade");
-            }
             boolean pastoralJaResponsavel = repository.existsByCelebracaoIdAndFuncaoPastoralIdAndActiveTrue(
                     entidade.getCelebracao().getId(), pastoralId);
             if (!pastoralJaResponsavel) {
@@ -121,11 +129,7 @@ public class VagaService extends CrudService<Vaga, VagaRequestDTO, VagaResponseD
     }
 
     private void exigirVisivel(Vaga entidade) {
-        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
-        if (visiveis.isEmpty()) {
-            return;
-        }
-        if (!visiveis.get().contains(entidade.getFuncao().getPastoral().getId())) {
+        if (!pastoraisPermissao.visivel(entidade.getFuncao().getPastoral().getId())) {
             throw new RecursoNaoEncontradoException(nomeRecurso(), entidade.getId());
         }
     }

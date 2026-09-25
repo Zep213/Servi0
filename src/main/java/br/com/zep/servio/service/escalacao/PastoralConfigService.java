@@ -6,10 +6,12 @@ import br.com.zep.servio.model.dto.PastoralConfigRequestDTO;
 import br.com.zep.servio.model.dto.PastoralConfigResponseDTO;
 import br.com.zep.servio.repository.PastoralConfigRepository;
 import br.com.zep.servio.repository.PastoralRepository;
+import br.com.zep.servio.security.PastoraisPermissao;
 import br.com.zep.servio.security.UsuarioLogado;
 import br.com.zep.servio.service.escalacao.regra.RegraElegibilidade;
 import br.com.zep.servio.exception.RecursoNaoEncontradoException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ public class PastoralConfigService {
     private final ConfiguracaoPastoralService configuracaoPastoralService;
     private final PastoralConfigRepository pastoralConfigRepository;
     private final PastoralRepository pastoralRepository;
+    private final PastoraisPermissao pastoraisPermissao;
     private final UsuarioLogado usuarioLogado;
 
     @Transactional(readOnly = true)
@@ -58,9 +61,19 @@ public class PastoralConfigService {
         return resultado;
     }
 
+    /**
+     * Só o coordenador da pastoral configura as regras de elegibilidade (Parte C, item 3) —
+     * pastoral fora do alcance do usuário (Parte 4) dá 404, não 403.
+     */
     @Transactional
     public PastoralConfigResponseDTO salvar(Long pastoralId, String chave, PastoralConfigRequestDTO request) {
         Pastoral pastoral = pastoral(pastoralId);
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException("Pastoral", pastoralId);
+        }
+        if (!pastoraisPermissao.temPapel(pastoralId, "COORDENADOR")) {
+            throw new AccessDeniedException("Só o coordenador da pastoral (ou padre/ADMIN) configura as regras");
+        }
         PastoralConfig config = pastoralConfigRepository.findByPastoralIdAndChaveAndActiveTrue(pastoralId, chave)
                 .orElseGet(PastoralConfig::new);
 

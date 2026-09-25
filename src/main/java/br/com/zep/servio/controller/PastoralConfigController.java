@@ -5,7 +5,6 @@ import br.com.zep.servio.model.dto.PastoralConfigResponseDTO;
 import br.com.zep.servio.service.escalacao.PastoralConfigService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +21,7 @@ public class PastoralConfigController {
         return service.efetivas(pastoralId);
     }
 
-    /** Só o coordenador da pastoral configura as regras de elegibilidade (Parte C, item 3). */
-    @PreAuthorize("@pastorais.temPapel(#pastoralId, 'COORDENADOR')")
+    /** Decisão fina (COORDENADOR/PADRE/ADMIN, 404 se a pastoral for invisível) no service. */
     @PutMapping("/{chave}")
     public PastoralConfigResponseDTO salvar(@PathVariable Long pastoralId, @PathVariable String chave,
                                              @Valid @RequestBody PastoralConfigRequestDTO request) {

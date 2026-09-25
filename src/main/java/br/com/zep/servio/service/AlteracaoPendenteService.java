@@ -76,7 +76,10 @@ public class AlteracaoPendenteService {
     @Transactional
     public AlteracaoPendenteResponseDTO confirmar(Long id) {
         AlteracaoPendente pendente = obterPendente(id);
-        exigirCoordenador(pendente.getPastoral().getId());
+        exigirCoordenador(pendente);
+        if (pendente.getStatus() != StatusAlteracaoPendente.PENDENTE) {
+            throw new RegraNegocioException("Esta alteração já foi resolvida");
+        }
         pendente.setStatus(StatusAlteracaoPendente.CONFIRMADA);
         return mapper.toResponse(repository.save(pendente));
     }
@@ -85,7 +88,7 @@ public class AlteracaoPendenteService {
     @Transactional
     public AlteracaoPendenteResponseDTO desfazer(Long id) {
         AlteracaoPendente pendente = obterPendente(id);
-        exigirCoordenador(pendente.getPastoral().getId());
+        exigirCoordenador(pendente);
         if (pendente.getStatus() != StatusAlteracaoPendente.PENDENTE) {
             throw new RegraNegocioException("Esta alteração já foi resolvida");
         }
@@ -102,7 +105,12 @@ public class AlteracaoPendenteService {
         return mapper.toResponse(repository.save(pendente));
     }
 
-    private void exigirCoordenador(Long pastoralId) {
+    /** Pastoral fora do alcance do usuário (Parte 4) dá 404 antes mesmo de checar o papel. */
+    private void exigirCoordenador(AlteracaoPendente pendente) {
+        Long pastoralId = pendente.getPastoral().getId();
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException("AlteracaoPendente", pendente.getId());
+        }
         if (!pastoraisPermissao.temPapel(pastoralId, "COORDENADOR")) {
             throw new AccessDeniedException("Só o coordenador da pastoral confirma ou desfaz alterações");
         }

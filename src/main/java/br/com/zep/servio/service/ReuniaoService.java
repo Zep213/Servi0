@@ -24,9 +24,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
 /**
  * Só o coordenador da pastoral marca reunião diretamente. Os demais papéis
  * (vice/secretário/tesoureiro/membro) só podem solicitar por e-mail ao coordenador.
@@ -51,15 +48,18 @@ public class ReuniaoService {
         return repository.findByPastoralIdAndActiveTrue(pastoralId, pageable).map(mapper::toResponse);
     }
 
+    /** Pastoral fora do alcance do usuário (Parte 4) dá 404, não 403 — não revela a existência das reuniões. */
     private void exigirLeitura(Long pastoralId) {
-        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
-        if (visiveis.isPresent() && !visiveis.get().contains(pastoralId)) {
-            throw new AccessDeniedException("Você não tem acesso às reuniões desta pastoral");
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException("Pastoral", pastoralId);
         }
     }
 
     @Transactional
     public ReuniaoResponseDTO marcar(Long pastoralId, ReuniaoRequestDTO request) {
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException("Pastoral", pastoralId);
+        }
         if (!pastoraisPermissao.temPapel(pastoralId, PapelPastoral.COORDENADOR.name())) {
             throw new AccessDeniedException("Só o coordenador da pastoral marca reunião");
         }

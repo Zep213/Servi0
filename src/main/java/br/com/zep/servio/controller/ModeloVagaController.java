@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -15,11 +14,10 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-/** Só o coordenador da pastoral (ou padre/admin) gerencia modelos de vaga (Parte 3.3). */
+/** Decisão fina (COORDENADOR/PADRE/ADMIN, 404 se a pastoral for invisível) no service. */
 @RestController
 @RequestMapping("/api/pastorais/{pastoralId}/modelos-vaga")
 @RequiredArgsConstructor
-@PreAuthorize("@pastorais.temPapel(#pastoralId, 'COORDENADOR')")
 public class ModeloVagaController {
 
     private final ModeloVagaService service;

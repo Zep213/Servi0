@@ -11,6 +11,8 @@ public interface AlteracaoPendenteRepository extends TenantRepository<AlteracaoP
 
     List<AlteracaoPendente> findByPastoralIdAndStatusAndActiveTrue(Long pastoralId, StatusAlteracaoPendente status);
 
+    List<AlteracaoPendente> findByAlocacaoId(Long alocacaoId);
+
     /** Parte 4: só das pastorais que o usuário gerencia (COORDENADOR/VICE); todas para PADRE/ADMIN. */
     Page<AlteracaoPendente> findByParoquiaIdAndPastoralIdInAndActiveTrue(
             Long paroquiaId, List<Long> pastoraisIds, Pageable pageable);

@@ -84,6 +84,16 @@ public class PastoraisPermissao {
     }
 
     /**
+     * Verdadeiro se a pastoral é visível ao usuário (ADMIN/PADRE sempre; os demais, só se
+     * tiverem algum papel real nela). Usado para decidir 404 (pastoral fora do alcance,
+     * como se não existisse) vs 403 (pastoral visível, mas sem permissão para a ação).
+     */
+    public boolean visivel(Long pastoralId) {
+        Optional<List<Long>> visiveis = pastoraisVisiveis();
+        return visiveis.isEmpty() || visiveis.get().contains(pastoralId);
+    }
+
+    /**
      * Ids das pastorais que o usuário GERENCIA (COORDENADOR ou VICE) — mais estrito que
      * pastoraisVisiveis() (Parte 4: alterações pendentes só aparecem para quem pode agir
      * nelas). Vazio (Optional.empty) significa "sem restrição": PADRE/ADMIN.
