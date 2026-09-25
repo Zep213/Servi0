@@ -65,6 +65,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -72,12 +73,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * COORDENADOR/VICE/SECRETARIO/TESOUREIRO/MEMBRO da própria Pascom, e o COORDENADOR do ECC
  * (zero relação com a Pascom, pra testar o limite entre pastorais).
  *
- * <p>Desvios da matriz original do pedido, registrados aqui e no relatório final (Parte 6,
- * item 4): a matriz pedia 403 pro COORDENADOR do ECC em "Atribuir VICE/SECR/TES/MEMBRO"; o
- * código (e este teste) usa 404, pela mesma regra de "pastoral fora do alcance" aplicada a
- * toda ação pastoral-específica nesta parte (financeiro, reuniões, config, modelo de vaga,
- * vaga, alocação, alteração pendente) — a única exceção mantida é "Solicitar reunião", cujo
- * gate é sobre a própria participação do autor, não sobre a visibilidade da pastoral alheia.
+ * <p>Desvios da matriz original do pedido, decididos com o usuário e registrados no relatório
+ * final (Parte 6, item 4): a matriz pedia 403 pro COORDENADOR do ECC em "Atribuir
+ * VICE/SECR/TES/MEMBRO"; o código (e este teste) usa 404, pela mesma regra de "pastoral fora do
+ * alcance" aplicada a toda ação pastoral-específica nesta parte (financeiro, reuniões, config,
+ * modelo de vaga, vaga, alocação, alteração pendente) — a única exceção mantida é "Solicitar
+ * reunião", cujo gate é sobre a própria participação do autor, não sobre a visibilidade da
+ * pastoral alheia. Decisão final do usuário: manter o 404, mas com uma mensagem explícita
+ * ("Você não pode alterar nada em outra pastoral") em vez do "não encontrado" genérico, só
+ * neste caso específico ({@code UsuarioPastoralService.exigirGestor}).
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -266,11 +270,13 @@ class PermissaoPorPapelIT {
                     .andExpect(status().isForbidden());
         }
 
-        // COORDENADOR do ECC: pastoral (Pascom) fora do alcance dele -> 404, não 403 (ver nota da classe)
+        // COORDENADOR do ECC: pastoral (Pascom) fora do alcance dele -> 404, não 403 (ver nota da classe),
+        // mas com mensagem explícita em vez do "não encontrado" genérico (decisão do usuário, Parte 6 item 4).
         Usuario alvoEcc = candidatoFresco();
         como(cenario.coordenadorEcc, post("/api/usuarios-pastorais").contentType(MediaType.APPLICATION_JSON)
                         .content(json(new UsuarioPastoralRequestDTO(alvoEcc.getId(), cenario.pascom.getId(), PapelPastoral.MEMBRO))))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Você não pode alterar nada em outra pastoral")));
     }
 
     @Test

@@ -1,8 +1,8 @@
 package br.com.zep.servio.service;
 
 import br.com.zep.servio.exception.ConflitoException;
-import br.com.zep.servio.exception.RecursoNaoEncontradoException;
 import br.com.zep.servio.exception.RegraNegocioException;
+import br.com.zep.servio.exception.ServioException;
 import br.com.zep.servio.mapper.UsuarioPastoralMapper;
 import br.com.zep.servio.model.UsuarioPastoral;
 import br.com.zep.servio.model.dto.UsuarioPastoralRequestDTO;
@@ -14,6 +14,7 @@ import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,7 +108,10 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
     /**
      * Só padre ou ADMIN atribuem o papel COORDENADOR (gate de Perfil puro, vale pra qualquer
      * pastoral). Os demais papéis, o coordenador da pastoral também pode — mas pastoral fora
-     * do alcance do usuário (Parte 4) dá 404 em vez de 403.
+     * do alcance do usuário (Parte 4) dá 404 em vez de 403 (não revela a existência da
+     * pastoral). Decisão do usuário (Parte 6, item 4): mantém o status 404, mas com uma
+     * mensagem explícita em vez do "não encontrado" genérico — só quem já não é padre/ADMIN
+     * cai aqui (eles sempre passam em {@code visivel()}).
      */
     private void exigirGestor(Long pastoralId, PapelPastoral papelAlvo) {
         if (papelAlvo == PapelPastoral.COORDENADOR) {
@@ -117,7 +121,7 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
             return;
         }
         if (!pastoraisPermissao.visivel(pastoralId)) {
-            throw new RecursoNaoEncontradoException("Pastoral", pastoralId);
+            throw new ServioException("Você não pode alterar nada em outra pastoral", HttpStatus.NOT_FOUND);
         }
         if (!pastoraisPermissao.temPapel(pastoralId, PapelPastoral.COORDENADOR.name())) {
             throw new AccessDeniedException("Só o coordenador desta pastoral (ou padre/ADMIN) atribui papéis nela");
