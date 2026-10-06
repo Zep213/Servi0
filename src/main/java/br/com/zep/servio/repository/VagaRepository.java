@@ -1,5 +1,6 @@
 package br.com.zep.servio.repository;
 
+import br.com.zep.servio.model.Celebracao;
 import br.com.zep.servio.model.Vaga;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,4 +44,31 @@ public interface VagaRepository extends TenantRepository<Vaga> {
             where v.id = :id and v.active = true
             """)
     Optional<Vaga> findParaEmail(@Param("id") Long id);
+
+    /**
+     * Painel (Etapa 6, Parte 6): soma de quantidade e de vagas sem quantidade, por celebração,
+     * de uma pastoral no intervalo. Uma consulta agrupada; quem junta com as contagens é o serviço.
+     */
+    @Query("""
+            select v.celebracao.id, coalesce(sum(v.quantidade), 0),
+                   sum(case when v.quantidade is null then 1 else 0 end)
+            from Vaga v
+            where v.paroquiaId = :paroquiaId and v.active = true
+              and v.funcao.pastoral.id = :pastoralId
+              and v.celebracao.data between :inicio and :fim
+            group by v.celebracao.id
+            """)
+    List<Object[]> totaisPorCelebracao(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId,
+                                       @Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
+
+    /** Celebrações do intervalo que têm vaga desta pastoral, em ordem de data e hora (painel). */
+    @Query("""
+            select distinct v.celebracao from Vaga v
+            where v.paroquiaId = :paroquiaId and v.active = true
+              and v.funcao.pastoral.id = :pastoralId
+              and v.celebracao.data between :inicio and :fim
+            order by v.celebracao.data, v.celebracao.hora
+            """)
+    List<Celebracao> celebracoesDaPastoral(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId,
+                                           @Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
 }

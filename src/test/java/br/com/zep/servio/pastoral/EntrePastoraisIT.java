@@ -330,4 +330,11 @@ class EntrePastoraisIT {
                     assertThat(body).doesNotContain("\"id\":" + celebracaoEcc.getId());
                 });
     }
+
+    @Test
+    void painelDoEcc() throws Exception {
+        mvc.perform(get("/api/pastorais/{id}/painel", cenario.ecc.getId())
+                        .with(user(cenario.principal(cenario.coordenadorPascom))).with(csrf()))
+                .andExpect(status().isNotFound());
+    }
 }

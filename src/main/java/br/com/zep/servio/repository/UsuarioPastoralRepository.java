@@ -45,4 +45,12 @@ public interface UsuarioPastoralRepository extends TenantRepository<UsuarioPasto
     List<Usuario> findUsuariosPorPapel(@Param("pastoralId") Long pastoralId,
                                        @Param("paroquiaId") Long paroquiaId,
                                        @Param("papel") PapelPastoral papel);
+
+    /** Participações ativas do usuário com a pastoral já carregada, para /api/me (sem sessão aberta). */
+    @Query("""
+            select up from UsuarioPastoral up join fetch up.pastoral p
+            where up.usuario.id = :usuarioId and up.active = true and p.active = true
+            order by p.nome
+            """)
+    List<UsuarioPastoral> participacoesComPastoral(@Param("usuarioId") Long usuarioId);
 }

@@ -214,4 +214,11 @@ class EntreParoquiasIT {
         AuditLog escrita = logs.stream().filter(l -> l.getTipoEvento().equals("ADMIN_ACAO_EM_PAROQUIA_ASSUMIDA")).findFirst().orElseThrow();
         assertThat(escrita.getDetalhe()).contains("POST").contains("/api/celebracoes");
     }
+
+    @Test
+    void padreDeOutraParoquiaNaoAcessaPainelDaA() throws Exception {
+        mvc.perform(get("/api/pastorais/{id}/painel", cenario.pascom.getId())
+                        .with(user(cenario.principal(cenario.padreB))).with(csrf()))
+                .andExpect(status().isNotFound());
+    }
 }

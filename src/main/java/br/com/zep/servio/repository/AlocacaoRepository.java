@@ -114,4 +114,60 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
             """)
     List<Alocacao> candidatosLembreteResposta(@Param("status") StatusConvite status, @Param("tipo") TipoNotificacao tipo,
                                               @Param("agora") LocalDateTime agora);
+
+    /** Painel: contagem de alocações por celebração e status, de uma pastoral no intervalo (uma consulta agrupada). */
+    @Query("""
+            select a.vaga.celebracao.id, a.status, count(a)
+            from Alocacao a
+            where a.paroquiaId = :paroquiaId and a.active = true
+              and a.vaga.funcao.pastoral.id = :pastoralId
+              and a.vaga.celebracao.data between :inicio and :fim
+            group by a.vaga.celebracao.id, a.status
+            """)
+    List<Object[]> contagensPorCelebracaoEStatus(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId,
+                                                 @Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
+
+    /** Painel: quantas pessoas ocupam cada vaga (PENDENTE e ACEITA), a partir de hoje. */
+    @Query("""
+            select a.vaga.id, count(a)
+            from Alocacao a
+            where a.paroquiaId = :paroquiaId and a.active = true
+              and a.status in :ocupantes
+              and a.vaga.funcao.pastoral.id = :pastoralId
+              and a.vaga.celebracao.data >= :hoje
+            group by a.vaga.id
+            """)
+    List<Object[]> ocupantesPorVagaAPartirDe(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId,
+                                            @Param("ocupantes") Collection<StatusConvite> ocupantes,
+                                            @Param("hoje") LocalDate hoje);
+
+    /** Painel: convites pendentes com prazo ainda por vir (o recorte de "vencendo" é feito no serviço, por pastoral). */
+    @Query("""
+            select a from Alocacao a
+            join fetch a.usuario
+            join fetch a.vaga v
+            join fetch v.funcao f
+            join fetch v.celebracao c
+            where a.paroquiaId = :paroquiaId and a.active = true
+              and a.status = :status and f.pastoral.id = :pastoralId
+              and a.dataLimiteResposta > :agora
+            """)
+    List<Alocacao> pendentesComPrazoPorVir(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId,
+                                           @Param("status") StatusConvite status, @Param("agora") LocalDateTime agora);
+
+    /** Painel: recusas e expirações de celebrações que ainda não aconteceram. */
+    @Query("""
+            select a from Alocacao a
+            join fetch a.usuario
+            join fetch a.vaga v
+            join fetch v.funcao f
+            join fetch v.celebracao c
+            where a.paroquiaId = :paroquiaId and a.active = true
+              and a.status in :status and f.pastoral.id = :pastoralId
+              and c.data >= :hoje
+            order by c.data, c.hora
+            """)
+    List<Alocacao> recusadasOuExpiradasAPartirDe(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId,
+                                                 @Param("status") Collection<StatusConvite> status,
+                                                 @Param("hoje") LocalDate hoje);
 }
