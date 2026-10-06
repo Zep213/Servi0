@@ -23,8 +23,9 @@ public class FuncaoController {
     private final FuncaoService service;
 
     @GetMapping
-    public Page<FuncaoResponseDTO> listar(@PageableDefault(size = 20, sort = "nome") Pageable pageable) {
-        return service.listar(pageable);
+    public Page<FuncaoResponseDTO> listar(@RequestParam(required = false) Long pastoralId,
+                                          @PageableDefault(size = 20, sort = "nome") Pageable pageable) {
+        return pastoralId == null ? service.listar(pageable) : service.listarDaPastoral(pastoralId, pageable);
     }
 
     @GetMapping("/{id}")

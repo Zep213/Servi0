@@ -221,4 +221,11 @@ class EntreParoquiasIT {
                         .with(user(cenario.principal(cenario.padreB))).with(csrf()))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void padreDeOutraParoquiaNaoVeMembrosDaA() throws Exception {
+        mvc.perform(get("/api/pastorais/{id}/membros", cenario.pascom.getId())
+                        .with(user(cenario.principal(cenario.padreB))))
+                .andExpect(status().isNotFound());
+    }
 }

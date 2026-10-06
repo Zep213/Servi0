@@ -170,4 +170,36 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
     List<Alocacao> recusadasOuExpiradasAPartirDe(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId,
                                                  @Param("status") Collection<StatusConvite> status,
                                                  @Param("hoje") LocalDate hoje);
+
+    /**
+     * Escalas de um usuário no período, com vaga, função, pastoral e celebração já carregadas
+     * (uma consulta só, sem uma por linha). Substituídas ficam de fora: já não são da pessoa.
+     */
+    @Query("""
+            select a from Alocacao a
+            join fetch a.vaga v
+            join fetch v.celebracao c
+            join fetch v.funcao f
+            join fetch f.pastoral p
+            where a.paroquiaId = :paroquiaId and a.active = true
+              and a.usuario.id = :usuarioId
+              and a.status <> :substituida
+              and c.data between :de and :ate
+            order by c.data, c.hora
+            """)
+    List<Alocacao> escalasDoUsuario(@Param("paroquiaId") Long paroquiaId, @Param("usuarioId") Long usuarioId,
+                                    @Param("de") LocalDate de, @Param("ate") LocalDate ate,
+                                    @Param("substituida") StatusConvite substituida);
+
+    /** Alocações (sem substituídas) de um conjunto de vagas, com a pessoa carregada. */
+    @Query("""
+            select a from Alocacao a
+            join fetch a.usuario
+            join fetch a.vaga v
+            where a.paroquiaId = :paroquiaId and a.active = true
+              and v.id in :vagaIds and a.status <> :substituida
+            order by a.id
+            """)
+    List<Alocacao> alocacoesDasVagas(@Param("paroquiaId") Long paroquiaId, @Param("vagaIds") Collection<Long> vagaIds,
+                                     @Param("substituida") StatusConvite substituida);
 }

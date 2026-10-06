@@ -53,4 +53,13 @@ public interface UsuarioPastoralRepository extends TenantRepository<UsuarioPasto
             order by p.nome
             """)
     List<UsuarioPastoral> participacoesComPastoral(@Param("usuarioId") Long usuarioId);
+
+    /** Membros ativos de uma pastoral com a pessoa carregada (tela de membros). */
+    @Query("""
+            select up from UsuarioPastoral up join fetch up.usuario u
+            where up.paroquiaId = :paroquiaId and up.pastoral.id = :pastoralId
+              and up.active = true and u.active = true
+            order by u.nome
+            """)
+    List<UsuarioPastoral> membrosDaPastoral(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId);
 }
