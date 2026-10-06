@@ -23,6 +23,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,7 @@ public class AlteracaoPendenteService {
     private final ConfiguracaoPastoralService configuracaoPastoralService;
     private final PastoraisPermissao pastoraisPermissao;
     private final UsuarioLogado usuarioLogado;
+    private final Clock clock;
 
     @Transactional
     public void registrar(Alocacao alocacaoAtualizada, Pastoral pastoral, Usuario autor,
@@ -98,7 +100,7 @@ public class AlteracaoPendenteService {
         alocacao.setUsuario(pendente.getUsuarioAnterior());
         alocacao.setStatus(StatusConvite.PENDENTE);
         long prazoHoras = configuracaoPastoralService.prazoRespostaHoras(pendente.getPastoral().getId());
-        alocacao.setDataLimiteResposta(LocalDateTime.now().plusHours(prazoHoras));
+        alocacao.setDataLimiteResposta(LocalDateTime.now(clock).plusHours(prazoHoras));
         alocacaoRepository.save(alocacao);
 
         pendente.setStatus(StatusAlteracaoPendente.DESFEITA);

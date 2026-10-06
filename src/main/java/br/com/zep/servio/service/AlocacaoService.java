@@ -28,6 +28,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,7 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     private final ConfiguracaoPastoralService configuracaoPastoralService;
     private final PastoraisPermissao pastoraisPermissao;
     private final AlteracaoPendenteService alteracaoPendenteService;
+    private final Clock clock;
 
     @Override
     protected TenantRepository<Alocacao> repository() {
@@ -99,7 +101,7 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     private void reiniciarConvite(Alocacao entidade, Long pastoralId) {
         long prazoHoras = configuracaoPastoralService.prazoRespostaHoras(pastoralId);
         entidade.setStatus(StatusConvite.PENDENTE);
-        entidade.setDataLimiteResposta(LocalDateTime.now().plusHours(prazoHoras));
+        entidade.setDataLimiteResposta(LocalDateTime.now(clock).plusHours(prazoHoras));
     }
 
     @Override
@@ -218,7 +220,7 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
         if (entidade.getStatus() != StatusConvite.PENDENTE) {
             throw new RegraNegocioException("Este convite já foi respondido");
         }
-        if (entidade.getDataLimiteResposta() != null && LocalDateTime.now().isAfter(entidade.getDataLimiteResposta())) {
+        if (entidade.getDataLimiteResposta() != null && LocalDateTime.now(clock).isAfter(entidade.getDataLimiteResposta())) {
             entidade.setStatus(StatusConvite.EXPIRADA);
             repository.save(entidade);
             throw new RegraNegocioException("Prazo de resposta deste convite expirou");
