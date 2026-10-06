@@ -59,3 +59,22 @@ export function prazoLegivel(prazo: string | undefined): string {
 export function primeiroNome(nome: string | undefined): string {
   return (nome ?? '').trim().split(/\s+/)[0] ?? '';
 }
+
+/** Data de hoje no horário local, em AAAA-MM-DD. */
+export function hojeIso(agora: Date = new Date()): string {
+  return dataIso(agora);
+}
+
+/** Soma dias a uma data AAAA-MM-DD (sem passar pelo fuso). */
+export function somarDias(iso: string, dias: number): string {
+  const data = dataLocal(iso) ?? new Date();
+  data.setDate(data.getDate() + dias);
+  return dataIso(data);
+}
+
+function dataIso(data: Date): string {
+  const ano = String(data.getFullYear());
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const dia = String(data.getDate()).padStart(2, '0');
+  return `${ano}-${mes}-${dia}`;
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dataPorExtenso, horaCurta, prazoLegivel, primeiroNome } from './datas';
+import { dataPorExtenso, horaCurta, hojeIso, prazoLegivel, primeiroNome, somarDias } from './datas';
 
 describe('datas em português', () => {
   it('data por extenso com dia da semana', () => {
@@ -26,5 +26,16 @@ describe('datas em português', () => {
     expect(primeiroNome('  Maria Clara  Souza ')).toBe('Maria');
     expect(primeiroNome('')).toBe('');
     expect(primeiroNome(undefined)).toBe('');
+  });
+});
+
+describe('período', () => {
+  it('hoje em AAAA-MM-DD, no horário local', () => {
+    expect(hojeIso(new Date(2031, 2, 2, 23, 30))).toBe('2031-03-02');
+  });
+
+  it('somar dias atravessa mês e ano', () => {
+    expect(somarDias('2031-03-02', 365)).toBe('2032-03-01');
+    expect(somarDias('2031-01-01', -1)).toBe('2030-12-31');
   });
 });

@@ -47,7 +47,6 @@ import type {
   FuncaoResponseDTO,
   GetAlocacoesParams,
   GetAlteracoesPendentesParams,
-  GetAuthCsrfParams,
   GetCelebracoesParams,
   GetCompromissosAgendaParams,
   GetComunidadesParams,
@@ -4014,10 +4013,18 @@ export type getVagasResponseSuccess = (getVagasResponse200) & {
 
 export type getVagasResponse = (getVagasResponseSuccess)
 
-export const getGetVagasUrl = (params: GetVagasParams,) => {
+export const getGetVagasUrl = (params?: GetVagasParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -4029,7 +4036,7 @@ export const getGetVagasUrl = (params: GetVagasParams,) => {
   return stringifiedParams.length > 0 ? `/api/vagas?${stringifiedParams}` : `/api/vagas`
 }
 
-export const getVagas = async (params: GetVagasParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getVagasResponse> => {
+export const getVagas = async (params?: GetVagasParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getVagasResponse> => {
 
   return clienteGerado<getVagasResponse>(getGetVagasUrl(params),
   {
@@ -4051,7 +4058,7 @@ export const getGetVagasQueryKey = (params?: GetVagasParams,) => {
     }
 
 
-export const getGetVagasQueryOptions = <TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetVagasQueryOptions = <TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(params?: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -4074,7 +4081,7 @@ export type GetVagasQueryError = unknown
 
 
 export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(
- params: GetVagasParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>> & Pick<
+ params: undefined |  GetVagasParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getVagas>>,
           TError,
@@ -4084,7 +4091,7 @@ export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(
- params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>> & Pick<
+ params?: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getVagas>>,
           TError,
@@ -4094,12 +4101,12 @@ export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(
- params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(
- params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -4397,10 +4404,18 @@ export type getUsuariosResponseSuccess = (getUsuariosResponse200) & {
 
 export type getUsuariosResponse = (getUsuariosResponseSuccess)
 
-export const getGetUsuariosUrl = (params: GetUsuariosParams,) => {
+export const getGetUsuariosUrl = (params?: GetUsuariosParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -4412,7 +4427,7 @@ export const getGetUsuariosUrl = (params: GetUsuariosParams,) => {
   return stringifiedParams.length > 0 ? `/api/usuarios?${stringifiedParams}` : `/api/usuarios`
 }
 
-export const getUsuarios = async (params: GetUsuariosParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosResponse> => {
+export const getUsuarios = async (params?: GetUsuariosParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosResponse> => {
 
   return clienteGerado<getUsuariosResponse>(getGetUsuariosUrl(params),
   {
@@ -4434,7 +4449,7 @@ export const getGetUsuariosQueryKey = (params?: GetUsuariosParams,) => {
     }
 
 
-export const getGetUsuariosQueryOptions = <TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetUsuariosQueryOptions = <TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(params?: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -4457,7 +4472,7 @@ export type GetUsuariosQueryError = unknown
 
 
 export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(
- params: GetUsuariosParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>> & Pick<
+ params: undefined |  GetUsuariosParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUsuarios>>,
           TError,
@@ -4467,7 +4482,7 @@ export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, 
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(
- params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>> & Pick<
+ params?: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUsuarios>>,
           TError,
@@ -4477,12 +4492,12 @@ export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, 
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(
- params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(
- params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -4605,10 +4620,18 @@ export type getUsuariosPastoraisResponseSuccess = (getUsuariosPastoraisResponse2
 
 export type getUsuariosPastoraisResponse = (getUsuariosPastoraisResponseSuccess)
 
-export const getGetUsuariosPastoraisUrl = (params: GetUsuariosPastoraisParams,) => {
+export const getGetUsuariosPastoraisUrl = (params?: GetUsuariosPastoraisParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -4620,7 +4643,7 @@ export const getGetUsuariosPastoraisUrl = (params: GetUsuariosPastoraisParams,) 
   return stringifiedParams.length > 0 ? `/api/usuarios-pastorais?${stringifiedParams}` : `/api/usuarios-pastorais`
 }
 
-export const getUsuariosPastorais = async (params: GetUsuariosPastoraisParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosPastoraisResponse> => {
+export const getUsuariosPastorais = async (params?: GetUsuariosPastoraisParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosPastoraisResponse> => {
 
   return clienteGerado<getUsuariosPastoraisResponse>(getGetUsuariosPastoraisUrl(params),
   {
@@ -4642,7 +4665,7 @@ export const getGetUsuariosPastoraisQueryKey = (params?: GetUsuariosPastoraisPar
     }
 
 
-export const getGetUsuariosPastoraisQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetUsuariosPastoraisQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(params?: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -4665,7 +4688,7 @@ export type GetUsuariosPastoraisQueryError = unknown
 
 
 export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(
- params: GetUsuariosPastoraisParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>> & Pick<
+ params: undefined |  GetUsuariosPastoraisParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUsuariosPastorais>>,
           TError,
@@ -4675,7 +4698,7 @@ export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsu
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(
- params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>> & Pick<
+ params?: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUsuariosPastorais>>,
           TError,
@@ -4685,12 +4708,12 @@ export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsu
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(
- params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(
- params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -4813,10 +4836,18 @@ export type getUsuariosFuncoesResponseSuccess = (getUsuariosFuncoesResponse200) 
 
 export type getUsuariosFuncoesResponse = (getUsuariosFuncoesResponseSuccess)
 
-export const getGetUsuariosFuncoesUrl = (params: GetUsuariosFuncoesParams,) => {
+export const getGetUsuariosFuncoesUrl = (params?: GetUsuariosFuncoesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -4828,7 +4859,7 @@ export const getGetUsuariosFuncoesUrl = (params: GetUsuariosFuncoesParams,) => {
   return stringifiedParams.length > 0 ? `/api/usuarios-funcoes?${stringifiedParams}` : `/api/usuarios-funcoes`
 }
 
-export const getUsuariosFuncoes = async (params: GetUsuariosFuncoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosFuncoesResponse> => {
+export const getUsuariosFuncoes = async (params?: GetUsuariosFuncoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosFuncoesResponse> => {
 
   return clienteGerado<getUsuariosFuncoesResponse>(getGetUsuariosFuncoesUrl(params),
   {
@@ -4850,7 +4881,7 @@ export const getGetUsuariosFuncoesQueryKey = (params?: GetUsuariosFuncoesParams,
     }
 
 
-export const getGetUsuariosFuncoesQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetUsuariosFuncoesQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(params?: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -4873,7 +4904,7 @@ export type GetUsuariosFuncoesQueryError = unknown
 
 
 export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(
- params: GetUsuariosFuncoesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>> & Pick<
+ params: undefined |  GetUsuariosFuncoesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUsuariosFuncoes>>,
           TError,
@@ -4883,7 +4914,7 @@ export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuar
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(
- params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>> & Pick<
+ params?: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUsuariosFuncoes>>,
           TError,
@@ -4893,12 +4924,12 @@ export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuar
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(
- params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(
- params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -5382,10 +5413,18 @@ export type getPedidosTrocaResponseSuccess = (getPedidosTrocaResponse200) & {
 
 export type getPedidosTrocaResponse = (getPedidosTrocaResponseSuccess)
 
-export const getGetPedidosTrocaUrl = (params: GetPedidosTrocaParams,) => {
+export const getGetPedidosTrocaUrl = (params?: GetPedidosTrocaParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -5397,7 +5436,7 @@ export const getGetPedidosTrocaUrl = (params: GetPedidosTrocaParams,) => {
   return stringifiedParams.length > 0 ? `/api/pedidos-troca?${stringifiedParams}` : `/api/pedidos-troca`
 }
 
-export const getPedidosTroca = async (params: GetPedidosTrocaParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPedidosTrocaResponse> => {
+export const getPedidosTroca = async (params?: GetPedidosTrocaParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPedidosTrocaResponse> => {
 
   return clienteGerado<getPedidosTrocaResponse>(getGetPedidosTrocaUrl(params),
   {
@@ -5419,7 +5458,7 @@ export const getGetPedidosTrocaQueryKey = (params?: GetPedidosTrocaParams,) => {
     }
 
 
-export const getGetPedidosTrocaQueryOptions = <TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetPedidosTrocaQueryOptions = <TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(params?: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -5442,7 +5481,7 @@ export type GetPedidosTrocaQueryError = unknown
 
 
 export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(
- params: GetPedidosTrocaParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>> & Pick<
+ params: undefined |  GetPedidosTrocaParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPedidosTroca>>,
           TError,
@@ -5452,7 +5491,7 @@ export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosT
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(
- params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>> & Pick<
+ params?: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPedidosTroca>>,
           TError,
@@ -5462,12 +5501,12 @@ export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosT
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(
- params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(
- params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -5590,10 +5629,18 @@ export type getPastoraisResponseSuccess = (getPastoraisResponse200) & {
 
 export type getPastoraisResponse = (getPastoraisResponseSuccess)
 
-export const getGetPastoraisUrl = (params: GetPastoraisParams,) => {
+export const getGetPastoraisUrl = (params?: GetPastoraisParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -5605,7 +5652,7 @@ export const getGetPastoraisUrl = (params: GetPastoraisParams,) => {
   return stringifiedParams.length > 0 ? `/api/pastorais?${stringifiedParams}` : `/api/pastorais`
 }
 
-export const getPastorais = async (params: GetPastoraisParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisResponse> => {
+export const getPastorais = async (params?: GetPastoraisParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisResponse> => {
 
   return clienteGerado<getPastoraisResponse>(getGetPastoraisUrl(params),
   {
@@ -5627,7 +5674,7 @@ export const getGetPastoraisQueryKey = (params?: GetPastoraisParams,) => {
     }
 
 
-export const getGetPastoraisQueryOptions = <TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetPastoraisQueryOptions = <TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(params?: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -5650,7 +5697,7 @@ export type GetPastoraisQueryError = unknown
 
 
 export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(
- params: GetPastoraisParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>> & Pick<
+ params: undefined |  GetPastoraisParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPastorais>>,
           TError,
@@ -5660,7 +5707,7 @@ export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(
- params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>> & Pick<
+ params?: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPastorais>>,
           TError,
@@ -5670,12 +5717,12 @@ export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(
- params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(
- params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -5799,10 +5846,18 @@ export type getPastoraisPorPastoralIdReunioesResponseSuccess = (getPastoraisPorP
 export type getPastoraisPorPastoralIdReunioesResponse = (getPastoraisPorPastoralIdReunioesResponseSuccess)
 
 export const getGetPastoraisPorPastoralIdReunioesUrl = (pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams,) => {
+    params?: GetPastoraisPorPastoralIdReunioesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -5815,7 +5870,7 @@ export const getGetPastoraisPorPastoralIdReunioesUrl = (pastoralId: number,
 }
 
 export const getPastoraisPorPastoralIdReunioes = async (pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdReunioesResponse> => {
+    params?: GetPastoraisPorPastoralIdReunioesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdReunioesResponse> => {
 
   return clienteGerado<getPastoraisPorPastoralIdReunioesResponse>(getGetPastoraisPorPastoralIdReunioesUrl(pastoralId,params),
   {
@@ -5839,7 +5894,7 @@ export const getGetPastoraisPorPastoralIdReunioesQueryKey = (pastoralId: number,
 
 
 export const getGetPastoraisPorPastoralIdReunioesQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError = unknown>(pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+    params?: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -5863,7 +5918,7 @@ export type GetPastoraisPorPastoralIdReunioesQueryError = unknown
 
 export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>> & Pick<
+    params: undefined |  GetPastoraisPorPastoralIdReunioesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>,
           TError,
@@ -5874,7 +5929,7 @@ export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>> & Pick<
+    params?: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>,
           TError,
@@ -5885,13 +5940,13 @@ export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+    params?: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+    params?: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -6393,10 +6448,18 @@ export type getPastoraisPorPastoralIdFinanceiroResponseSuccess = (getPastoraisPo
 export type getPastoraisPorPastoralIdFinanceiroResponse = (getPastoraisPorPastoralIdFinanceiroResponseSuccess)
 
 export const getGetPastoraisPorPastoralIdFinanceiroUrl = (pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams,) => {
+    params?: GetPastoraisPorPastoralIdFinanceiroParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -6409,7 +6472,7 @@ export const getGetPastoraisPorPastoralIdFinanceiroUrl = (pastoralId: number,
 }
 
 export const getPastoraisPorPastoralIdFinanceiro = async (pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdFinanceiroResponse> => {
+    params?: GetPastoraisPorPastoralIdFinanceiroParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdFinanceiroResponse> => {
 
   return clienteGerado<getPastoraisPorPastoralIdFinanceiroResponse>(getGetPastoraisPorPastoralIdFinanceiroUrl(pastoralId,params),
   {
@@ -6433,7 +6496,7 @@ export const getGetPastoraisPorPastoralIdFinanceiroQueryKey = (pastoralId: numbe
 
 
 export const getGetPastoraisPorPastoralIdFinanceiroQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError = unknown>(pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+    params?: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -6457,7 +6520,7 @@ export type GetPastoraisPorPastoralIdFinanceiroQueryError = unknown
 
 export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>> & Pick<
+    params: undefined |  GetPastoraisPorPastoralIdFinanceiroParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>,
           TError,
@@ -6468,7 +6531,7 @@ export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnTyp
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>> & Pick<
+    params?: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>,
           TError,
@@ -6479,13 +6542,13 @@ export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnTyp
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+    params?: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+    params?: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -6785,10 +6848,18 @@ export type getIndisponibilidadesResponseSuccess = (getIndisponibilidadesRespons
 
 export type getIndisponibilidadesResponse = (getIndisponibilidadesResponseSuccess)
 
-export const getGetIndisponibilidadesUrl = (params: GetIndisponibilidadesParams,) => {
+export const getGetIndisponibilidadesUrl = (params?: GetIndisponibilidadesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -6800,7 +6871,7 @@ export const getGetIndisponibilidadesUrl = (params: GetIndisponibilidadesParams,
   return stringifiedParams.length > 0 ? `/api/indisponibilidades?${stringifiedParams}` : `/api/indisponibilidades`
 }
 
-export const getIndisponibilidades = async (params: GetIndisponibilidadesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getIndisponibilidadesResponse> => {
+export const getIndisponibilidades = async (params?: GetIndisponibilidadesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getIndisponibilidadesResponse> => {
 
   return clienteGerado<getIndisponibilidadesResponse>(getGetIndisponibilidadesUrl(params),
   {
@@ -6822,7 +6893,7 @@ export const getGetIndisponibilidadesQueryKey = (params?: GetIndisponibilidadesP
     }
 
 
-export const getGetIndisponibilidadesQueryOptions = <TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetIndisponibilidadesQueryOptions = <TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(params?: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -6845,7 +6916,7 @@ export type GetIndisponibilidadesQueryError = unknown
 
 
 export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(
- params: GetIndisponibilidadesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>> & Pick<
+ params: undefined |  GetIndisponibilidadesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getIndisponibilidades>>,
           TError,
@@ -6855,7 +6926,7 @@ export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIn
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(
- params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>> & Pick<
+ params?: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getIndisponibilidades>>,
           TError,
@@ -6865,12 +6936,12 @@ export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIn
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(
- params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(
- params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -6993,10 +7064,18 @@ export type getFuncoesResponseSuccess = (getFuncoesResponse200) & {
 
 export type getFuncoesResponse = (getFuncoesResponseSuccess)
 
-export const getGetFuncoesUrl = (params: GetFuncoesParams,) => {
+export const getGetFuncoesUrl = (params?: GetFuncoesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -7008,7 +7087,7 @@ export const getGetFuncoesUrl = (params: GetFuncoesParams,) => {
   return stringifiedParams.length > 0 ? `/api/funcoes?${stringifiedParams}` : `/api/funcoes`
 }
 
-export const getFuncoes = async (params: GetFuncoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getFuncoesResponse> => {
+export const getFuncoes = async (params?: GetFuncoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getFuncoesResponse> => {
 
   return clienteGerado<getFuncoesResponse>(getGetFuncoesUrl(params),
   {
@@ -7030,7 +7109,7 @@ export const getGetFuncoesQueryKey = (params?: GetFuncoesParams,) => {
     }
 
 
-export const getGetFuncoesQueryOptions = <TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetFuncoesQueryOptions = <TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(params?: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -7053,7 +7132,7 @@ export type GetFuncoesQueryError = unknown
 
 
 export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(
- params: GetFuncoesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>> & Pick<
+ params: undefined |  GetFuncoesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getFuncoes>>,
           TError,
@@ -7063,7 +7142,7 @@ export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TE
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(
- params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>> & Pick<
+ params?: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getFuncoes>>,
           TError,
@@ -7073,12 +7152,12 @@ export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TE
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(
- params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(
- params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -7389,10 +7468,18 @@ export type getComunidadesResponseSuccess = (getComunidadesResponse200) & {
 
 export type getComunidadesResponse = (getComunidadesResponseSuccess)
 
-export const getGetComunidadesUrl = (params: GetComunidadesParams,) => {
+export const getGetComunidadesUrl = (params?: GetComunidadesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -7404,7 +7491,7 @@ export const getGetComunidadesUrl = (params: GetComunidadesParams,) => {
   return stringifiedParams.length > 0 ? `/api/comunidades?${stringifiedParams}` : `/api/comunidades`
 }
 
-export const getComunidades = async (params: GetComunidadesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getComunidadesResponse> => {
+export const getComunidades = async (params?: GetComunidadesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getComunidadesResponse> => {
 
   return clienteGerado<getComunidadesResponse>(getGetComunidadesUrl(params),
   {
@@ -7426,7 +7513,7 @@ export const getGetComunidadesQueryKey = (params?: GetComunidadesParams,) => {
     }
 
 
-export const getGetComunidadesQueryOptions = <TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetComunidadesQueryOptions = <TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(params?: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -7449,7 +7536,7 @@ export type GetComunidadesQueryError = unknown
 
 
 export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(
- params: GetComunidadesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>> & Pick<
+ params: undefined |  GetComunidadesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getComunidades>>,
           TError,
@@ -7459,7 +7546,7 @@ export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidad
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(
- params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>> & Pick<
+ params?: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getComunidades>>,
           TError,
@@ -7469,12 +7556,12 @@ export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidad
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(
- params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(
- params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -7597,10 +7684,18 @@ export type getCompromissosAgendaResponseSuccess = (getCompromissosAgendaRespons
 
 export type getCompromissosAgendaResponse = (getCompromissosAgendaResponseSuccess)
 
-export const getGetCompromissosAgendaUrl = (params: GetCompromissosAgendaParams,) => {
+export const getGetCompromissosAgendaUrl = (params?: GetCompromissosAgendaParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -7612,7 +7707,7 @@ export const getGetCompromissosAgendaUrl = (params: GetCompromissosAgendaParams,
   return stringifiedParams.length > 0 ? `/api/compromissos-agenda?${stringifiedParams}` : `/api/compromissos-agenda`
 }
 
-export const getCompromissosAgenda = async (params: GetCompromissosAgendaParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getCompromissosAgendaResponse> => {
+export const getCompromissosAgenda = async (params?: GetCompromissosAgendaParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getCompromissosAgendaResponse> => {
 
   return clienteGerado<getCompromissosAgendaResponse>(getGetCompromissosAgendaUrl(params),
   {
@@ -7634,7 +7729,7 @@ export const getGetCompromissosAgendaQueryKey = (params?: GetCompromissosAgendaP
     }
 
 
-export const getGetCompromissosAgendaQueryOptions = <TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetCompromissosAgendaQueryOptions = <TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(params?: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -7657,7 +7752,7 @@ export type GetCompromissosAgendaQueryError = unknown
 
 
 export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(
- params: GetCompromissosAgendaParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>> & Pick<
+ params: undefined |  GetCompromissosAgendaParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getCompromissosAgenda>>,
           TError,
@@ -7667,7 +7762,7 @@ export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCo
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(
- params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>> & Pick<
+ params?: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getCompromissosAgenda>>,
           TError,
@@ -7677,12 +7772,12 @@ export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCo
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(
- params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(
- params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -7805,10 +7900,18 @@ export type getCelebracoesResponseSuccess = (getCelebracoesResponse200) & {
 
 export type getCelebracoesResponse = (getCelebracoesResponseSuccess)
 
-export const getGetCelebracoesUrl = (params: GetCelebracoesParams,) => {
+export const getGetCelebracoesUrl = (params?: GetCelebracoesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -7820,7 +7923,7 @@ export const getGetCelebracoesUrl = (params: GetCelebracoesParams,) => {
   return stringifiedParams.length > 0 ? `/api/celebracoes?${stringifiedParams}` : `/api/celebracoes`
 }
 
-export const getCelebracoes = async (params: GetCelebracoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getCelebracoesResponse> => {
+export const getCelebracoes = async (params?: GetCelebracoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getCelebracoesResponse> => {
 
   return clienteGerado<getCelebracoesResponse>(getGetCelebracoesUrl(params),
   {
@@ -7842,7 +7945,7 @@ export const getGetCelebracoesQueryKey = (params?: GetCelebracoesParams,) => {
     }
 
 
-export const getGetCelebracoesQueryOptions = <TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetCelebracoesQueryOptions = <TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(params?: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -7865,7 +7968,7 @@ export type GetCelebracoesQueryError = unknown
 
 
 export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(
- params: GetCelebracoesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>> & Pick<
+ params: undefined |  GetCelebracoesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getCelebracoes>>,
           TError,
@@ -7875,7 +7978,7 @@ export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebraco
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(
- params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>> & Pick<
+ params?: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getCelebracoes>>,
           TError,
@@ -7885,12 +7988,12 @@ export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebraco
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(
- params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(
- params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -8173,10 +8276,18 @@ export type getAlocacoesResponseSuccess = (getAlocacoesResponse200) & {
 
 export type getAlocacoesResponse = (getAlocacoesResponseSuccess)
 
-export const getGetAlocacoesUrl = (params: GetAlocacoesParams,) => {
+export const getGetAlocacoesUrl = (params?: GetAlocacoesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -8188,7 +8299,7 @@ export const getGetAlocacoesUrl = (params: GetAlocacoesParams,) => {
   return stringifiedParams.length > 0 ? `/api/alocacoes?${stringifiedParams}` : `/api/alocacoes`
 }
 
-export const getAlocacoes = async (params: GetAlocacoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getAlocacoesResponse> => {
+export const getAlocacoes = async (params?: GetAlocacoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getAlocacoesResponse> => {
 
   return clienteGerado<getAlocacoesResponse>(getGetAlocacoesUrl(params),
   {
@@ -8210,7 +8321,7 @@ export const getGetAlocacoesQueryKey = (params?: GetAlocacoesParams,) => {
     }
 
 
-export const getGetAlocacoesQueryOptions = <TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetAlocacoesQueryOptions = <TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(params?: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -8233,7 +8344,7 @@ export type GetAlocacoesQueryError = unknown
 
 
 export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(
- params: GetAlocacoesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>> & Pick<
+ params: undefined |  GetAlocacoesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAlocacoes>>,
           TError,
@@ -8243,7 +8354,7 @@ export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(
- params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>> & Pick<
+ params?: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAlocacoes>>,
           TError,
@@ -8253,12 +8364,12 @@ export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(
- params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(
- params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -8752,10 +8863,18 @@ export type getUsuariosBuscaResponseSuccess = (getUsuariosBuscaResponse200) & {
 
 export type getUsuariosBuscaResponse = (getUsuariosBuscaResponseSuccess)
 
-export const getGetUsuariosBuscaUrl = (params: GetUsuariosBuscaParams,) => {
+export const getGetUsuariosBuscaUrl = (params?: GetUsuariosBuscaParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -8767,7 +8886,7 @@ export const getGetUsuariosBuscaUrl = (params: GetUsuariosBuscaParams,) => {
   return stringifiedParams.length > 0 ? `/api/usuarios/busca?${stringifiedParams}` : `/api/usuarios/busca`
 }
 
-export const getUsuariosBusca = async (params: GetUsuariosBuscaParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosBuscaResponse> => {
+export const getUsuariosBusca = async (params?: GetUsuariosBuscaParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosBuscaResponse> => {
 
   return clienteGerado<getUsuariosBuscaResponse>(getGetUsuariosBuscaUrl(params),
   {
@@ -8789,7 +8908,7 @@ export const getGetUsuariosBuscaQueryKey = (params?: GetUsuariosBuscaParams,) =>
     }
 
 
-export const getGetUsuariosBuscaQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetUsuariosBuscaQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(params?: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -8812,7 +8931,7 @@ export type GetUsuariosBuscaQueryError = unknown
 
 
 export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(
- params: GetUsuariosBuscaParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>> & Pick<
+ params: undefined |  GetUsuariosBuscaParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUsuariosBusca>>,
           TError,
@@ -8822,7 +8941,7 @@ export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuario
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(
- params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>> & Pick<
+ params?: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUsuariosBusca>>,
           TError,
@@ -8832,12 +8951,12 @@ export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuario
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(
- params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(
- params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9973,24 +10092,17 @@ export type getAuthCsrfResponseSuccess = (getAuthCsrfResponse204) & {
 
 export type getAuthCsrfResponse = (getAuthCsrfResponseSuccess)
 
-export const getGetAuthCsrfUrl = (params: GetAuthCsrfParams,) => {
-  const normalizedParams = new URLSearchParams();
+export const getGetAuthCsrfUrl = () => {
 
-  Object.entries(params || {}).forEach(([key, value]) => {
 
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
 
-  const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/auth/csrf?${stringifiedParams}` : `/api/auth/csrf`
+  return `/api/auth/csrf`
 }
 
-export const getAuthCsrf = async (params: GetAuthCsrfParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getAuthCsrfResponse> => {
+export const getAuthCsrf = async ( options?: Parameters<typeof clienteGerado>[1]): Promise<getAuthCsrfResponse> => {
 
-  return clienteGerado<getAuthCsrfResponse>(getGetAuthCsrfUrl(params),
+  return clienteGerado<getAuthCsrfResponse>(getGetAuthCsrfUrl(),
   {
     ...options,
     method: 'GET'
@@ -10003,23 +10115,23 @@ export const getAuthCsrf = async (params: GetAuthCsrfParams, options?: Parameter
 
 
 
-export const getGetAuthCsrfQueryKey = (params?: GetAuthCsrfParams,) => {
+export const getGetAuthCsrfQueryKey = () => {
     return [
-    `/api/auth/csrf`, ...(params ? [params] : [])
+    `/api/auth/csrf`
     ] as const;
     }
 
 
-export const getGetAuthCsrfQueryOptions = <TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetAuthCsrfQueryOptions = <TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetAuthCsrfQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetAuthCsrfQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAuthCsrf>>> = ({ signal }) => getAuthCsrf(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAuthCsrf>>> = ({ signal }) => getAuthCsrf({ signal, ...requestOptions });
 
 
 
@@ -10033,7 +10145,7 @@ export type GetAuthCsrfQueryError = unknown
 
 
 export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(
- params: GetAuthCsrfParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>> & Pick<
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAuthCsrf>>,
           TError,
@@ -10043,7 +10155,7 @@ export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, 
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(
- params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>> & Pick<
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAuthCsrf>>,
           TError,
@@ -10053,16 +10165,16 @@ export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, 
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(
- params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(
- params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetAuthCsrfQueryOptions(params,options)
+  const queryOptions = getGetAuthCsrfQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -10301,10 +10413,18 @@ export type getAlteracoesPendentesResponseSuccess = (getAlteracoesPendentesRespo
 
 export type getAlteracoesPendentesResponse = (getAlteracoesPendentesResponseSuccess)
 
-export const getGetAlteracoesPendentesUrl = (params: GetAlteracoesPendentesParams,) => {
+export const getGetAlteracoesPendentesUrl = (params?: GetAlteracoesPendentesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["sort"];
+
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -10316,7 +10436,7 @@ export const getGetAlteracoesPendentesUrl = (params: GetAlteracoesPendentesParam
   return stringifiedParams.length > 0 ? `/api/alteracoes-pendentes?${stringifiedParams}` : `/api/alteracoes-pendentes`
 }
 
-export const getAlteracoesPendentes = async (params: GetAlteracoesPendentesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getAlteracoesPendentesResponse> => {
+export const getAlteracoesPendentes = async (params?: GetAlteracoesPendentesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getAlteracoesPendentesResponse> => {
 
   return clienteGerado<getAlteracoesPendentesResponse>(getGetAlteracoesPendentesUrl(params),
   {
@@ -10338,7 +10458,7 @@ export const getGetAlteracoesPendentesQueryKey = (params?: GetAlteracoesPendente
     }
 
 
-export const getGetAlteracoesPendentesQueryOptions = <TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+export const getGetAlteracoesPendentesQueryOptions = <TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(params?: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -10361,7 +10481,7 @@ export type GetAlteracoesPendentesQueryError = unknown
 
 
 export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(
- params: GetAlteracoesPendentesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>> & Pick<
+ params: undefined |  GetAlteracoesPendentesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAlteracoesPendentes>>,
           TError,
@@ -10371,7 +10491,7 @@ export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getA
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(
- params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>> & Pick<
+ params?: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAlteracoesPendentes>>,
           TError,
@@ -10381,12 +10501,12 @@ export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getA
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(
- params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(
- params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
+ params?: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 

@@ -23,6 +23,7 @@ export function Casca() {
         ]
       : []),
     { para: '/minhas-escalas', rotulo: 'Minhas escalas', icone: 'calendario' as const },
+    { para: '/indisponibilidades', rotulo: 'Indisponibilidades', icone: 'relogio' as const },
   ];
 
   return (

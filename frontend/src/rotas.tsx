@@ -6,6 +6,8 @@ import { Convite } from './paginas/publico/Convite';
 import { NaoEncontrada } from './paginas/publico/NaoEncontrada';
 import { TrocarSenha } from './paginas/conta/TrocarSenha';
 import { ExigeSessao, RedirecionaInicio } from './auth/rotas';
+import { MinhasEscalas } from './paginas/servidor/MinhasEscalas';
+import { Indisponibilidades } from './paginas/servidor/Indisponibilidades';
 
 /** Mapa de rotas. Cada área entra aqui quando a sua parte é feita. */
 export const rotas = [
@@ -21,6 +23,8 @@ export const rotas = [
         children: [
           { index: true, element: <RedirecionaInicio /> },
           { path: '/conta/senha', element: <TrocarSenha /> },
+          { path: '/minhas-escalas', element: <MinhasEscalas /> },
+          { path: '/indisponibilidades', element: <Indisponibilidades /> },
         ],
       },
     ],
