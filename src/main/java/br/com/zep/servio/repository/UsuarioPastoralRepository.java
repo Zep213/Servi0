@@ -1,5 +1,6 @@
 package br.com.zep.servio.repository;
 
+import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.model.UsuarioPastoral;
 import br.com.zep.servio.model.enumerated.PapelPastoral;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +34,15 @@ public interface UsuarioPastoralRepository extends TenantRepository<UsuarioPasto
     boolean existsByUsuarioIdAndPapelAndActiveTrue(Long usuarioId, PapelPastoral papel);
 
     long countByPastoralIdAndPapelAndActiveTrueAndIdNot(Long pastoralId, PapelPastoral papel, Long id);
+
+    /** Pessoas ativas com um papel na pastoral (ex.: coordenadores, para os avisos por e-mail). */
+    @Query("""
+            select up.usuario from UsuarioPastoral up
+            where up.pastoral.id = :pastoralId and up.paroquiaId = :paroquiaId
+              and up.papel = :papel and up.active = true and up.usuario.active = true
+            order by up.usuario.id
+            """)
+    List<Usuario> findUsuariosPorPapel(@Param("pastoralId") Long pastoralId,
+                                       @Param("paroquiaId") Long paroquiaId,
+                                       @Param("papel") PapelPastoral papel);
 }

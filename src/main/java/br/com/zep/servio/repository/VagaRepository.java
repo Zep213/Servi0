@@ -32,4 +32,14 @@ public interface VagaRepository extends TenantRepository<Vaga> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select v from Vaga v where v.id = :id and v.paroquiaId = :paroquiaId and v.active = true")
     Optional<Vaga> findByIdParaEscalarComLock(@Param("id") Long id, @Param("paroquiaId") Long paroquiaId);
+
+    /** Vaga com função, pastoral e celebração para o aviso de vaga sem elegíveis (Etapa 6, Parte 4). */
+    @Query("""
+            select v from Vaga v
+            join fetch v.funcao f
+            join fetch f.pastoral
+            left join fetch v.celebracao
+            where v.id = :id and v.active = true
+            """)
+    Optional<Vaga> findParaEmail(@Param("id") Long id);
 }

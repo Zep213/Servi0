@@ -50,4 +50,16 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
                                         @Param("aceita") StatusConvite aceita,
                                         @Param("usuarioIds") Collection<Long> usuarioIds,
                                         @Param("hoje") LocalDate hoje);
+
+    /** Alocação com o que o e-mail precisa, sem depender de sessão aberta (o envio roda depois do commit). */
+    @Query("""
+            select a from Alocacao a
+            join fetch a.usuario
+            join fetch a.vaga v
+            join fetch v.funcao f
+            join fetch f.pastoral
+            left join fetch v.celebracao
+            where a.id = :id and a.active = true
+            """)
+    Optional<Alocacao> findParaEmail(@Param("id") Long id);
 }
