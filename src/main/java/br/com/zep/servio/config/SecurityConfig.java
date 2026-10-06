@@ -45,7 +45,7 @@ public class SecurityConfig {
     private static final String[] GESTAO_POR_PASTORAL = {
             "/api/pastorais/*/config/**", "/api/pastorais/*/financeiro/**", "/api/pastorais/*/reunioes/**",
             "/api/pastorais/*/modelos-vaga/**", "/api/alocacoes/**", "/api/usuarios-pastorais/**",
-            "/api/celebracoes/**", "/api/vagas/**"
+            "/api/celebracoes/**", "/api/vagas/**", "/api/pastorais/*/celebracoes/**"
     };
 
     private final TentativasLogin tentativasLogin;

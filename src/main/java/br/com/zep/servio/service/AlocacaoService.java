@@ -13,13 +13,15 @@ import br.com.zep.servio.model.dto.AlocacaoRequestDTO;
 import br.com.zep.servio.model.dto.AlocacaoResponseDTO;
 import br.com.zep.servio.model.enumerated.PapelPastoral;
 import br.com.zep.servio.model.enumerated.StatusConvite;
+import br.com.zep.servio.model.enumerated.TipoNotificacao;
 import br.com.zep.servio.repository.AlocacaoRepository;
 import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.repository.VagaRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
-import br.com.zep.servio.service.escalacao.ConfiguracaoPastoralService;
+import br.com.zep.servio.service.escalacao.ConviteService;
 import br.com.zep.servio.service.escalacao.ElegibilidadeService;
+import br.com.zep.servio.service.escalacao.EscalacaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +44,8 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     private final VagaRepository vagaRepository;
     private final UsuarioRepository usuarioRepository;
     private final ElegibilidadeService elegibilidadeService;
-    private final ConfiguracaoPastoralService configuracaoPastoralService;
+    private final EscalacaoService escalacaoService;
+    private final ConviteService conviteService;
     private final PastoraisPermissao pastoraisPermissao;
     private final AlteracaoPendenteService alteracaoPendenteService;
     private final Clock clock;
@@ -91,17 +94,13 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
             throw new RegraNegocioException("Vaga já está com todas as posições preenchidas");
         }
 
-        // Numa criação (id nulo) o convite sempre começa do zero; numa edição, o
-        // atualizar() abaixo decide se a escalação de fato mudou antes de reiniciar o prazo.
-        if (entidade.getId() == null) {
-            reiniciarConvite(entidade, pastoralId);
-        }
     }
 
-    private void reiniciarConvite(Alocacao entidade, Long pastoralId) {
-        long prazoHoras = configuracaoPastoralService.prazoRespostaHoras(pastoralId);
-        entidade.setStatus(StatusConvite.PENDENTE);
-        entidade.setDataLimiteResposta(LocalDateTime.now(clock).plusHours(prazoHoras));
+    /** Um caminho só para criar alocação: a escalação manual, sem forçar (forçar tem rota própria). */
+    @Override
+    @Transactional
+    public AlocacaoResponseDTO criar(AlocacaoRequestDTO request) {
+        return escalacaoService.escalar(request.vagaId(), request.usuarioId(), false);
     }
 
     @Override
@@ -141,13 +140,21 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
         exigirVisivel(pastoralAnterior.getId(), id);
         exigirGestorPastoral(pastoralAnterior.getId());
 
+        // Trava a vaga de destino antes de contar ocupantes (validar), como faz o caminho de escalação.
+        vagaRepository.findByIdParaEscalarComLock(request.vagaId(), paroquiaId());
         atualizarEntidade(request, entidade);
         validar(entidade);
         if (mudouEscalacao) {
+            // Quem recebe a vaga ganha prazo novo; o token antigo deixa de valer, então o link que
+            // o convidado anterior tinha não responde mais por esta alocação.
             Long pastoralNovaId = entidade.getVaga().getFuncao().getPastoral().getId();
-            reiniciarConvite(entidade, pastoralNovaId);
+            entidade.setStatus(StatusConvite.PENDENTE);
+            entidade.setDataLimiteResposta(conviteService.novoPrazo(pastoralNovaId));
         }
         Alocacao salva = repository.save(entidade);
+        if (mudouEscalacao) {
+            conviteService.emitir(salva, TipoNotificacao.CONVITE_REENVIO);
+        }
 
         boolean isVice = pastoraisPermissao.temPapel(pastoralAnterior.getId(), PapelPastoral.VICE.name());
         boolean isCoordenador = pastoraisPermissao.temPapel(pastoralAnterior.getId(), PapelPastoral.COORDENADOR.name());

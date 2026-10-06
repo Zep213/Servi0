@@ -2,6 +2,8 @@ package br.com.zep.servio.repository;
 
 import br.com.zep.servio.model.UsuarioPastoral;
 import br.com.zep.servio.model.enumerated.PapelPastoral;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +11,16 @@ import java.util.Optional;
 public interface UsuarioPastoralRepository extends TenantRepository<UsuarioPastoral> {
 
     List<UsuarioPastoral> findByPastoralIdAndActiveTrue(Long pastoralId);
+
+    /** Membros ativos da pastoral com o usuário já carregado, numa consulta só (Etapa 6, Parte 2). */
+    @Query("""
+            select up from UsuarioPastoral up join fetch up.usuario u
+            where up.pastoral.id = :pastoralId and up.paroquiaId = :paroquiaId
+              and up.active = true and u.active = true
+            order by u.id
+            """)
+    List<UsuarioPastoral> findMembrosAtivosComUsuario(@Param("pastoralId") Long pastoralId,
+                                                       @Param("paroquiaId") Long paroquiaId);
 
     List<UsuarioPastoral> findByPastoralIdAndPapelAndActiveTrue(Long pastoralId, PapelPastoral papel);
 
