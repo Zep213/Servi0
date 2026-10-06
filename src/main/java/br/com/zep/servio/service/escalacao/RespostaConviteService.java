@@ -2,6 +2,7 @@ package br.com.zep.servio.service.escalacao;
 
 import br.com.zep.servio.model.Alocacao;
 import br.com.zep.servio.model.enumerated.StatusConvite;
+import br.com.zep.servio.service.escalacao.evento.ConviteExpiradoEvent;
 import br.com.zep.servio.service.escalacao.evento.ConviteRecusadoEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,13 +26,14 @@ public class RespostaConviteService {
 
     /**
      * Aplica a resposta e zera o token (o link deixa de valer). Se o prazo já passou, grava EXPIRADA
-     * e devolve EXPIRADA sem mudar para aceita/recusada. Quem chama persiste e decide o erro.
+     * e devolve EXPIRADA sem mudar para aceita/recusada (e avisa o coordenador). Quem chama persiste e decide o erro.
      */
     public StatusConvite aplicar(Alocacao alocacao, boolean aceitar, String justificativa) {
         LocalDateTime agora = LocalDateTime.now(clock);
         alocacao.setTokenHash(null);
         if (alocacao.getDataLimiteResposta() != null && agora.isAfter(alocacao.getDataLimiteResposta())) {
             alocacao.setStatus(StatusConvite.EXPIRADA);
+            eventos.publishEvent(new ConviteExpiradoEvent(alocacao.getId()));
             return StatusConvite.EXPIRADA;
         }
         alocacao.setStatus(aceitar ? StatusConvite.ACEITA : StatusConvite.RECUSADA);
