@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface AlocacaoRepository extends TenantRepository<Alocacao> {
 
@@ -21,6 +22,9 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
     }
 
     List<Alocacao> findByVagaIdAndActiveTrue(Long vagaId);
+
+    /** Só quem tem o token (guardado como SHA-256) acha a alocação; alocação inativa não conta. */
+    Optional<Alocacao> findByTokenHashAndActiveTrue(String tokenHash);
 
     /** Alocações visíveis a quem não é PADRE/ADMIN (Parte 4): só de funções de pastorais do usuário. */
     Page<Alocacao> findByParoquiaIdAndVagaFuncaoPastoralIdInAndActiveTrue(

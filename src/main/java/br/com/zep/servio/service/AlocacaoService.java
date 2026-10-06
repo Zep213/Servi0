@@ -22,6 +22,7 @@ import br.com.zep.servio.security.PastoraisPermissao;
 import br.com.zep.servio.service.escalacao.ConviteService;
 import br.com.zep.servio.service.escalacao.ElegibilidadeService;
 import br.com.zep.servio.service.escalacao.EscalacaoService;
+import br.com.zep.servio.service.escalacao.RespostaConviteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +47,7 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     private final ElegibilidadeService elegibilidadeService;
     private final EscalacaoService escalacaoService;
     private final ConviteService conviteService;
+    private final RespostaConviteService respostaConviteService;
     private final PastoraisPermissao pastoraisPermissao;
     private final AlteracaoPendenteService alteracaoPendenteService;
     private final Clock clock;
@@ -219,7 +221,7 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
      * noRollbackFor: a expiração gravada abaixo tem que valer mesmo a chamada terminando em erro.
      */
     @Transactional(noRollbackFor = RegraNegocioException.class)
-    public AlocacaoResponseDTO responder(Long id, boolean aceitar) {
+    public AlocacaoResponseDTO responder(Long id, boolean aceitar, String justificativa) {
         Alocacao entidade = obterAtivo(id);
         if (!entidade.getUsuario().getId().equals(usuarioId())) {
             throw new ServioException("Você só pode responder ao próprio convite", HttpStatus.FORBIDDEN);
@@ -227,13 +229,15 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
         if (entidade.getStatus() != StatusConvite.PENDENTE) {
             throw new RegraNegocioException("Este convite já foi respondido");
         }
-        if (entidade.getDataLimiteResposta() != null && LocalDateTime.now(clock).isAfter(entidade.getDataLimiteResposta())) {
-            entidade.setStatus(StatusConvite.EXPIRADA);
-            repository.save(entidade);
+        if (justificativa != null && justificativa.length() > RespostaConviteService.TAMANHO_MAXIMO_JUSTIFICATIVA) {
+            throw new RegraNegocioException("Justificativa muito longa");
+        }
+        StatusConvite resultado = respostaConviteService.aplicar(entidade, aceitar, justificativa);
+        Alocacao salva = repository.save(entidade);
+        if (resultado == StatusConvite.EXPIRADA) {
+            // a expiração já está gravada (noRollbackFor acima); só o erro vai para quem chamou
             throw new RegraNegocioException("Prazo de resposta deste convite expirou");
         }
-
-        entidade.setStatus(aceitar ? StatusConvite.ACEITA : StatusConvite.RECUSADA);
-        return paraResposta(repository.save(entidade));
+        return paraResposta(salva);
     }
 }

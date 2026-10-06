@@ -52,7 +52,8 @@ public class AlocacaoController {
     }
 
     @PostMapping("/{id}/responder")
-    public AlocacaoResponseDTO responder(@PathVariable Long id, @RequestParam boolean aceitar) {
-        return service.responder(id, aceitar);
+    public AlocacaoResponseDTO responder(@PathVariable Long id, @RequestParam boolean aceitar,
+                                         @RequestParam(required = false) String justificativa) {
+        return service.responder(id, aceitar, justificativa);
     }
 }
