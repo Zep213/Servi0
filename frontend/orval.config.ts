@@ -34,7 +34,7 @@ export default defineConfig({
         operationName: nomeDaOperacao,
         mutator: {
           path: './src/api/cliente.ts',
-          name: 'clienteHttp',
+          name: 'clienteGerado',
         },
       },
     },

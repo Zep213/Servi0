@@ -121,7 +121,7 @@ import type {
   VagaResponseDTO
 } from './modelos';
 
-import { clienteHttp } from '../cliente';
+import { clienteGerado } from '../cliente';
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
@@ -161,9 +161,9 @@ export const getGetVagasPorIdUrl = (id: number,) => {
   return `/api/vagas/${id}`
 }
 
-export const getVagasPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getVagasPorIdResponse> => {
+export const getVagasPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getVagasPorIdResponse> => {
 
-  return clienteHttp<getVagasPorIdResponse>(getGetVagasPorIdUrl(id),
+  return clienteGerado<getVagasPorIdResponse>(getGetVagasPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -183,7 +183,7 @@ export const getGetVagasPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetVagasPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getVagasPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetVagasPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getVagasPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -212,7 +212,7 @@ export function useGetVagasPorId<TData = Awaited<ReturnType<typeof getVagasPorId
           TError,
           Awaited<ReturnType<typeof getVagasPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetVagasPorId<TData = Awaited<ReturnType<typeof getVagasPorId>>, TError = unknown>(
@@ -222,16 +222,16 @@ export function useGetVagasPorId<TData = Awaited<ReturnType<typeof getVagasPorId
           TError,
           Awaited<ReturnType<typeof getVagasPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetVagasPorId<TData = Awaited<ReturnType<typeof getVagasPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetVagasPorId<TData = Awaited<ReturnType<typeof getVagasPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -269,7 +269,7 @@ export const getPutVagasPorIdUrl = (id: number,) => {
 }
 
 export const putVagasPorId = async (id: number,
-    vagaRequestDTO: VagaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putVagasPorIdResponse> => {
+    vagaRequestDTO: VagaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putVagasPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -285,7 +285,7 @@ export const putVagasPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putVagasPorIdResponse>(getPutVagasPorIdUrl(id),
+return clienteGerado<putVagasPorIdResponse>(getPutVagasPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -301,7 +301,7 @@ return clienteHttp<putVagasPorIdResponse>(getPutVagasPorIdUrl(id),
 export const getPutVagasPorIdMutationKey = () => ['putVagasPorId'] as const;
 
 export const getPutVagasPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putVagasPorId>>, TError,PutVagasPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putVagasPorId>>, TError,PutVagasPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putVagasPorId>>, TError,PutVagasPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutVagasPorIdMutationKey();
@@ -333,7 +333,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutVagasPorIdMutationVariables = {id: number;data: VagaRequestDTO}
 
     export const usePutVagasPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putVagasPorId>>, TError,PutVagasPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putVagasPorId>>, TError,PutVagasPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putVagasPorId>>,
         TError,
@@ -363,9 +363,9 @@ export const getDeleteVagasPorIdUrl = (id: number,) => {
   return `/api/vagas/${id}`
 }
 
-export const deleteVagasPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteVagasPorIdResponse> => {
+export const deleteVagasPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteVagasPorIdResponse> => {
 
-  return clienteHttp<deleteVagasPorIdResponse>(getDeleteVagasPorIdUrl(id),
+  return clienteGerado<deleteVagasPorIdResponse>(getDeleteVagasPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -381,7 +381,7 @@ export const deleteVagasPorId = async (id: number, options?: Parameters<typeof c
 export const getDeleteVagasPorIdMutationKey = () => ['deleteVagasPorId'] as const;
 
 export const getDeleteVagasPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteVagasPorId>>, TError,DeleteVagasPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteVagasPorId>>, TError,DeleteVagasPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteVagasPorId>>, TError,DeleteVagasPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteVagasPorIdMutationKey();
@@ -413,7 +413,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteVagasPorIdMutationVariables = {id: number}
 
     export const useDeleteVagasPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteVagasPorId>>, TError,DeleteVagasPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteVagasPorId>>, TError,DeleteVagasPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteVagasPorId>>,
         TError,
@@ -443,9 +443,9 @@ export const getGetUsuariosPorIdUrl = (id: number,) => {
   return `/api/usuarios/${id}`
 }
 
-export const getUsuariosPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getUsuariosPorIdResponse> => {
+export const getUsuariosPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosPorIdResponse> => {
 
-  return clienteHttp<getUsuariosPorIdResponse>(getGetUsuariosPorIdUrl(id),
+  return clienteGerado<getUsuariosPorIdResponse>(getGetUsuariosPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -465,7 +465,7 @@ export const getGetUsuariosPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetUsuariosPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetUsuariosPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -494,7 +494,7 @@ export function useGetUsuariosPorId<TData = Awaited<ReturnType<typeof getUsuario
           TError,
           Awaited<ReturnType<typeof getUsuariosPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosPorId<TData = Awaited<ReturnType<typeof getUsuariosPorId>>, TError = unknown>(
@@ -504,16 +504,16 @@ export function useGetUsuariosPorId<TData = Awaited<ReturnType<typeof getUsuario
           TError,
           Awaited<ReturnType<typeof getUsuariosPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosPorId<TData = Awaited<ReturnType<typeof getUsuariosPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuariosPorId<TData = Awaited<ReturnType<typeof getUsuariosPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -551,7 +551,7 @@ export const getPutUsuariosPorIdUrl = (id: number,) => {
 }
 
 export const putUsuariosPorId = async (id: number,
-    usuarioUpdateDTO: UsuarioUpdateDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putUsuariosPorIdResponse> => {
+    usuarioUpdateDTO: UsuarioUpdateDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putUsuariosPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -567,7 +567,7 @@ export const putUsuariosPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putUsuariosPorIdResponse>(getPutUsuariosPorIdUrl(id),
+return clienteGerado<putUsuariosPorIdResponse>(getPutUsuariosPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -583,7 +583,7 @@ return clienteHttp<putUsuariosPorIdResponse>(getPutUsuariosPorIdUrl(id),
 export const getPutUsuariosPorIdMutationKey = () => ['putUsuariosPorId'] as const;
 
 export const getPutUsuariosPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPorId>>, TError,PutUsuariosPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPorId>>, TError,PutUsuariosPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPorId>>, TError,PutUsuariosPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutUsuariosPorIdMutationKey();
@@ -615,7 +615,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutUsuariosPorIdMutationVariables = {id: number;data: UsuarioUpdateDTO}
 
     export const usePutUsuariosPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPorId>>, TError,PutUsuariosPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPorId>>, TError,PutUsuariosPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putUsuariosPorId>>,
         TError,
@@ -645,9 +645,9 @@ export const getDeleteUsuariosPorIdUrl = (id: number,) => {
   return `/api/usuarios/${id}`
 }
 
-export const deleteUsuariosPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteUsuariosPorIdResponse> => {
+export const deleteUsuariosPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteUsuariosPorIdResponse> => {
 
-  return clienteHttp<deleteUsuariosPorIdResponse>(getDeleteUsuariosPorIdUrl(id),
+  return clienteGerado<deleteUsuariosPorIdResponse>(getDeleteUsuariosPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -663,7 +663,7 @@ export const deleteUsuariosPorId = async (id: number, options?: Parameters<typeo
 export const getDeleteUsuariosPorIdMutationKey = () => ['deleteUsuariosPorId'] as const;
 
 export const getDeleteUsuariosPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPorId>>, TError,DeleteUsuariosPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPorId>>, TError,DeleteUsuariosPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPorId>>, TError,DeleteUsuariosPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteUsuariosPorIdMutationKey();
@@ -695,7 +695,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteUsuariosPorIdMutationVariables = {id: number}
 
     export const useDeleteUsuariosPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPorId>>, TError,DeleteUsuariosPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPorId>>, TError,DeleteUsuariosPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteUsuariosPorId>>,
         TError,
@@ -725,9 +725,9 @@ export const getGetUsuariosPastoraisPorIdUrl = (id: number,) => {
   return `/api/usuarios-pastorais/${id}`
 }
 
-export const getUsuariosPastoraisPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getUsuariosPastoraisPorIdResponse> => {
+export const getUsuariosPastoraisPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosPastoraisPorIdResponse> => {
 
-  return clienteHttp<getUsuariosPastoraisPorIdResponse>(getGetUsuariosPastoraisPorIdUrl(id),
+  return clienteGerado<getUsuariosPastoraisPorIdResponse>(getGetUsuariosPastoraisPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -747,7 +747,7 @@ export const getGetUsuariosPastoraisPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetUsuariosPastoraisPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetUsuariosPastoraisPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -776,7 +776,7 @@ export function useGetUsuariosPastoraisPorId<TData = Awaited<ReturnType<typeof g
           TError,
           Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosPastoraisPorId<TData = Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError = unknown>(
@@ -786,16 +786,16 @@ export function useGetUsuariosPastoraisPorId<TData = Awaited<ReturnType<typeof g
           TError,
           Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosPastoraisPorId<TData = Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuariosPastoraisPorId<TData = Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -833,7 +833,7 @@ export const getPutUsuariosPastoraisPorIdUrl = (id: number,) => {
 }
 
 export const putUsuariosPastoraisPorId = async (id: number,
-    usuarioPastoralRequestDTO: UsuarioPastoralRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putUsuariosPastoraisPorIdResponse> => {
+    usuarioPastoralRequestDTO: UsuarioPastoralRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putUsuariosPastoraisPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -849,7 +849,7 @@ export const putUsuariosPastoraisPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putUsuariosPastoraisPorIdResponse>(getPutUsuariosPastoraisPorIdUrl(id),
+return clienteGerado<putUsuariosPastoraisPorIdResponse>(getPutUsuariosPastoraisPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -865,7 +865,7 @@ return clienteHttp<putUsuariosPastoraisPorIdResponse>(getPutUsuariosPastoraisPor
 export const getPutUsuariosPastoraisPorIdMutationKey = () => ['putUsuariosPastoraisPorId'] as const;
 
 export const getPutUsuariosPastoraisPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPastoraisPorId>>, TError,PutUsuariosPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPastoraisPorId>>, TError,PutUsuariosPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPastoraisPorId>>, TError,PutUsuariosPastoraisPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutUsuariosPastoraisPorIdMutationKey();
@@ -897,7 +897,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutUsuariosPastoraisPorIdMutationVariables = {id: number;data: UsuarioPastoralRequestDTO}
 
     export const usePutUsuariosPastoraisPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPastoraisPorId>>, TError,PutUsuariosPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosPastoraisPorId>>, TError,PutUsuariosPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putUsuariosPastoraisPorId>>,
         TError,
@@ -927,9 +927,9 @@ export const getDeleteUsuariosPastoraisPorIdUrl = (id: number,) => {
   return `/api/usuarios-pastorais/${id}`
 }
 
-export const deleteUsuariosPastoraisPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteUsuariosPastoraisPorIdResponse> => {
+export const deleteUsuariosPastoraisPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteUsuariosPastoraisPorIdResponse> => {
 
-  return clienteHttp<deleteUsuariosPastoraisPorIdResponse>(getDeleteUsuariosPastoraisPorIdUrl(id),
+  return clienteGerado<deleteUsuariosPastoraisPorIdResponse>(getDeleteUsuariosPastoraisPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -945,7 +945,7 @@ export const deleteUsuariosPastoraisPorId = async (id: number, options?: Paramet
 export const getDeleteUsuariosPastoraisPorIdMutationKey = () => ['deleteUsuariosPastoraisPorId'] as const;
 
 export const getDeleteUsuariosPastoraisPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPastoraisPorId>>, TError,DeleteUsuariosPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPastoraisPorId>>, TError,DeleteUsuariosPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPastoraisPorId>>, TError,DeleteUsuariosPastoraisPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteUsuariosPastoraisPorIdMutationKey();
@@ -977,7 +977,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteUsuariosPastoraisPorIdMutationVariables = {id: number}
 
     export const useDeleteUsuariosPastoraisPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPastoraisPorId>>, TError,DeleteUsuariosPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosPastoraisPorId>>, TError,DeleteUsuariosPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteUsuariosPastoraisPorId>>,
         TError,
@@ -1007,9 +1007,9 @@ export const getGetUsuariosFuncoesPorIdUrl = (id: number,) => {
   return `/api/usuarios-funcoes/${id}`
 }
 
-export const getUsuariosFuncoesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getUsuariosFuncoesPorIdResponse> => {
+export const getUsuariosFuncoesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosFuncoesPorIdResponse> => {
 
-  return clienteHttp<getUsuariosFuncoesPorIdResponse>(getGetUsuariosFuncoesPorIdUrl(id),
+  return clienteGerado<getUsuariosFuncoesPorIdResponse>(getGetUsuariosFuncoesPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -1029,7 +1029,7 @@ export const getGetUsuariosFuncoesPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetUsuariosFuncoesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetUsuariosFuncoesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1058,7 +1058,7 @@ export function useGetUsuariosFuncoesPorId<TData = Awaited<ReturnType<typeof get
           TError,
           Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosFuncoesPorId<TData = Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError = unknown>(
@@ -1068,16 +1068,16 @@ export function useGetUsuariosFuncoesPorId<TData = Awaited<ReturnType<typeof get
           TError,
           Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosFuncoesPorId<TData = Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuariosFuncoesPorId<TData = Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1115,7 +1115,7 @@ export const getPutUsuariosFuncoesPorIdUrl = (id: number,) => {
 }
 
 export const putUsuariosFuncoesPorId = async (id: number,
-    usuarioFuncaoRequestDTO: UsuarioFuncaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putUsuariosFuncoesPorIdResponse> => {
+    usuarioFuncaoRequestDTO: UsuarioFuncaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putUsuariosFuncoesPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -1131,7 +1131,7 @@ export const putUsuariosFuncoesPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putUsuariosFuncoesPorIdResponse>(getPutUsuariosFuncoesPorIdUrl(id),
+return clienteGerado<putUsuariosFuncoesPorIdResponse>(getPutUsuariosFuncoesPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -1147,7 +1147,7 @@ return clienteHttp<putUsuariosFuncoesPorIdResponse>(getPutUsuariosFuncoesPorIdUr
 export const getPutUsuariosFuncoesPorIdMutationKey = () => ['putUsuariosFuncoesPorId'] as const;
 
 export const getPutUsuariosFuncoesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosFuncoesPorId>>, TError,PutUsuariosFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosFuncoesPorId>>, TError,PutUsuariosFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putUsuariosFuncoesPorId>>, TError,PutUsuariosFuncoesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutUsuariosFuncoesPorIdMutationKey();
@@ -1179,7 +1179,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutUsuariosFuncoesPorIdMutationVariables = {id: number;data: UsuarioFuncaoRequestDTO}
 
     export const usePutUsuariosFuncoesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosFuncoesPorId>>, TError,PutUsuariosFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsuariosFuncoesPorId>>, TError,PutUsuariosFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putUsuariosFuncoesPorId>>,
         TError,
@@ -1209,9 +1209,9 @@ export const getDeleteUsuariosFuncoesPorIdUrl = (id: number,) => {
   return `/api/usuarios-funcoes/${id}`
 }
 
-export const deleteUsuariosFuncoesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteUsuariosFuncoesPorIdResponse> => {
+export const deleteUsuariosFuncoesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteUsuariosFuncoesPorIdResponse> => {
 
-  return clienteHttp<deleteUsuariosFuncoesPorIdResponse>(getDeleteUsuariosFuncoesPorIdUrl(id),
+  return clienteGerado<deleteUsuariosFuncoesPorIdResponse>(getDeleteUsuariosFuncoesPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -1227,7 +1227,7 @@ export const deleteUsuariosFuncoesPorId = async (id: number, options?: Parameter
 export const getDeleteUsuariosFuncoesPorIdMutationKey = () => ['deleteUsuariosFuncoesPorId'] as const;
 
 export const getDeleteUsuariosFuncoesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosFuncoesPorId>>, TError,DeleteUsuariosFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosFuncoesPorId>>, TError,DeleteUsuariosFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosFuncoesPorId>>, TError,DeleteUsuariosFuncoesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteUsuariosFuncoesPorIdMutationKey();
@@ -1259,7 +1259,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteUsuariosFuncoesPorIdMutationVariables = {id: number}
 
     export const useDeleteUsuariosFuncoesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosFuncoesPorId>>, TError,DeleteUsuariosFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsuariosFuncoesPorId>>, TError,DeleteUsuariosFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteUsuariosFuncoesPorId>>,
         TError,
@@ -1289,9 +1289,9 @@ export const getGetPedidosTrocaPorIdUrl = (id: number,) => {
   return `/api/pedidos-troca/${id}`
 }
 
-export const getPedidosTrocaPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getPedidosTrocaPorIdResponse> => {
+export const getPedidosTrocaPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getPedidosTrocaPorIdResponse> => {
 
-  return clienteHttp<getPedidosTrocaPorIdResponse>(getGetPedidosTrocaPorIdUrl(id),
+  return clienteGerado<getPedidosTrocaPorIdResponse>(getGetPedidosTrocaPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -1311,7 +1311,7 @@ export const getGetPedidosTrocaPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetPedidosTrocaPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPedidosTrocaPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1340,7 +1340,7 @@ export function useGetPedidosTrocaPorId<TData = Awaited<ReturnType<typeof getPed
           TError,
           Awaited<ReturnType<typeof getPedidosTrocaPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPedidosTrocaPorId<TData = Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError = unknown>(
@@ -1350,16 +1350,16 @@ export function useGetPedidosTrocaPorId<TData = Awaited<ReturnType<typeof getPed
           TError,
           Awaited<ReturnType<typeof getPedidosTrocaPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPedidosTrocaPorId<TData = Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPedidosTrocaPorId<TData = Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTrocaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1397,7 +1397,7 @@ export const getPutPedidosTrocaPorIdUrl = (id: number,) => {
 }
 
 export const putPedidosTrocaPorId = async (id: number,
-    pedidoTrocaRequestDTO: PedidoTrocaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putPedidosTrocaPorIdResponse> => {
+    pedidoTrocaRequestDTO: PedidoTrocaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putPedidosTrocaPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -1413,7 +1413,7 @@ export const putPedidosTrocaPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putPedidosTrocaPorIdResponse>(getPutPedidosTrocaPorIdUrl(id),
+return clienteGerado<putPedidosTrocaPorIdResponse>(getPutPedidosTrocaPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -1429,7 +1429,7 @@ return clienteHttp<putPedidosTrocaPorIdResponse>(getPutPedidosTrocaPorIdUrl(id),
 export const getPutPedidosTrocaPorIdMutationKey = () => ['putPedidosTrocaPorId'] as const;
 
 export const getPutPedidosTrocaPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPedidosTrocaPorId>>, TError,PutPedidosTrocaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPedidosTrocaPorId>>, TError,PutPedidosTrocaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putPedidosTrocaPorId>>, TError,PutPedidosTrocaPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutPedidosTrocaPorIdMutationKey();
@@ -1461,7 +1461,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutPedidosTrocaPorIdMutationVariables = {id: number;data: PedidoTrocaRequestDTO}
 
     export const usePutPedidosTrocaPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPedidosTrocaPorId>>, TError,PutPedidosTrocaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPedidosTrocaPorId>>, TError,PutPedidosTrocaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putPedidosTrocaPorId>>,
         TError,
@@ -1491,9 +1491,9 @@ export const getDeletePedidosTrocaPorIdUrl = (id: number,) => {
   return `/api/pedidos-troca/${id}`
 }
 
-export const deletePedidosTrocaPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deletePedidosTrocaPorIdResponse> => {
+export const deletePedidosTrocaPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deletePedidosTrocaPorIdResponse> => {
 
-  return clienteHttp<deletePedidosTrocaPorIdResponse>(getDeletePedidosTrocaPorIdUrl(id),
+  return clienteGerado<deletePedidosTrocaPorIdResponse>(getDeletePedidosTrocaPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -1509,7 +1509,7 @@ export const deletePedidosTrocaPorId = async (id: number, options?: Parameters<t
 export const getDeletePedidosTrocaPorIdMutationKey = () => ['deletePedidosTrocaPorId'] as const;
 
 export const getDeletePedidosTrocaPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePedidosTrocaPorId>>, TError,DeletePedidosTrocaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePedidosTrocaPorId>>, TError,DeletePedidosTrocaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deletePedidosTrocaPorId>>, TError,DeletePedidosTrocaPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeletePedidosTrocaPorIdMutationKey();
@@ -1541,7 +1541,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeletePedidosTrocaPorIdMutationVariables = {id: number}
 
     export const useDeletePedidosTrocaPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePedidosTrocaPorId>>, TError,DeletePedidosTrocaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePedidosTrocaPorId>>, TError,DeletePedidosTrocaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deletePedidosTrocaPorId>>,
         TError,
@@ -1574,7 +1574,7 @@ export const getPutPastoraisPorPastoralIdModelosVagaPorIdUrl = (pastoralId: numb
 
 export const putPastoraisPorPastoralIdModelosVagaPorId = async (pastoralId: number,
     id: number,
-    modeloVagaRequestDTO: ModeloVagaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putPastoraisPorPastoralIdModelosVagaPorIdResponse> => {
+    modeloVagaRequestDTO: ModeloVagaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putPastoraisPorPastoralIdModelosVagaPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -1590,7 +1590,7 @@ export const putPastoraisPorPastoralIdModelosVagaPorId = async (pastoralId: numb
     }
     return headers;
   };
-return clienteHttp<putPastoraisPorPastoralIdModelosVagaPorIdResponse>(getPutPastoraisPorPastoralIdModelosVagaPorIdUrl(pastoralId,id),
+return clienteGerado<putPastoraisPorPastoralIdModelosVagaPorIdResponse>(getPutPastoraisPorPastoralIdModelosVagaPorIdUrl(pastoralId,id),
   {
     ...options,
     method: 'PUT',
@@ -1606,7 +1606,7 @@ return clienteHttp<putPastoraisPorPastoralIdModelosVagaPorIdResponse>(getPutPast
 export const getPutPastoraisPorPastoralIdModelosVagaPorIdMutationKey = () => ['putPastoraisPorPastoralIdModelosVagaPorId'] as const;
 
 export const getPutPastoraisPorPastoralIdModelosVagaPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdModelosVagaPorId>>, TError,PutPastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdModelosVagaPorId>>, TError,PutPastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdModelosVagaPorId>>, TError,PutPastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutPastoraisPorPastoralIdModelosVagaPorIdMutationKey();
@@ -1638,7 +1638,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutPastoraisPorPastoralIdModelosVagaPorIdMutationVariables = {pastoralId: number;id: number;data: ModeloVagaRequestDTO}
 
     export const usePutPastoraisPorPastoralIdModelosVagaPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdModelosVagaPorId>>, TError,PutPastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdModelosVagaPorId>>, TError,PutPastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putPastoraisPorPastoralIdModelosVagaPorId>>,
         TError,
@@ -1670,9 +1670,9 @@ export const getDeletePastoraisPorPastoralIdModelosVagaPorIdUrl = (pastoralId: n
 }
 
 export const deletePastoraisPorPastoralIdModelosVagaPorId = async (pastoralId: number,
-    id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deletePastoraisPorPastoralIdModelosVagaPorIdResponse> => {
+    id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deletePastoraisPorPastoralIdModelosVagaPorIdResponse> => {
 
-  return clienteHttp<deletePastoraisPorPastoralIdModelosVagaPorIdResponse>(getDeletePastoraisPorPastoralIdModelosVagaPorIdUrl(pastoralId,id),
+  return clienteGerado<deletePastoraisPorPastoralIdModelosVagaPorIdResponse>(getDeletePastoraisPorPastoralIdModelosVagaPorIdUrl(pastoralId,id),
   {
     ...options,
     method: 'DELETE'
@@ -1688,7 +1688,7 @@ export const deletePastoraisPorPastoralIdModelosVagaPorId = async (pastoralId: n
 export const getDeletePastoraisPorPastoralIdModelosVagaPorIdMutationKey = () => ['deletePastoraisPorPastoralIdModelosVagaPorId'] as const;
 
 export const getDeletePastoraisPorPastoralIdModelosVagaPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdModelosVagaPorId>>, TError,DeletePastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdModelosVagaPorId>>, TError,DeletePastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdModelosVagaPorId>>, TError,DeletePastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeletePastoraisPorPastoralIdModelosVagaPorIdMutationKey();
@@ -1720,7 +1720,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeletePastoraisPorPastoralIdModelosVagaPorIdMutationVariables = {pastoralId: number;id: number}
 
     export const useDeletePastoraisPorPastoralIdModelosVagaPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdModelosVagaPorId>>, TError,DeletePastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdModelosVagaPorId>>, TError,DeletePastoraisPorPastoralIdModelosVagaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deletePastoraisPorPastoralIdModelosVagaPorId>>,
         TError,
@@ -1753,7 +1753,7 @@ export const getPutPastoraisPorPastoralIdConfigPorChaveUrl = (pastoralId: number
 
 export const putPastoraisPorPastoralIdConfigPorChave = async (pastoralId: number,
     chave: string,
-    pastoralConfigRequestDTO: PastoralConfigRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putPastoraisPorPastoralIdConfigPorChaveResponse> => {
+    pastoralConfigRequestDTO: PastoralConfigRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putPastoraisPorPastoralIdConfigPorChaveResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -1769,7 +1769,7 @@ export const putPastoraisPorPastoralIdConfigPorChave = async (pastoralId: number
     }
     return headers;
   };
-return clienteHttp<putPastoraisPorPastoralIdConfigPorChaveResponse>(getPutPastoraisPorPastoralIdConfigPorChaveUrl(pastoralId,chave),
+return clienteGerado<putPastoraisPorPastoralIdConfigPorChaveResponse>(getPutPastoraisPorPastoralIdConfigPorChaveUrl(pastoralId,chave),
   {
     ...options,
     method: 'PUT',
@@ -1785,7 +1785,7 @@ return clienteHttp<putPastoraisPorPastoralIdConfigPorChaveResponse>(getPutPastor
 export const getPutPastoraisPorPastoralIdConfigPorChaveMutationKey = () => ['putPastoraisPorPastoralIdConfigPorChave'] as const;
 
 export const getPutPastoraisPorPastoralIdConfigPorChaveMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdConfigPorChave>>, TError,PutPastoraisPorPastoralIdConfigPorChaveMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdConfigPorChave>>, TError,PutPastoraisPorPastoralIdConfigPorChaveMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdConfigPorChave>>, TError,PutPastoraisPorPastoralIdConfigPorChaveMutationVariables, TContext> => {
 
 const mutationKey = getPutPastoraisPorPastoralIdConfigPorChaveMutationKey();
@@ -1817,7 +1817,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutPastoraisPorPastoralIdConfigPorChaveMutationVariables = {pastoralId: number;chave: string;data: PastoralConfigRequestDTO}
 
     export const usePutPastoraisPorPastoralIdConfigPorChave = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdConfigPorChave>>, TError,PutPastoraisPorPastoralIdConfigPorChaveMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorPastoralIdConfigPorChave>>, TError,PutPastoraisPorPastoralIdConfigPorChaveMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putPastoraisPorPastoralIdConfigPorChave>>,
         TError,
@@ -1847,9 +1847,9 @@ export const getGetPastoraisPorIdUrl = (id: number,) => {
   return `/api/pastorais/${id}`
 }
 
-export const getPastoraisPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisPorIdResponse> => {
+export const getPastoraisPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorIdResponse> => {
 
-  return clienteHttp<getPastoraisPorIdResponse>(getGetPastoraisPorIdUrl(id),
+  return clienteGerado<getPastoraisPorIdResponse>(getGetPastoraisPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -1869,7 +1869,7 @@ export const getGetPastoraisPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetPastoraisPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPastoraisPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1898,7 +1898,7 @@ export function useGetPastoraisPorId<TData = Awaited<ReturnType<typeof getPastor
           TError,
           Awaited<ReturnType<typeof getPastoraisPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorId<TData = Awaited<ReturnType<typeof getPastoraisPorId>>, TError = unknown>(
@@ -1908,16 +1908,16 @@ export function useGetPastoraisPorId<TData = Awaited<ReturnType<typeof getPastor
           TError,
           Awaited<ReturnType<typeof getPastoraisPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorId<TData = Awaited<ReturnType<typeof getPastoraisPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorId<TData = Awaited<ReturnType<typeof getPastoraisPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1955,7 +1955,7 @@ export const getPutPastoraisPorIdUrl = (id: number,) => {
 }
 
 export const putPastoraisPorId = async (id: number,
-    pastoralRequestDTO: PastoralRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putPastoraisPorIdResponse> => {
+    pastoralRequestDTO: PastoralRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putPastoraisPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -1971,7 +1971,7 @@ export const putPastoraisPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putPastoraisPorIdResponse>(getPutPastoraisPorIdUrl(id),
+return clienteGerado<putPastoraisPorIdResponse>(getPutPastoraisPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -1987,7 +1987,7 @@ return clienteHttp<putPastoraisPorIdResponse>(getPutPastoraisPorIdUrl(id),
 export const getPutPastoraisPorIdMutationKey = () => ['putPastoraisPorId'] as const;
 
 export const getPutPastoraisPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorId>>, TError,PutPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorId>>, TError,PutPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorId>>, TError,PutPastoraisPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutPastoraisPorIdMutationKey();
@@ -2019,7 +2019,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutPastoraisPorIdMutationVariables = {id: number;data: PastoralRequestDTO}
 
     export const usePutPastoraisPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorId>>, TError,PutPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPastoraisPorId>>, TError,PutPastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putPastoraisPorId>>,
         TError,
@@ -2049,9 +2049,9 @@ export const getDeletePastoraisPorIdUrl = (id: number,) => {
   return `/api/pastorais/${id}`
 }
 
-export const deletePastoraisPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deletePastoraisPorIdResponse> => {
+export const deletePastoraisPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deletePastoraisPorIdResponse> => {
 
-  return clienteHttp<deletePastoraisPorIdResponse>(getDeletePastoraisPorIdUrl(id),
+  return clienteGerado<deletePastoraisPorIdResponse>(getDeletePastoraisPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -2067,7 +2067,7 @@ export const deletePastoraisPorId = async (id: number, options?: Parameters<type
 export const getDeletePastoraisPorIdMutationKey = () => ['deletePastoraisPorId'] as const;
 
 export const getDeletePastoraisPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorId>>, TError,DeletePastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorId>>, TError,DeletePastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorId>>, TError,DeletePastoraisPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeletePastoraisPorIdMutationKey();
@@ -2099,7 +2099,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeletePastoraisPorIdMutationVariables = {id: number}
 
     export const useDeletePastoraisPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorId>>, TError,DeletePastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorId>>, TError,DeletePastoraisPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deletePastoraisPorId>>,
         TError,
@@ -2129,9 +2129,9 @@ export const getGetParoquiasMinhaUrl = () => {
   return `/api/paroquias/minha`
 }
 
-export const getParoquiasMinha = async ( options?: Parameters<typeof clienteHttp>[1]): Promise<getParoquiasMinhaResponse> => {
+export const getParoquiasMinha = async ( options?: Parameters<typeof clienteGerado>[1]): Promise<getParoquiasMinhaResponse> => {
 
-  return clienteHttp<getParoquiasMinhaResponse>(getGetParoquiasMinhaUrl(),
+  return clienteGerado<getParoquiasMinhaResponse>(getGetParoquiasMinhaUrl(),
   {
     ...options,
     method: 'GET'
@@ -2151,7 +2151,7 @@ export const getGetParoquiasMinhaQueryKey = () => {
     }
 
 
-export const getGetParoquiasMinhaQueryOptions = <TData = Awaited<ReturnType<typeof getParoquiasMinha>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParoquiasMinha>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetParoquiasMinhaQueryOptions = <TData = Awaited<ReturnType<typeof getParoquiasMinha>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParoquiasMinha>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2180,7 +2180,7 @@ export function useGetParoquiasMinha<TData = Awaited<ReturnType<typeof getParoqu
           TError,
           Awaited<ReturnType<typeof getParoquiasMinha>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetParoquiasMinha<TData = Awaited<ReturnType<typeof getParoquiasMinha>>, TError = unknown>(
@@ -2190,16 +2190,16 @@ export function useGetParoquiasMinha<TData = Awaited<ReturnType<typeof getParoqu
           TError,
           Awaited<ReturnType<typeof getParoquiasMinha>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetParoquiasMinha<TData = Awaited<ReturnType<typeof getParoquiasMinha>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParoquiasMinha>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParoquiasMinha>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetParoquiasMinha<TData = Awaited<ReturnType<typeof getParoquiasMinha>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParoquiasMinha>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getParoquiasMinha>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2236,7 +2236,7 @@ export const getPutParoquiasMinhaUrl = () => {
   return `/api/paroquias/minha`
 }
 
-export const putParoquiasMinha = async (paroquiaRequestDTO: ParoquiaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putParoquiasMinhaResponse> => {
+export const putParoquiasMinha = async (paroquiaRequestDTO: ParoquiaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putParoquiasMinhaResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -2252,7 +2252,7 @@ export const putParoquiasMinha = async (paroquiaRequestDTO: ParoquiaRequestDTO, 
     }
     return headers;
   };
-return clienteHttp<putParoquiasMinhaResponse>(getPutParoquiasMinhaUrl(),
+return clienteGerado<putParoquiasMinhaResponse>(getPutParoquiasMinhaUrl(),
   {
     ...options,
     method: 'PUT',
@@ -2268,7 +2268,7 @@ return clienteHttp<putParoquiasMinhaResponse>(getPutParoquiasMinhaUrl(),
 export const getPutParoquiasMinhaMutationKey = () => ['putParoquiasMinha'] as const;
 
 export const getPutParoquiasMinhaMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putParoquiasMinha>>, TError,PutParoquiasMinhaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putParoquiasMinha>>, TError,PutParoquiasMinhaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putParoquiasMinha>>, TError,PutParoquiasMinhaMutationVariables, TContext> => {
 
 const mutationKey = getPutParoquiasMinhaMutationKey();
@@ -2300,7 +2300,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutParoquiasMinhaMutationVariables = {data: ParoquiaRequestDTO}
 
     export const usePutParoquiasMinha = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putParoquiasMinha>>, TError,PutParoquiasMinhaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putParoquiasMinha>>, TError,PutParoquiasMinhaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putParoquiasMinha>>,
         TError,
@@ -2330,9 +2330,9 @@ export const getGetIndisponibilidadesPorIdUrl = (id: number,) => {
   return `/api/indisponibilidades/${id}`
 }
 
-export const getIndisponibilidadesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getIndisponibilidadesPorIdResponse> => {
+export const getIndisponibilidadesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getIndisponibilidadesPorIdResponse> => {
 
-  return clienteHttp<getIndisponibilidadesPorIdResponse>(getGetIndisponibilidadesPorIdUrl(id),
+  return clienteGerado<getIndisponibilidadesPorIdResponse>(getGetIndisponibilidadesPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -2352,7 +2352,7 @@ export const getGetIndisponibilidadesPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetIndisponibilidadesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetIndisponibilidadesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2381,7 +2381,7 @@ export function useGetIndisponibilidadesPorId<TData = Awaited<ReturnType<typeof 
           TError,
           Awaited<ReturnType<typeof getIndisponibilidadesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetIndisponibilidadesPorId<TData = Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError = unknown>(
@@ -2391,16 +2391,16 @@ export function useGetIndisponibilidadesPorId<TData = Awaited<ReturnType<typeof 
           TError,
           Awaited<ReturnType<typeof getIndisponibilidadesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetIndisponibilidadesPorId<TData = Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetIndisponibilidadesPorId<TData = Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2438,7 +2438,7 @@ export const getPutIndisponibilidadesPorIdUrl = (id: number,) => {
 }
 
 export const putIndisponibilidadesPorId = async (id: number,
-    indisponibilidadeRequestDTO: IndisponibilidadeRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putIndisponibilidadesPorIdResponse> => {
+    indisponibilidadeRequestDTO: IndisponibilidadeRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putIndisponibilidadesPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -2454,7 +2454,7 @@ export const putIndisponibilidadesPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putIndisponibilidadesPorIdResponse>(getPutIndisponibilidadesPorIdUrl(id),
+return clienteGerado<putIndisponibilidadesPorIdResponse>(getPutIndisponibilidadesPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -2470,7 +2470,7 @@ return clienteHttp<putIndisponibilidadesPorIdResponse>(getPutIndisponibilidadesP
 export const getPutIndisponibilidadesPorIdMutationKey = () => ['putIndisponibilidadesPorId'] as const;
 
 export const getPutIndisponibilidadesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putIndisponibilidadesPorId>>, TError,PutIndisponibilidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putIndisponibilidadesPorId>>, TError,PutIndisponibilidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putIndisponibilidadesPorId>>, TError,PutIndisponibilidadesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutIndisponibilidadesPorIdMutationKey();
@@ -2502,7 +2502,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutIndisponibilidadesPorIdMutationVariables = {id: number;data: IndisponibilidadeRequestDTO}
 
     export const usePutIndisponibilidadesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putIndisponibilidadesPorId>>, TError,PutIndisponibilidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putIndisponibilidadesPorId>>, TError,PutIndisponibilidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putIndisponibilidadesPorId>>,
         TError,
@@ -2532,9 +2532,9 @@ export const getDeleteIndisponibilidadesPorIdUrl = (id: number,) => {
   return `/api/indisponibilidades/${id}`
 }
 
-export const deleteIndisponibilidadesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteIndisponibilidadesPorIdResponse> => {
+export const deleteIndisponibilidadesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteIndisponibilidadesPorIdResponse> => {
 
-  return clienteHttp<deleteIndisponibilidadesPorIdResponse>(getDeleteIndisponibilidadesPorIdUrl(id),
+  return clienteGerado<deleteIndisponibilidadesPorIdResponse>(getDeleteIndisponibilidadesPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -2550,7 +2550,7 @@ export const deleteIndisponibilidadesPorId = async (id: number, options?: Parame
 export const getDeleteIndisponibilidadesPorIdMutationKey = () => ['deleteIndisponibilidadesPorId'] as const;
 
 export const getDeleteIndisponibilidadesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteIndisponibilidadesPorId>>, TError,DeleteIndisponibilidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteIndisponibilidadesPorId>>, TError,DeleteIndisponibilidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteIndisponibilidadesPorId>>, TError,DeleteIndisponibilidadesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteIndisponibilidadesPorIdMutationKey();
@@ -2582,7 +2582,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteIndisponibilidadesPorIdMutationVariables = {id: number}
 
     export const useDeleteIndisponibilidadesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteIndisponibilidadesPorId>>, TError,DeleteIndisponibilidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteIndisponibilidadesPorId>>, TError,DeleteIndisponibilidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteIndisponibilidadesPorId>>,
         TError,
@@ -2612,9 +2612,9 @@ export const getGetFuncoesPorIdUrl = (id: number,) => {
   return `/api/funcoes/${id}`
 }
 
-export const getFuncoesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getFuncoesPorIdResponse> => {
+export const getFuncoesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getFuncoesPorIdResponse> => {
 
-  return clienteHttp<getFuncoesPorIdResponse>(getGetFuncoesPorIdUrl(id),
+  return clienteGerado<getFuncoesPorIdResponse>(getGetFuncoesPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -2634,7 +2634,7 @@ export const getGetFuncoesPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetFuncoesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getFuncoesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetFuncoesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getFuncoesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2663,7 +2663,7 @@ export function useGetFuncoesPorId<TData = Awaited<ReturnType<typeof getFuncoesP
           TError,
           Awaited<ReturnType<typeof getFuncoesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFuncoesPorId<TData = Awaited<ReturnType<typeof getFuncoesPorId>>, TError = unknown>(
@@ -2673,16 +2673,16 @@ export function useGetFuncoesPorId<TData = Awaited<ReturnType<typeof getFuncoesP
           TError,
           Awaited<ReturnType<typeof getFuncoesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFuncoesPorId<TData = Awaited<ReturnType<typeof getFuncoesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetFuncoesPorId<TData = Awaited<ReturnType<typeof getFuncoesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2720,7 +2720,7 @@ export const getPutFuncoesPorIdUrl = (id: number,) => {
 }
 
 export const putFuncoesPorId = async (id: number,
-    funcaoRequestDTO: FuncaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putFuncoesPorIdResponse> => {
+    funcaoRequestDTO: FuncaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putFuncoesPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -2736,7 +2736,7 @@ export const putFuncoesPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putFuncoesPorIdResponse>(getPutFuncoesPorIdUrl(id),
+return clienteGerado<putFuncoesPorIdResponse>(getPutFuncoesPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -2752,7 +2752,7 @@ return clienteHttp<putFuncoesPorIdResponse>(getPutFuncoesPorIdUrl(id),
 export const getPutFuncoesPorIdMutationKey = () => ['putFuncoesPorId'] as const;
 
 export const getPutFuncoesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putFuncoesPorId>>, TError,PutFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putFuncoesPorId>>, TError,PutFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putFuncoesPorId>>, TError,PutFuncoesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutFuncoesPorIdMutationKey();
@@ -2784,7 +2784,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutFuncoesPorIdMutationVariables = {id: number;data: FuncaoRequestDTO}
 
     export const usePutFuncoesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putFuncoesPorId>>, TError,PutFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putFuncoesPorId>>, TError,PutFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putFuncoesPorId>>,
         TError,
@@ -2814,9 +2814,9 @@ export const getDeleteFuncoesPorIdUrl = (id: number,) => {
   return `/api/funcoes/${id}`
 }
 
-export const deleteFuncoesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteFuncoesPorIdResponse> => {
+export const deleteFuncoesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteFuncoesPorIdResponse> => {
 
-  return clienteHttp<deleteFuncoesPorIdResponse>(getDeleteFuncoesPorIdUrl(id),
+  return clienteGerado<deleteFuncoesPorIdResponse>(getDeleteFuncoesPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -2832,7 +2832,7 @@ export const deleteFuncoesPorId = async (id: number, options?: Parameters<typeof
 export const getDeleteFuncoesPorIdMutationKey = () => ['deleteFuncoesPorId'] as const;
 
 export const getDeleteFuncoesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFuncoesPorId>>, TError,DeleteFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFuncoesPorId>>, TError,DeleteFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteFuncoesPorId>>, TError,DeleteFuncoesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteFuncoesPorIdMutationKey();
@@ -2864,7 +2864,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteFuncoesPorIdMutationVariables = {id: number}
 
     export const useDeleteFuncoesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFuncoesPorId>>, TError,DeleteFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFuncoesPorId>>, TError,DeleteFuncoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteFuncoesPorId>>,
         TError,
@@ -2894,9 +2894,9 @@ export const getGetComunidadesPorIdUrl = (id: number,) => {
   return `/api/comunidades/${id}`
 }
 
-export const getComunidadesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getComunidadesPorIdResponse> => {
+export const getComunidadesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getComunidadesPorIdResponse> => {
 
-  return clienteHttp<getComunidadesPorIdResponse>(getGetComunidadesPorIdUrl(id),
+  return clienteGerado<getComunidadesPorIdResponse>(getGetComunidadesPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -2916,7 +2916,7 @@ export const getGetComunidadesPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetComunidadesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getComunidadesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetComunidadesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getComunidadesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2945,7 +2945,7 @@ export function useGetComunidadesPorId<TData = Awaited<ReturnType<typeof getComu
           TError,
           Awaited<ReturnType<typeof getComunidadesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetComunidadesPorId<TData = Awaited<ReturnType<typeof getComunidadesPorId>>, TError = unknown>(
@@ -2955,16 +2955,16 @@ export function useGetComunidadesPorId<TData = Awaited<ReturnType<typeof getComu
           TError,
           Awaited<ReturnType<typeof getComunidadesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetComunidadesPorId<TData = Awaited<ReturnType<typeof getComunidadesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetComunidadesPorId<TData = Awaited<ReturnType<typeof getComunidadesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidadesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -3002,7 +3002,7 @@ export const getPutComunidadesPorIdUrl = (id: number,) => {
 }
 
 export const putComunidadesPorId = async (id: number,
-    comunidadeRequestDTO: ComunidadeRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putComunidadesPorIdResponse> => {
+    comunidadeRequestDTO: ComunidadeRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putComunidadesPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -3018,7 +3018,7 @@ export const putComunidadesPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putComunidadesPorIdResponse>(getPutComunidadesPorIdUrl(id),
+return clienteGerado<putComunidadesPorIdResponse>(getPutComunidadesPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -3034,7 +3034,7 @@ return clienteHttp<putComunidadesPorIdResponse>(getPutComunidadesPorIdUrl(id),
 export const getPutComunidadesPorIdMutationKey = () => ['putComunidadesPorId'] as const;
 
 export const getPutComunidadesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putComunidadesPorId>>, TError,PutComunidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putComunidadesPorId>>, TError,PutComunidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putComunidadesPorId>>, TError,PutComunidadesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutComunidadesPorIdMutationKey();
@@ -3066,7 +3066,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutComunidadesPorIdMutationVariables = {id: number;data: ComunidadeRequestDTO}
 
     export const usePutComunidadesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putComunidadesPorId>>, TError,PutComunidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putComunidadesPorId>>, TError,PutComunidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putComunidadesPorId>>,
         TError,
@@ -3096,9 +3096,9 @@ export const getDeleteComunidadesPorIdUrl = (id: number,) => {
   return `/api/comunidades/${id}`
 }
 
-export const deleteComunidadesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteComunidadesPorIdResponse> => {
+export const deleteComunidadesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteComunidadesPorIdResponse> => {
 
-  return clienteHttp<deleteComunidadesPorIdResponse>(getDeleteComunidadesPorIdUrl(id),
+  return clienteGerado<deleteComunidadesPorIdResponse>(getDeleteComunidadesPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -3114,7 +3114,7 @@ export const deleteComunidadesPorId = async (id: number, options?: Parameters<ty
 export const getDeleteComunidadesPorIdMutationKey = () => ['deleteComunidadesPorId'] as const;
 
 export const getDeleteComunidadesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteComunidadesPorId>>, TError,DeleteComunidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteComunidadesPorId>>, TError,DeleteComunidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteComunidadesPorId>>, TError,DeleteComunidadesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteComunidadesPorIdMutationKey();
@@ -3146,7 +3146,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteComunidadesPorIdMutationVariables = {id: number}
 
     export const useDeleteComunidadesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteComunidadesPorId>>, TError,DeleteComunidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteComunidadesPorId>>, TError,DeleteComunidadesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteComunidadesPorId>>,
         TError,
@@ -3176,9 +3176,9 @@ export const getGetCompromissosAgendaPorIdUrl = (id: number,) => {
   return `/api/compromissos-agenda/${id}`
 }
 
-export const getCompromissosAgendaPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getCompromissosAgendaPorIdResponse> => {
+export const getCompromissosAgendaPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getCompromissosAgendaPorIdResponse> => {
 
-  return clienteHttp<getCompromissosAgendaPorIdResponse>(getGetCompromissosAgendaPorIdUrl(id),
+  return clienteGerado<getCompromissosAgendaPorIdResponse>(getGetCompromissosAgendaPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -3198,7 +3198,7 @@ export const getGetCompromissosAgendaPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetCompromissosAgendaPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetCompromissosAgendaPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -3227,7 +3227,7 @@ export function useGetCompromissosAgendaPorId<TData = Awaited<ReturnType<typeof 
           TError,
           Awaited<ReturnType<typeof getCompromissosAgendaPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCompromissosAgendaPorId<TData = Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError = unknown>(
@@ -3237,16 +3237,16 @@ export function useGetCompromissosAgendaPorId<TData = Awaited<ReturnType<typeof 
           TError,
           Awaited<ReturnType<typeof getCompromissosAgendaPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCompromissosAgendaPorId<TData = Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetCompromissosAgendaPorId<TData = Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgendaPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -3284,7 +3284,7 @@ export const getPutCompromissosAgendaPorIdUrl = (id: number,) => {
 }
 
 export const putCompromissosAgendaPorId = async (id: number,
-    compromissoAgendaRequestDTO: CompromissoAgendaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putCompromissosAgendaPorIdResponse> => {
+    compromissoAgendaRequestDTO: CompromissoAgendaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putCompromissosAgendaPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -3300,7 +3300,7 @@ export const putCompromissosAgendaPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putCompromissosAgendaPorIdResponse>(getPutCompromissosAgendaPorIdUrl(id),
+return clienteGerado<putCompromissosAgendaPorIdResponse>(getPutCompromissosAgendaPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -3316,7 +3316,7 @@ return clienteHttp<putCompromissosAgendaPorIdResponse>(getPutCompromissosAgendaP
 export const getPutCompromissosAgendaPorIdMutationKey = () => ['putCompromissosAgendaPorId'] as const;
 
 export const getPutCompromissosAgendaPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putCompromissosAgendaPorId>>, TError,PutCompromissosAgendaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putCompromissosAgendaPorId>>, TError,PutCompromissosAgendaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putCompromissosAgendaPorId>>, TError,PutCompromissosAgendaPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutCompromissosAgendaPorIdMutationKey();
@@ -3348,7 +3348,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutCompromissosAgendaPorIdMutationVariables = {id: number;data: CompromissoAgendaRequestDTO}
 
     export const usePutCompromissosAgendaPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putCompromissosAgendaPorId>>, TError,PutCompromissosAgendaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putCompromissosAgendaPorId>>, TError,PutCompromissosAgendaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putCompromissosAgendaPorId>>,
         TError,
@@ -3378,9 +3378,9 @@ export const getDeleteCompromissosAgendaPorIdUrl = (id: number,) => {
   return `/api/compromissos-agenda/${id}`
 }
 
-export const deleteCompromissosAgendaPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteCompromissosAgendaPorIdResponse> => {
+export const deleteCompromissosAgendaPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteCompromissosAgendaPorIdResponse> => {
 
-  return clienteHttp<deleteCompromissosAgendaPorIdResponse>(getDeleteCompromissosAgendaPorIdUrl(id),
+  return clienteGerado<deleteCompromissosAgendaPorIdResponse>(getDeleteCompromissosAgendaPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -3396,7 +3396,7 @@ export const deleteCompromissosAgendaPorId = async (id: number, options?: Parame
 export const getDeleteCompromissosAgendaPorIdMutationKey = () => ['deleteCompromissosAgendaPorId'] as const;
 
 export const getDeleteCompromissosAgendaPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompromissosAgendaPorId>>, TError,DeleteCompromissosAgendaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompromissosAgendaPorId>>, TError,DeleteCompromissosAgendaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteCompromissosAgendaPorId>>, TError,DeleteCompromissosAgendaPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteCompromissosAgendaPorIdMutationKey();
@@ -3428,7 +3428,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteCompromissosAgendaPorIdMutationVariables = {id: number}
 
     export const useDeleteCompromissosAgendaPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompromissosAgendaPorId>>, TError,DeleteCompromissosAgendaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompromissosAgendaPorId>>, TError,DeleteCompromissosAgendaPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCompromissosAgendaPorId>>,
         TError,
@@ -3458,9 +3458,9 @@ export const getGetCelebracoesPorIdUrl = (id: number,) => {
   return `/api/celebracoes/${id}`
 }
 
-export const getCelebracoesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getCelebracoesPorIdResponse> => {
+export const getCelebracoesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getCelebracoesPorIdResponse> => {
 
-  return clienteHttp<getCelebracoesPorIdResponse>(getGetCelebracoesPorIdUrl(id),
+  return clienteGerado<getCelebracoesPorIdResponse>(getGetCelebracoesPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -3480,7 +3480,7 @@ export const getGetCelebracoesPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetCelebracoesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getCelebracoesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetCelebracoesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getCelebracoesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -3509,7 +3509,7 @@ export function useGetCelebracoesPorId<TData = Awaited<ReturnType<typeof getCele
           TError,
           Awaited<ReturnType<typeof getCelebracoesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCelebracoesPorId<TData = Awaited<ReturnType<typeof getCelebracoesPorId>>, TError = unknown>(
@@ -3519,16 +3519,16 @@ export function useGetCelebracoesPorId<TData = Awaited<ReturnType<typeof getCele
           TError,
           Awaited<ReturnType<typeof getCelebracoesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCelebracoesPorId<TData = Awaited<ReturnType<typeof getCelebracoesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetCelebracoesPorId<TData = Awaited<ReturnType<typeof getCelebracoesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -3566,7 +3566,7 @@ export const getPutCelebracoesPorIdUrl = (id: number,) => {
 }
 
 export const putCelebracoesPorId = async (id: number,
-    celebracaoRequestDTO: CelebracaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putCelebracoesPorIdResponse> => {
+    celebracaoRequestDTO: CelebracaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putCelebracoesPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -3582,7 +3582,7 @@ export const putCelebracoesPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putCelebracoesPorIdResponse>(getPutCelebracoesPorIdUrl(id),
+return clienteGerado<putCelebracoesPorIdResponse>(getPutCelebracoesPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -3598,7 +3598,7 @@ return clienteHttp<putCelebracoesPorIdResponse>(getPutCelebracoesPorIdUrl(id),
 export const getPutCelebracoesPorIdMutationKey = () => ['putCelebracoesPorId'] as const;
 
 export const getPutCelebracoesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putCelebracoesPorId>>, TError,PutCelebracoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putCelebracoesPorId>>, TError,PutCelebracoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putCelebracoesPorId>>, TError,PutCelebracoesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutCelebracoesPorIdMutationKey();
@@ -3630,7 +3630,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutCelebracoesPorIdMutationVariables = {id: number;data: CelebracaoRequestDTO}
 
     export const usePutCelebracoesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putCelebracoesPorId>>, TError,PutCelebracoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putCelebracoesPorId>>, TError,PutCelebracoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putCelebracoesPorId>>,
         TError,
@@ -3660,9 +3660,9 @@ export const getDeleteCelebracoesPorIdUrl = (id: number,) => {
   return `/api/celebracoes/${id}`
 }
 
-export const deleteCelebracoesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteCelebracoesPorIdResponse> => {
+export const deleteCelebracoesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteCelebracoesPorIdResponse> => {
 
-  return clienteHttp<deleteCelebracoesPorIdResponse>(getDeleteCelebracoesPorIdUrl(id),
+  return clienteGerado<deleteCelebracoesPorIdResponse>(getDeleteCelebracoesPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -3678,7 +3678,7 @@ export const deleteCelebracoesPorId = async (id: number, options?: Parameters<ty
 export const getDeleteCelebracoesPorIdMutationKey = () => ['deleteCelebracoesPorId'] as const;
 
 export const getDeleteCelebracoesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCelebracoesPorId>>, TError,DeleteCelebracoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCelebracoesPorId>>, TError,DeleteCelebracoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteCelebracoesPorId>>, TError,DeleteCelebracoesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteCelebracoesPorIdMutationKey();
@@ -3710,7 +3710,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteCelebracoesPorIdMutationVariables = {id: number}
 
     export const useDeleteCelebracoesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCelebracoesPorId>>, TError,DeleteCelebracoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCelebracoesPorId>>, TError,DeleteCelebracoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCelebracoesPorId>>,
         TError,
@@ -3740,9 +3740,9 @@ export const getGetAlocacoesPorIdUrl = (id: number,) => {
   return `/api/alocacoes/${id}`
 }
 
-export const getAlocacoesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getAlocacoesPorIdResponse> => {
+export const getAlocacoesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getAlocacoesPorIdResponse> => {
 
-  return clienteHttp<getAlocacoesPorIdResponse>(getGetAlocacoesPorIdUrl(id),
+  return clienteGerado<getAlocacoesPorIdResponse>(getGetAlocacoesPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -3762,7 +3762,7 @@ export const getGetAlocacoesPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetAlocacoesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getAlocacoesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetAlocacoesPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getAlocacoesPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -3791,7 +3791,7 @@ export function useGetAlocacoesPorId<TData = Awaited<ReturnType<typeof getAlocac
           TError,
           Awaited<ReturnType<typeof getAlocacoesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlocacoesPorId<TData = Awaited<ReturnType<typeof getAlocacoesPorId>>, TError = unknown>(
@@ -3801,16 +3801,16 @@ export function useGetAlocacoesPorId<TData = Awaited<ReturnType<typeof getAlocac
           TError,
           Awaited<ReturnType<typeof getAlocacoesPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlocacoesPorId<TData = Awaited<ReturnType<typeof getAlocacoesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAlocacoesPorId<TData = Awaited<ReturnType<typeof getAlocacoesPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoesPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -3848,7 +3848,7 @@ export const getPutAlocacoesPorIdUrl = (id: number,) => {
 }
 
 export const putAlocacoesPorId = async (id: number,
-    alocacaoRequestDTO: AlocacaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<putAlocacoesPorIdResponse> => {
+    alocacaoRequestDTO: AlocacaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<putAlocacoesPorIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -3864,7 +3864,7 @@ export const putAlocacoesPorId = async (id: number,
     }
     return headers;
   };
-return clienteHttp<putAlocacoesPorIdResponse>(getPutAlocacoesPorIdUrl(id),
+return clienteGerado<putAlocacoesPorIdResponse>(getPutAlocacoesPorIdUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -3880,7 +3880,7 @@ return clienteHttp<putAlocacoesPorIdResponse>(getPutAlocacoesPorIdUrl(id),
 export const getPutAlocacoesPorIdMutationKey = () => ['putAlocacoesPorId'] as const;
 
 export const getPutAlocacoesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putAlocacoesPorId>>, TError,PutAlocacoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putAlocacoesPorId>>, TError,PutAlocacoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putAlocacoesPorId>>, TError,PutAlocacoesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getPutAlocacoesPorIdMutationKey();
@@ -3912,7 +3912,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutAlocacoesPorIdMutationVariables = {id: number;data: AlocacaoRequestDTO}
 
     export const usePutAlocacoesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putAlocacoesPorId>>, TError,PutAlocacoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putAlocacoesPorId>>, TError,PutAlocacoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putAlocacoesPorId>>,
         TError,
@@ -3942,9 +3942,9 @@ export const getDeleteAlocacoesPorIdUrl = (id: number,) => {
   return `/api/alocacoes/${id}`
 }
 
-export const deleteAlocacoesPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deleteAlocacoesPorIdResponse> => {
+export const deleteAlocacoesPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deleteAlocacoesPorIdResponse> => {
 
-  return clienteHttp<deleteAlocacoesPorIdResponse>(getDeleteAlocacoesPorIdUrl(id),
+  return clienteGerado<deleteAlocacoesPorIdResponse>(getDeleteAlocacoesPorIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -3960,7 +3960,7 @@ export const deleteAlocacoesPorId = async (id: number, options?: Parameters<type
 export const getDeleteAlocacoesPorIdMutationKey = () => ['deleteAlocacoesPorId'] as const;
 
 export const getDeleteAlocacoesPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAlocacoesPorId>>, TError,DeleteAlocacoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAlocacoesPorId>>, TError,DeleteAlocacoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteAlocacoesPorId>>, TError,DeleteAlocacoesPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeleteAlocacoesPorIdMutationKey();
@@ -3992,7 +3992,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteAlocacoesPorIdMutationVariables = {id: number}
 
     export const useDeleteAlocacoesPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAlocacoesPorId>>, TError,DeleteAlocacoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAlocacoesPorId>>, TError,DeleteAlocacoesPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteAlocacoesPorId>>,
         TError,
@@ -4029,9 +4029,9 @@ export const getGetVagasUrl = (params: GetVagasParams,) => {
   return stringifiedParams.length > 0 ? `/api/vagas?${stringifiedParams}` : `/api/vagas`
 }
 
-export const getVagas = async (params: GetVagasParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getVagasResponse> => {
+export const getVagas = async (params: GetVagasParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getVagasResponse> => {
 
-  return clienteHttp<getVagasResponse>(getGetVagasUrl(params),
+  return clienteGerado<getVagasResponse>(getGetVagasUrl(params),
   {
     ...options,
     method: 'GET'
@@ -4051,7 +4051,7 @@ export const getGetVagasQueryKey = (params?: GetVagasParams,) => {
     }
 
 
-export const getGetVagasQueryOptions = <TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetVagasQueryOptions = <TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -4080,7 +4080,7 @@ export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError
           TError,
           Awaited<ReturnType<typeof getVagas>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(
@@ -4090,16 +4090,16 @@ export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError
           TError,
           Awaited<ReturnType<typeof getVagas>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(
- params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetVagas<TData = Awaited<ReturnType<typeof getVagas>>, TError = unknown>(
- params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetVagasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -4136,7 +4136,7 @@ export const getPostVagasUrl = () => {
   return `/api/vagas`
 }
 
-export const postVagas = async (vagaRequestDTO: VagaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postVagasResponse> => {
+export const postVagas = async (vagaRequestDTO: VagaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postVagasResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -4152,7 +4152,7 @@ export const postVagas = async (vagaRequestDTO: VagaRequestDTO, options?: Parame
     }
     return headers;
   };
-return clienteHttp<postVagasResponse>(getPostVagasUrl(),
+return clienteGerado<postVagasResponse>(getPostVagasUrl(),
   {
     ...options,
     method: 'POST',
@@ -4168,7 +4168,7 @@ return clienteHttp<postVagasResponse>(getPostVagasUrl(),
 export const getPostVagasMutationKey = () => ['postVagas'] as const;
 
 export const getPostVagasMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagas>>, TError,PostVagasMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagas>>, TError,PostVagasMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postVagas>>, TError,PostVagasMutationVariables, TContext> => {
 
 const mutationKey = getPostVagasMutationKey();
@@ -4200,7 +4200,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostVagasMutationVariables = {data: VagaRequestDTO}
 
     export const usePostVagas = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagas>>, TError,PostVagasMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagas>>, TError,PostVagasMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postVagas>>,
         TError,
@@ -4230,9 +4230,9 @@ export const getPostVagasPorIdSortearUrl = (id: number,) => {
   return `/api/vagas/${id}/sortear`
 }
 
-export const postVagasPorIdSortear = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<postVagasPorIdSortearResponse> => {
+export const postVagasPorIdSortear = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<postVagasPorIdSortearResponse> => {
 
-  return clienteHttp<postVagasPorIdSortearResponse>(getPostVagasPorIdSortearUrl(id),
+  return clienteGerado<postVagasPorIdSortearResponse>(getPostVagasPorIdSortearUrl(id),
   {
     ...options,
     method: 'POST'
@@ -4248,7 +4248,7 @@ export const postVagasPorIdSortear = async (id: number, options?: Parameters<typ
 export const getPostVagasPorIdSortearMutationKey = () => ['postVagasPorIdSortear'] as const;
 
 export const getPostVagasPorIdSortearMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdSortear>>, TError,PostVagasPorIdSortearMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdSortear>>, TError,PostVagasPorIdSortearMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdSortear>>, TError,PostVagasPorIdSortearMutationVariables, TContext> => {
 
 const mutationKey = getPostVagasPorIdSortearMutationKey();
@@ -4280,7 +4280,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostVagasPorIdSortearMutationVariables = {id: number}
 
     export const usePostVagasPorIdSortear = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdSortear>>, TError,PostVagasPorIdSortearMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdSortear>>, TError,PostVagasPorIdSortearMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postVagasPorIdSortear>>,
         TError,
@@ -4311,7 +4311,7 @@ export const getPostVagasPorIdEscalarUrl = (id: number,) => {
 }
 
 export const postVagasPorIdEscalar = async (id: number,
-    escalarRequestDTO: EscalarRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postVagasPorIdEscalarResponse> => {
+    escalarRequestDTO: EscalarRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postVagasPorIdEscalarResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -4327,7 +4327,7 @@ export const postVagasPorIdEscalar = async (id: number,
     }
     return headers;
   };
-return clienteHttp<postVagasPorIdEscalarResponse>(getPostVagasPorIdEscalarUrl(id),
+return clienteGerado<postVagasPorIdEscalarResponse>(getPostVagasPorIdEscalarUrl(id),
   {
     ...options,
     method: 'POST',
@@ -4343,7 +4343,7 @@ return clienteHttp<postVagasPorIdEscalarResponse>(getPostVagasPorIdEscalarUrl(id
 export const getPostVagasPorIdEscalarMutationKey = () => ['postVagasPorIdEscalar'] as const;
 
 export const getPostVagasPorIdEscalarMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdEscalar>>, TError,PostVagasPorIdEscalarMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdEscalar>>, TError,PostVagasPorIdEscalarMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdEscalar>>, TError,PostVagasPorIdEscalarMutationVariables, TContext> => {
 
 const mutationKey = getPostVagasPorIdEscalarMutationKey();
@@ -4375,7 +4375,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostVagasPorIdEscalarMutationVariables = {id: number;data: EscalarRequestDTO}
 
     export const usePostVagasPorIdEscalar = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdEscalar>>, TError,PostVagasPorIdEscalarMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postVagasPorIdEscalar>>, TError,PostVagasPorIdEscalarMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postVagasPorIdEscalar>>,
         TError,
@@ -4412,9 +4412,9 @@ export const getGetUsuariosUrl = (params: GetUsuariosParams,) => {
   return stringifiedParams.length > 0 ? `/api/usuarios?${stringifiedParams}` : `/api/usuarios`
 }
 
-export const getUsuarios = async (params: GetUsuariosParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getUsuariosResponse> => {
+export const getUsuarios = async (params: GetUsuariosParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosResponse> => {
 
-  return clienteHttp<getUsuariosResponse>(getGetUsuariosUrl(params),
+  return clienteGerado<getUsuariosResponse>(getGetUsuariosUrl(params),
   {
     ...options,
     method: 'GET'
@@ -4434,7 +4434,7 @@ export const getGetUsuariosQueryKey = (params?: GetUsuariosParams,) => {
     }
 
 
-export const getGetUsuariosQueryOptions = <TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetUsuariosQueryOptions = <TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -4463,7 +4463,7 @@ export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, 
           TError,
           Awaited<ReturnType<typeof getUsuarios>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(
@@ -4473,16 +4473,16 @@ export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, 
           TError,
           Awaited<ReturnType<typeof getUsuarios>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(
- params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuarios<TData = Awaited<ReturnType<typeof getUsuarios>>, TError = unknown>(
- params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetUsuariosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuarios>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -4519,7 +4519,7 @@ export const getPostUsuariosUrl = () => {
   return `/api/usuarios`
 }
 
-export const postUsuarios = async (usuarioRequestDTO: UsuarioRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postUsuariosResponse> => {
+export const postUsuarios = async (usuarioRequestDTO: UsuarioRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postUsuariosResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -4535,7 +4535,7 @@ export const postUsuarios = async (usuarioRequestDTO: UsuarioRequestDTO, options
     }
     return headers;
   };
-return clienteHttp<postUsuariosResponse>(getPostUsuariosUrl(),
+return clienteGerado<postUsuariosResponse>(getPostUsuariosUrl(),
   {
     ...options,
     method: 'POST',
@@ -4551,7 +4551,7 @@ return clienteHttp<postUsuariosResponse>(getPostUsuariosUrl(),
 export const getPostUsuariosMutationKey = () => ['postUsuarios'] as const;
 
 export const getPostUsuariosMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuarios>>, TError,PostUsuariosMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuarios>>, TError,PostUsuariosMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postUsuarios>>, TError,PostUsuariosMutationVariables, TContext> => {
 
 const mutationKey = getPostUsuariosMutationKey();
@@ -4583,7 +4583,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostUsuariosMutationVariables = {data: UsuarioRequestDTO}
 
     export const usePostUsuarios = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuarios>>, TError,PostUsuariosMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuarios>>, TError,PostUsuariosMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postUsuarios>>,
         TError,
@@ -4620,9 +4620,9 @@ export const getGetUsuariosPastoraisUrl = (params: GetUsuariosPastoraisParams,) 
   return stringifiedParams.length > 0 ? `/api/usuarios-pastorais?${stringifiedParams}` : `/api/usuarios-pastorais`
 }
 
-export const getUsuariosPastorais = async (params: GetUsuariosPastoraisParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getUsuariosPastoraisResponse> => {
+export const getUsuariosPastorais = async (params: GetUsuariosPastoraisParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosPastoraisResponse> => {
 
-  return clienteHttp<getUsuariosPastoraisResponse>(getGetUsuariosPastoraisUrl(params),
+  return clienteGerado<getUsuariosPastoraisResponse>(getGetUsuariosPastoraisUrl(params),
   {
     ...options,
     method: 'GET'
@@ -4642,7 +4642,7 @@ export const getGetUsuariosPastoraisQueryKey = (params?: GetUsuariosPastoraisPar
     }
 
 
-export const getGetUsuariosPastoraisQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetUsuariosPastoraisQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -4671,7 +4671,7 @@ export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsu
           TError,
           Awaited<ReturnType<typeof getUsuariosPastorais>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(
@@ -4681,16 +4681,16 @@ export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsu
           TError,
           Awaited<ReturnType<typeof getUsuariosPastorais>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(
- params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuariosPastorais<TData = Awaited<ReturnType<typeof getUsuariosPastorais>>, TError = unknown>(
- params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetUsuariosPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -4727,7 +4727,7 @@ export const getPostUsuariosPastoraisUrl = () => {
   return `/api/usuarios-pastorais`
 }
 
-export const postUsuariosPastorais = async (usuarioPastoralRequestDTO: UsuarioPastoralRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postUsuariosPastoraisResponse> => {
+export const postUsuariosPastorais = async (usuarioPastoralRequestDTO: UsuarioPastoralRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postUsuariosPastoraisResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -4743,7 +4743,7 @@ export const postUsuariosPastorais = async (usuarioPastoralRequestDTO: UsuarioPa
     }
     return headers;
   };
-return clienteHttp<postUsuariosPastoraisResponse>(getPostUsuariosPastoraisUrl(),
+return clienteGerado<postUsuariosPastoraisResponse>(getPostUsuariosPastoraisUrl(),
   {
     ...options,
     method: 'POST',
@@ -4759,7 +4759,7 @@ return clienteHttp<postUsuariosPastoraisResponse>(getPostUsuariosPastoraisUrl(),
 export const getPostUsuariosPastoraisMutationKey = () => ['postUsuariosPastorais'] as const;
 
 export const getPostUsuariosPastoraisMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuariosPastorais>>, TError,PostUsuariosPastoraisMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuariosPastorais>>, TError,PostUsuariosPastoraisMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postUsuariosPastorais>>, TError,PostUsuariosPastoraisMutationVariables, TContext> => {
 
 const mutationKey = getPostUsuariosPastoraisMutationKey();
@@ -4791,7 +4791,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostUsuariosPastoraisMutationVariables = {data: UsuarioPastoralRequestDTO}
 
     export const usePostUsuariosPastorais = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuariosPastorais>>, TError,PostUsuariosPastoraisMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuariosPastorais>>, TError,PostUsuariosPastoraisMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postUsuariosPastorais>>,
         TError,
@@ -4828,9 +4828,9 @@ export const getGetUsuariosFuncoesUrl = (params: GetUsuariosFuncoesParams,) => {
   return stringifiedParams.length > 0 ? `/api/usuarios-funcoes?${stringifiedParams}` : `/api/usuarios-funcoes`
 }
 
-export const getUsuariosFuncoes = async (params: GetUsuariosFuncoesParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getUsuariosFuncoesResponse> => {
+export const getUsuariosFuncoes = async (params: GetUsuariosFuncoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosFuncoesResponse> => {
 
-  return clienteHttp<getUsuariosFuncoesResponse>(getGetUsuariosFuncoesUrl(params),
+  return clienteGerado<getUsuariosFuncoesResponse>(getGetUsuariosFuncoesUrl(params),
   {
     ...options,
     method: 'GET'
@@ -4850,7 +4850,7 @@ export const getGetUsuariosFuncoesQueryKey = (params?: GetUsuariosFuncoesParams,
     }
 
 
-export const getGetUsuariosFuncoesQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetUsuariosFuncoesQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -4879,7 +4879,7 @@ export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuar
           TError,
           Awaited<ReturnType<typeof getUsuariosFuncoes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(
@@ -4889,16 +4889,16 @@ export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuar
           TError,
           Awaited<ReturnType<typeof getUsuariosFuncoes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(
- params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuariosFuncoes<TData = Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError = unknown>(
- params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetUsuariosFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -4935,7 +4935,7 @@ export const getPostUsuariosFuncoesUrl = () => {
   return `/api/usuarios-funcoes`
 }
 
-export const postUsuariosFuncoes = async (usuarioFuncaoRequestDTO: UsuarioFuncaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postUsuariosFuncoesResponse> => {
+export const postUsuariosFuncoes = async (usuarioFuncaoRequestDTO: UsuarioFuncaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postUsuariosFuncoesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -4951,7 +4951,7 @@ export const postUsuariosFuncoes = async (usuarioFuncaoRequestDTO: UsuarioFuncao
     }
     return headers;
   };
-return clienteHttp<postUsuariosFuncoesResponse>(getPostUsuariosFuncoesUrl(),
+return clienteGerado<postUsuariosFuncoesResponse>(getPostUsuariosFuncoesUrl(),
   {
     ...options,
     method: 'POST',
@@ -4967,7 +4967,7 @@ return clienteHttp<postUsuariosFuncoesResponse>(getPostUsuariosFuncoesUrl(),
 export const getPostUsuariosFuncoesMutationKey = () => ['postUsuariosFuncoes'] as const;
 
 export const getPostUsuariosFuncoesMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuariosFuncoes>>, TError,PostUsuariosFuncoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuariosFuncoes>>, TError,PostUsuariosFuncoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postUsuariosFuncoes>>, TError,PostUsuariosFuncoesMutationVariables, TContext> => {
 
 const mutationKey = getPostUsuariosFuncoesMutationKey();
@@ -4999,7 +4999,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostUsuariosFuncoesMutationVariables = {data: UsuarioFuncaoRequestDTO}
 
     export const usePostUsuariosFuncoes = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuariosFuncoes>>, TError,PostUsuariosFuncoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsuariosFuncoes>>, TError,PostUsuariosFuncoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postUsuariosFuncoes>>,
         TError,
@@ -5029,9 +5029,9 @@ export const getGetPlataformaParoquiasUrl = () => {
   return `/api/plataforma/paroquias`
 }
 
-export const getPlataformaParoquias = async ( options?: Parameters<typeof clienteHttp>[1]): Promise<getPlataformaParoquiasResponse> => {
+export const getPlataformaParoquias = async ( options?: Parameters<typeof clienteGerado>[1]): Promise<getPlataformaParoquiasResponse> => {
 
-  return clienteHttp<getPlataformaParoquiasResponse>(getGetPlataformaParoquiasUrl(),
+  return clienteGerado<getPlataformaParoquiasResponse>(getGetPlataformaParoquiasUrl(),
   {
     ...options,
     method: 'GET'
@@ -5051,7 +5051,7 @@ export const getGetPlataformaParoquiasQueryKey = () => {
     }
 
 
-export const getGetPlataformaParoquiasQueryOptions = <TData = Awaited<ReturnType<typeof getPlataformaParoquias>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaParoquias>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPlataformaParoquiasQueryOptions = <TData = Awaited<ReturnType<typeof getPlataformaParoquias>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaParoquias>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -5080,7 +5080,7 @@ export function useGetPlataformaParoquias<TData = Awaited<ReturnType<typeof getP
           TError,
           Awaited<ReturnType<typeof getPlataformaParoquias>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPlataformaParoquias<TData = Awaited<ReturnType<typeof getPlataformaParoquias>>, TError = unknown>(
@@ -5090,16 +5090,16 @@ export function useGetPlataformaParoquias<TData = Awaited<ReturnType<typeof getP
           TError,
           Awaited<ReturnType<typeof getPlataformaParoquias>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPlataformaParoquias<TData = Awaited<ReturnType<typeof getPlataformaParoquias>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaParoquias>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaParoquias>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPlataformaParoquias<TData = Awaited<ReturnType<typeof getPlataformaParoquias>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaParoquias>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaParoquias>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -5136,7 +5136,7 @@ export const getPostPlataformaParoquiasUrl = () => {
   return `/api/plataforma/paroquias`
 }
 
-export const postPlataformaParoquias = async (criarParoquiaRequestDTO: CriarParoquiaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postPlataformaParoquiasResponse> => {
+export const postPlataformaParoquias = async (criarParoquiaRequestDTO: CriarParoquiaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postPlataformaParoquiasResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -5152,7 +5152,7 @@ export const postPlataformaParoquias = async (criarParoquiaRequestDTO: CriarParo
     }
     return headers;
   };
-return clienteHttp<postPlataformaParoquiasResponse>(getPostPlataformaParoquiasUrl(),
+return clienteGerado<postPlataformaParoquiasResponse>(getPostPlataformaParoquiasUrl(),
   {
     ...options,
     method: 'POST',
@@ -5168,7 +5168,7 @@ return clienteHttp<postPlataformaParoquiasResponse>(getPostPlataformaParoquiasUr
 export const getPostPlataformaParoquiasMutationKey = () => ['postPlataformaParoquias'] as const;
 
 export const getPostPlataformaParoquiasMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquias>>, TError,PostPlataformaParoquiasMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquias>>, TError,PostPlataformaParoquiasMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquias>>, TError,PostPlataformaParoquiasMutationVariables, TContext> => {
 
 const mutationKey = getPostPlataformaParoquiasMutationKey();
@@ -5200,7 +5200,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPlataformaParoquiasMutationVariables = {data: CriarParoquiaRequestDTO}
 
     export const usePostPlataformaParoquias = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquias>>, TError,PostPlataformaParoquiasMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquias>>, TError,PostPlataformaParoquiasMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPlataformaParoquias>>,
         TError,
@@ -5230,9 +5230,9 @@ export const getPostPlataformaParoquiasPorIdAssumirUrl = (id: number,) => {
   return `/api/plataforma/paroquias/${id}/assumir`
 }
 
-export const postPlataformaParoquiasPorIdAssumir = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<postPlataformaParoquiasPorIdAssumirResponse> => {
+export const postPlataformaParoquiasPorIdAssumir = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<postPlataformaParoquiasPorIdAssumirResponse> => {
 
-  return clienteHttp<postPlataformaParoquiasPorIdAssumirResponse>(getPostPlataformaParoquiasPorIdAssumirUrl(id),
+  return clienteGerado<postPlataformaParoquiasPorIdAssumirResponse>(getPostPlataformaParoquiasPorIdAssumirUrl(id),
   {
     ...options,
     method: 'POST'
@@ -5248,7 +5248,7 @@ export const postPlataformaParoquiasPorIdAssumir = async (id: number, options?: 
 export const getPostPlataformaParoquiasPorIdAssumirMutationKey = () => ['postPlataformaParoquiasPorIdAssumir'] as const;
 
 export const getPostPlataformaParoquiasPorIdAssumirMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasPorIdAssumir>>, TError,PostPlataformaParoquiasPorIdAssumirMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasPorIdAssumir>>, TError,PostPlataformaParoquiasPorIdAssumirMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasPorIdAssumir>>, TError,PostPlataformaParoquiasPorIdAssumirMutationVariables, TContext> => {
 
 const mutationKey = getPostPlataformaParoquiasPorIdAssumirMutationKey();
@@ -5280,7 +5280,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPlataformaParoquiasPorIdAssumirMutationVariables = {id: number}
 
     export const usePostPlataformaParoquiasPorIdAssumir = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasPorIdAssumir>>, TError,PostPlataformaParoquiasPorIdAssumirMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasPorIdAssumir>>, TError,PostPlataformaParoquiasPorIdAssumirMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPlataformaParoquiasPorIdAssumir>>,
         TError,
@@ -5310,9 +5310,9 @@ export const getPostPlataformaParoquiasSairUrl = () => {
   return `/api/plataforma/paroquias/sair`
 }
 
-export const postPlataformaParoquiasSair = async ( options?: Parameters<typeof clienteHttp>[1]): Promise<postPlataformaParoquiasSairResponse> => {
+export const postPlataformaParoquiasSair = async ( options?: Parameters<typeof clienteGerado>[1]): Promise<postPlataformaParoquiasSairResponse> => {
 
-  return clienteHttp<postPlataformaParoquiasSairResponse>(getPostPlataformaParoquiasSairUrl(),
+  return clienteGerado<postPlataformaParoquiasSairResponse>(getPostPlataformaParoquiasSairUrl(),
   {
     ...options,
     method: 'POST'
@@ -5328,7 +5328,7 @@ export const postPlataformaParoquiasSair = async ( options?: Parameters<typeof c
 export const getPostPlataformaParoquiasSairMutationKey = () => ['postPlataformaParoquiasSair'] as const;
 
 export const getPostPlataformaParoquiasSairMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasSair>>, TError,void, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasSair>>, TError,void, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasSair>>, TError,void, TContext> => {
 
 const mutationKey = getPostPlataformaParoquiasSairMutationKey();
@@ -5360,7 +5360,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
     export const usePostPlataformaParoquiasSair = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasSair>>, TError,void, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPlataformaParoquiasSair>>, TError,void, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPlataformaParoquiasSair>>,
         TError,
@@ -5397,9 +5397,9 @@ export const getGetPedidosTrocaUrl = (params: GetPedidosTrocaParams,) => {
   return stringifiedParams.length > 0 ? `/api/pedidos-troca?${stringifiedParams}` : `/api/pedidos-troca`
 }
 
-export const getPedidosTroca = async (params: GetPedidosTrocaParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getPedidosTrocaResponse> => {
+export const getPedidosTroca = async (params: GetPedidosTrocaParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPedidosTrocaResponse> => {
 
-  return clienteHttp<getPedidosTrocaResponse>(getGetPedidosTrocaUrl(params),
+  return clienteGerado<getPedidosTrocaResponse>(getGetPedidosTrocaUrl(params),
   {
     ...options,
     method: 'GET'
@@ -5419,7 +5419,7 @@ export const getGetPedidosTrocaQueryKey = (params?: GetPedidosTrocaParams,) => {
     }
 
 
-export const getGetPedidosTrocaQueryOptions = <TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPedidosTrocaQueryOptions = <TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -5448,7 +5448,7 @@ export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosT
           TError,
           Awaited<ReturnType<typeof getPedidosTroca>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(
@@ -5458,16 +5458,16 @@ export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosT
           TError,
           Awaited<ReturnType<typeof getPedidosTroca>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(
- params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPedidosTroca<TData = Awaited<ReturnType<typeof getPedidosTroca>>, TError = unknown>(
- params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetPedidosTrocaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPedidosTroca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -5504,7 +5504,7 @@ export const getPostPedidosTrocaUrl = () => {
   return `/api/pedidos-troca`
 }
 
-export const postPedidosTroca = async (pedidoTrocaRequestDTO: PedidoTrocaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postPedidosTrocaResponse> => {
+export const postPedidosTroca = async (pedidoTrocaRequestDTO: PedidoTrocaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postPedidosTrocaResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -5520,7 +5520,7 @@ export const postPedidosTroca = async (pedidoTrocaRequestDTO: PedidoTrocaRequest
     }
     return headers;
   };
-return clienteHttp<postPedidosTrocaResponse>(getPostPedidosTrocaUrl(),
+return clienteGerado<postPedidosTrocaResponse>(getPostPedidosTrocaUrl(),
   {
     ...options,
     method: 'POST',
@@ -5536,7 +5536,7 @@ return clienteHttp<postPedidosTrocaResponse>(getPostPedidosTrocaUrl(),
 export const getPostPedidosTrocaMutationKey = () => ['postPedidosTroca'] as const;
 
 export const getPostPedidosTrocaMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPedidosTroca>>, TError,PostPedidosTrocaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPedidosTroca>>, TError,PostPedidosTrocaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPedidosTroca>>, TError,PostPedidosTrocaMutationVariables, TContext> => {
 
 const mutationKey = getPostPedidosTrocaMutationKey();
@@ -5568,7 +5568,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPedidosTrocaMutationVariables = {data: PedidoTrocaRequestDTO}
 
     export const usePostPedidosTroca = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPedidosTroca>>, TError,PostPedidosTrocaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPedidosTroca>>, TError,PostPedidosTrocaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPedidosTroca>>,
         TError,
@@ -5605,9 +5605,9 @@ export const getGetPastoraisUrl = (params: GetPastoraisParams,) => {
   return stringifiedParams.length > 0 ? `/api/pastorais?${stringifiedParams}` : `/api/pastorais`
 }
 
-export const getPastorais = async (params: GetPastoraisParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisResponse> => {
+export const getPastorais = async (params: GetPastoraisParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisResponse> => {
 
-  return clienteHttp<getPastoraisResponse>(getGetPastoraisUrl(params),
+  return clienteGerado<getPastoraisResponse>(getGetPastoraisUrl(params),
   {
     ...options,
     method: 'GET'
@@ -5627,7 +5627,7 @@ export const getGetPastoraisQueryKey = (params?: GetPastoraisParams,) => {
     }
 
 
-export const getGetPastoraisQueryOptions = <TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPastoraisQueryOptions = <TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -5656,7 +5656,7 @@ export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>
           TError,
           Awaited<ReturnType<typeof getPastorais>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(
@@ -5666,16 +5666,16 @@ export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>
           TError,
           Awaited<ReturnType<typeof getPastorais>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(
- params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastorais<TData = Awaited<ReturnType<typeof getPastorais>>, TError = unknown>(
- params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetPastoraisParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastorais>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -5712,7 +5712,7 @@ export const getPostPastoraisUrl = () => {
   return `/api/pastorais`
 }
 
-export const postPastorais = async (pastoralRequestDTO: PastoralRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postPastoraisResponse> => {
+export const postPastorais = async (pastoralRequestDTO: PastoralRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postPastoraisResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -5728,7 +5728,7 @@ export const postPastorais = async (pastoralRequestDTO: PastoralRequestDTO, opti
     }
     return headers;
   };
-return clienteHttp<postPastoraisResponse>(getPostPastoraisUrl(),
+return clienteGerado<postPastoraisResponse>(getPostPastoraisUrl(),
   {
     ...options,
     method: 'POST',
@@ -5744,7 +5744,7 @@ return clienteHttp<postPastoraisResponse>(getPostPastoraisUrl(),
 export const getPostPastoraisMutationKey = () => ['postPastorais'] as const;
 
 export const getPostPastoraisMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastorais>>, TError,PostPastoraisMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastorais>>, TError,PostPastoraisMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPastorais>>, TError,PostPastoraisMutationVariables, TContext> => {
 
 const mutationKey = getPostPastoraisMutationKey();
@@ -5776,7 +5776,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPastoraisMutationVariables = {data: PastoralRequestDTO}
 
     export const usePostPastorais = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastorais>>, TError,PostPastoraisMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastorais>>, TError,PostPastoraisMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPastorais>>,
         TError,
@@ -5815,9 +5815,9 @@ export const getGetPastoraisPorPastoralIdReunioesUrl = (pastoralId: number,
 }
 
 export const getPastoraisPorPastoralIdReunioes = async (pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisPorPastoralIdReunioesResponse> => {
+    params: GetPastoraisPorPastoralIdReunioesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdReunioesResponse> => {
 
-  return clienteHttp<getPastoraisPorPastoralIdReunioesResponse>(getGetPastoraisPorPastoralIdReunioesUrl(pastoralId,params),
+  return clienteGerado<getPastoraisPorPastoralIdReunioesResponse>(getGetPastoraisPorPastoralIdReunioesUrl(pastoralId,params),
   {
     ...options,
     method: 'GET'
@@ -5839,7 +5839,7 @@ export const getGetPastoraisPorPastoralIdReunioesQueryKey = (pastoralId: number,
 
 
 export const getGetPastoraisPorPastoralIdReunioesQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError = unknown>(pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -5869,7 +5869,7 @@ export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError = unknown>(
@@ -5880,18 +5880,18 @@ export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdReunioes<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    params: GetPastoraisPorPastoralIdReunioesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdReunioes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -5929,7 +5929,7 @@ export const getPostPastoraisPorPastoralIdReunioesUrl = (pastoralId: number,) =>
 }
 
 export const postPastoraisPorPastoralIdReunioes = async (pastoralId: number,
-    reuniaoRequestDTO: ReuniaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postPastoraisPorPastoralIdReunioesResponse> => {
+    reuniaoRequestDTO: ReuniaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postPastoraisPorPastoralIdReunioesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -5945,7 +5945,7 @@ export const postPastoraisPorPastoralIdReunioes = async (pastoralId: number,
     }
     return headers;
   };
-return clienteHttp<postPastoraisPorPastoralIdReunioesResponse>(getPostPastoraisPorPastoralIdReunioesUrl(pastoralId),
+return clienteGerado<postPastoraisPorPastoralIdReunioesResponse>(getPostPastoraisPorPastoralIdReunioesUrl(pastoralId),
   {
     ...options,
     method: 'POST',
@@ -5961,7 +5961,7 @@ return clienteHttp<postPastoraisPorPastoralIdReunioesResponse>(getPostPastoraisP
 export const getPostPastoraisPorPastoralIdReunioesMutationKey = () => ['postPastoraisPorPastoralIdReunioes'] as const;
 
 export const getPostPastoraisPorPastoralIdReunioesMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioes>>, TError,PostPastoraisPorPastoralIdReunioesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioes>>, TError,PostPastoraisPorPastoralIdReunioesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioes>>, TError,PostPastoraisPorPastoralIdReunioesMutationVariables, TContext> => {
 
 const mutationKey = getPostPastoraisPorPastoralIdReunioesMutationKey();
@@ -5993,7 +5993,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPastoraisPorPastoralIdReunioesMutationVariables = {pastoralId: number;data: ReuniaoRequestDTO}
 
     export const usePostPastoraisPorPastoralIdReunioes = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioes>>, TError,PostPastoraisPorPastoralIdReunioesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioes>>, TError,PostPastoraisPorPastoralIdReunioesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioes>>,
         TError,
@@ -6024,7 +6024,7 @@ export const getPostPastoraisPorPastoralIdReunioesSolicitarUrl = (pastoralId: nu
 }
 
 export const postPastoraisPorPastoralIdReunioesSolicitar = async (pastoralId: number,
-    solicitacaoReuniaoRequestDTO: SolicitacaoReuniaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postPastoraisPorPastoralIdReunioesSolicitarResponse> => {
+    solicitacaoReuniaoRequestDTO: SolicitacaoReuniaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postPastoraisPorPastoralIdReunioesSolicitarResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -6040,7 +6040,7 @@ export const postPastoraisPorPastoralIdReunioesSolicitar = async (pastoralId: nu
     }
     return headers;
   };
-return clienteHttp<postPastoraisPorPastoralIdReunioesSolicitarResponse>(getPostPastoraisPorPastoralIdReunioesSolicitarUrl(pastoralId),
+return clienteGerado<postPastoraisPorPastoralIdReunioesSolicitarResponse>(getPostPastoraisPorPastoralIdReunioesSolicitarUrl(pastoralId),
   {
     ...options,
     method: 'POST',
@@ -6056,7 +6056,7 @@ return clienteHttp<postPastoraisPorPastoralIdReunioesSolicitarResponse>(getPostP
 export const getPostPastoraisPorPastoralIdReunioesSolicitarMutationKey = () => ['postPastoraisPorPastoralIdReunioesSolicitar'] as const;
 
 export const getPostPastoraisPorPastoralIdReunioesSolicitarMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioesSolicitar>>, TError,PostPastoraisPorPastoralIdReunioesSolicitarMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioesSolicitar>>, TError,PostPastoraisPorPastoralIdReunioesSolicitarMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioesSolicitar>>, TError,PostPastoraisPorPastoralIdReunioesSolicitarMutationVariables, TContext> => {
 
 const mutationKey = getPostPastoraisPorPastoralIdReunioesSolicitarMutationKey();
@@ -6088,7 +6088,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPastoraisPorPastoralIdReunioesSolicitarMutationVariables = {pastoralId: number;data: SolicitacaoReuniaoRequestDTO}
 
     export const usePostPastoraisPorPastoralIdReunioesSolicitar = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioesSolicitar>>, TError,PostPastoraisPorPastoralIdReunioesSolicitarMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioesSolicitar>>, TError,PostPastoraisPorPastoralIdReunioesSolicitarMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPastoraisPorPastoralIdReunioesSolicitar>>,
         TError,
@@ -6118,9 +6118,9 @@ export const getGetPastoraisPorPastoralIdModelosVagaUrl = (pastoralId: number,) 
   return `/api/pastorais/${pastoralId}/modelos-vaga`
 }
 
-export const getPastoraisPorPastoralIdModelosVaga = async (pastoralId: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisPorPastoralIdModelosVagaResponse> => {
+export const getPastoraisPorPastoralIdModelosVaga = async (pastoralId: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdModelosVagaResponse> => {
 
-  return clienteHttp<getPastoraisPorPastoralIdModelosVagaResponse>(getGetPastoraisPorPastoralIdModelosVagaUrl(pastoralId),
+  return clienteGerado<getPastoraisPorPastoralIdModelosVagaResponse>(getGetPastoraisPorPastoralIdModelosVagaUrl(pastoralId),
   {
     ...options,
     method: 'GET'
@@ -6140,7 +6140,7 @@ export const getGetPastoraisPorPastoralIdModelosVagaQueryKey = (pastoralId: numb
     }
 
 
-export const getGetPastoraisPorPastoralIdModelosVagaQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError = unknown>(pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPastoraisPorPastoralIdModelosVagaQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError = unknown>(pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -6169,7 +6169,7 @@ export function useGetPastoraisPorPastoralIdModelosVaga<TData = Awaited<ReturnTy
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdModelosVaga<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError = unknown>(
@@ -6179,16 +6179,16 @@ export function useGetPastoraisPorPastoralIdModelosVaga<TData = Awaited<ReturnTy
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdModelosVaga<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError = unknown>(
- pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdModelosVaga<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError = unknown>(
- pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdModelosVaga>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -6226,7 +6226,7 @@ export const getPostPastoraisPorPastoralIdModelosVagaUrl = (pastoralId: number,)
 }
 
 export const postPastoraisPorPastoralIdModelosVaga = async (pastoralId: number,
-    modeloVagaRequestDTO: ModeloVagaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postPastoraisPorPastoralIdModelosVagaResponse> => {
+    modeloVagaRequestDTO: ModeloVagaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postPastoraisPorPastoralIdModelosVagaResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -6242,7 +6242,7 @@ export const postPastoraisPorPastoralIdModelosVaga = async (pastoralId: number,
     }
     return headers;
   };
-return clienteHttp<postPastoraisPorPastoralIdModelosVagaResponse>(getPostPastoraisPorPastoralIdModelosVagaUrl(pastoralId),
+return clienteGerado<postPastoraisPorPastoralIdModelosVagaResponse>(getPostPastoraisPorPastoralIdModelosVagaUrl(pastoralId),
   {
     ...options,
     method: 'POST',
@@ -6258,7 +6258,7 @@ return clienteHttp<postPastoraisPorPastoralIdModelosVagaResponse>(getPostPastora
 export const getPostPastoraisPorPastoralIdModelosVagaMutationKey = () => ['postPastoraisPorPastoralIdModelosVaga'] as const;
 
 export const getPostPastoraisPorPastoralIdModelosVagaMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVaga>>, TError,PostPastoraisPorPastoralIdModelosVagaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVaga>>, TError,PostPastoraisPorPastoralIdModelosVagaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVaga>>, TError,PostPastoraisPorPastoralIdModelosVagaMutationVariables, TContext> => {
 
 const mutationKey = getPostPastoraisPorPastoralIdModelosVagaMutationKey();
@@ -6290,7 +6290,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPastoraisPorPastoralIdModelosVagaMutationVariables = {pastoralId: number;data: ModeloVagaRequestDTO}
 
     export const usePostPastoraisPorPastoralIdModelosVaga = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVaga>>, TError,PostPastoraisPorPastoralIdModelosVagaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVaga>>, TError,PostPastoraisPorPastoralIdModelosVagaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVaga>>,
         TError,
@@ -6320,9 +6320,9 @@ export const getPostPastoraisPorPastoralIdModelosVagaAplicarFuturasUrl = (pastor
   return `/api/pastorais/${pastoralId}/modelos-vaga/aplicar-futuras`
 }
 
-export const postPastoraisPorPastoralIdModelosVagaAplicarFuturas = async (pastoralId: number, options?: Parameters<typeof clienteHttp>[1]): Promise<postPastoraisPorPastoralIdModelosVagaAplicarFuturasResponse> => {
+export const postPastoraisPorPastoralIdModelosVagaAplicarFuturas = async (pastoralId: number, options?: Parameters<typeof clienteGerado>[1]): Promise<postPastoraisPorPastoralIdModelosVagaAplicarFuturasResponse> => {
 
-  return clienteHttp<postPastoraisPorPastoralIdModelosVagaAplicarFuturasResponse>(getPostPastoraisPorPastoralIdModelosVagaAplicarFuturasUrl(pastoralId),
+  return clienteGerado<postPastoraisPorPastoralIdModelosVagaAplicarFuturasResponse>(getPostPastoraisPorPastoralIdModelosVagaAplicarFuturasUrl(pastoralId),
   {
     ...options,
     method: 'POST'
@@ -6338,7 +6338,7 @@ export const postPastoraisPorPastoralIdModelosVagaAplicarFuturas = async (pastor
 export const getPostPastoraisPorPastoralIdModelosVagaAplicarFuturasMutationKey = () => ['postPastoraisPorPastoralIdModelosVagaAplicarFuturas'] as const;
 
 export const getPostPastoraisPorPastoralIdModelosVagaAplicarFuturasMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVagaAplicarFuturas>>, TError,PostPastoraisPorPastoralIdModelosVagaAplicarFuturasMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVagaAplicarFuturas>>, TError,PostPastoraisPorPastoralIdModelosVagaAplicarFuturasMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVagaAplicarFuturas>>, TError,PostPastoraisPorPastoralIdModelosVagaAplicarFuturasMutationVariables, TContext> => {
 
 const mutationKey = getPostPastoraisPorPastoralIdModelosVagaAplicarFuturasMutationKey();
@@ -6370,7 +6370,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPastoraisPorPastoralIdModelosVagaAplicarFuturasMutationVariables = {pastoralId: number}
 
     export const usePostPastoraisPorPastoralIdModelosVagaAplicarFuturas = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVagaAplicarFuturas>>, TError,PostPastoraisPorPastoralIdModelosVagaAplicarFuturasMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVagaAplicarFuturas>>, TError,PostPastoraisPorPastoralIdModelosVagaAplicarFuturasMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPastoraisPorPastoralIdModelosVagaAplicarFuturas>>,
         TError,
@@ -6409,9 +6409,9 @@ export const getGetPastoraisPorPastoralIdFinanceiroUrl = (pastoralId: number,
 }
 
 export const getPastoraisPorPastoralIdFinanceiro = async (pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisPorPastoralIdFinanceiroResponse> => {
+    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdFinanceiroResponse> => {
 
-  return clienteHttp<getPastoraisPorPastoralIdFinanceiroResponse>(getGetPastoraisPorPastoralIdFinanceiroUrl(pastoralId,params),
+  return clienteGerado<getPastoraisPorPastoralIdFinanceiroResponse>(getGetPastoraisPorPastoralIdFinanceiroUrl(pastoralId,params),
   {
     ...options,
     method: 'GET'
@@ -6433,7 +6433,7 @@ export const getGetPastoraisPorPastoralIdFinanceiroQueryKey = (pastoralId: numbe
 
 
 export const getGetPastoraisPorPastoralIdFinanceiroQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError = unknown>(pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -6463,7 +6463,7 @@ export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnTyp
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError = unknown>(
@@ -6474,18 +6474,18 @@ export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnTyp
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdFinanceiro<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError = unknown>(
  pastoralId: number,
-    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    params: GetPastoraisPorPastoralIdFinanceiroParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiro>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -6523,7 +6523,7 @@ export const getPostPastoraisPorPastoralIdFinanceiroUrl = (pastoralId: number,) 
 }
 
 export const postPastoraisPorPastoralIdFinanceiro = async (pastoralId: number,
-    lancamentoFinanceiroRequestDTO: LancamentoFinanceiroRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postPastoraisPorPastoralIdFinanceiroResponse> => {
+    lancamentoFinanceiroRequestDTO: LancamentoFinanceiroRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postPastoraisPorPastoralIdFinanceiroResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -6539,7 +6539,7 @@ export const postPastoraisPorPastoralIdFinanceiro = async (pastoralId: number,
     }
     return headers;
   };
-return clienteHttp<postPastoraisPorPastoralIdFinanceiroResponse>(getPostPastoraisPorPastoralIdFinanceiroUrl(pastoralId),
+return clienteGerado<postPastoraisPorPastoralIdFinanceiroResponse>(getPostPastoraisPorPastoralIdFinanceiroUrl(pastoralId),
   {
     ...options,
     method: 'POST',
@@ -6555,7 +6555,7 @@ return clienteHttp<postPastoraisPorPastoralIdFinanceiroResponse>(getPostPastorai
 export const getPostPastoraisPorPastoralIdFinanceiroMutationKey = () => ['postPastoraisPorPastoralIdFinanceiro'] as const;
 
 export const getPostPastoraisPorPastoralIdFinanceiroMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdFinanceiro>>, TError,PostPastoraisPorPastoralIdFinanceiroMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdFinanceiro>>, TError,PostPastoraisPorPastoralIdFinanceiroMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdFinanceiro>>, TError,PostPastoraisPorPastoralIdFinanceiroMutationVariables, TContext> => {
 
 const mutationKey = getPostPastoraisPorPastoralIdFinanceiroMutationKey();
@@ -6587,7 +6587,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPastoraisPorPastoralIdFinanceiroMutationVariables = {pastoralId: number;data: LancamentoFinanceiroRequestDTO}
 
     export const usePostPastoraisPorPastoralIdFinanceiro = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdFinanceiro>>, TError,PostPastoraisPorPastoralIdFinanceiroMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdFinanceiro>>, TError,PostPastoraisPorPastoralIdFinanceiroMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPastoraisPorPastoralIdFinanceiro>>,
         TError,
@@ -6619,9 +6619,9 @@ export const getPostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearUrl =
 }
 
 export const postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear = async (pastoralId: number,
-    celebracaoId: number, options?: Parameters<typeof clienteHttp>[1]): Promise<postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearResponse> => {
+    celebracaoId: number, options?: Parameters<typeof clienteGerado>[1]): Promise<postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearResponse> => {
 
-  return clienteHttp<postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearResponse>(getPostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearUrl(pastoralId,celebracaoId),
+  return clienteGerado<postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearResponse>(getPostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearUrl(pastoralId,celebracaoId),
   {
     ...options,
     method: 'POST'
@@ -6637,7 +6637,7 @@ export const postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear = async
 export const getPostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearMutationKey = () => ['postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear'] as const;
 
 export const getPostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear>>, TError,PostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear>>, TError,PostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear>>, TError,PostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearMutationVariables, TContext> => {
 
 const mutationKey = getPostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearMutationKey();
@@ -6669,7 +6669,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearMutationVariables = {pastoralId: number;celebracaoId: number}
 
     export const usePostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear>>, TError,PostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear>>, TError,PostPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortearMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postPastoraisPorPastoralIdCelebracoesPorCelebracaoIdSortear>>,
         TError,
@@ -6699,7 +6699,7 @@ export const getPostMeSenhaUrl = () => {
   return `/api/me/senha`
 }
 
-export const postMeSenha = async (trocaSenhaRequestDTO: TrocaSenhaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postMeSenhaResponse> => {
+export const postMeSenha = async (trocaSenhaRequestDTO: TrocaSenhaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postMeSenhaResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -6715,7 +6715,7 @@ export const postMeSenha = async (trocaSenhaRequestDTO: TrocaSenhaRequestDTO, op
     }
     return headers;
   };
-return clienteHttp<postMeSenhaResponse>(getPostMeSenhaUrl(),
+return clienteGerado<postMeSenhaResponse>(getPostMeSenhaUrl(),
   {
     ...options,
     method: 'POST',
@@ -6731,7 +6731,7 @@ return clienteHttp<postMeSenhaResponse>(getPostMeSenhaUrl(),
 export const getPostMeSenhaMutationKey = () => ['postMeSenha'] as const;
 
 export const getPostMeSenhaMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeSenha>>, TError,PostMeSenhaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeSenha>>, TError,PostMeSenhaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postMeSenha>>, TError,PostMeSenhaMutationVariables, TContext> => {
 
 const mutationKey = getPostMeSenhaMutationKey();
@@ -6763,7 +6763,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostMeSenhaMutationVariables = {data: TrocaSenhaRequestDTO}
 
     export const usePostMeSenha = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeSenha>>, TError,PostMeSenhaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeSenha>>, TError,PostMeSenhaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postMeSenha>>,
         TError,
@@ -6800,9 +6800,9 @@ export const getGetIndisponibilidadesUrl = (params: GetIndisponibilidadesParams,
   return stringifiedParams.length > 0 ? `/api/indisponibilidades?${stringifiedParams}` : `/api/indisponibilidades`
 }
 
-export const getIndisponibilidades = async (params: GetIndisponibilidadesParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getIndisponibilidadesResponse> => {
+export const getIndisponibilidades = async (params: GetIndisponibilidadesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getIndisponibilidadesResponse> => {
 
-  return clienteHttp<getIndisponibilidadesResponse>(getGetIndisponibilidadesUrl(params),
+  return clienteGerado<getIndisponibilidadesResponse>(getGetIndisponibilidadesUrl(params),
   {
     ...options,
     method: 'GET'
@@ -6822,7 +6822,7 @@ export const getGetIndisponibilidadesQueryKey = (params?: GetIndisponibilidadesP
     }
 
 
-export const getGetIndisponibilidadesQueryOptions = <TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetIndisponibilidadesQueryOptions = <TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -6851,7 +6851,7 @@ export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIn
           TError,
           Awaited<ReturnType<typeof getIndisponibilidades>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(
@@ -6861,16 +6861,16 @@ export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIn
           TError,
           Awaited<ReturnType<typeof getIndisponibilidades>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(
- params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetIndisponibilidades<TData = Awaited<ReturnType<typeof getIndisponibilidades>>, TError = unknown>(
- params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetIndisponibilidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getIndisponibilidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -6907,7 +6907,7 @@ export const getPostIndisponibilidadesUrl = () => {
   return `/api/indisponibilidades`
 }
 
-export const postIndisponibilidades = async (indisponibilidadeRequestDTO: IndisponibilidadeRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postIndisponibilidadesResponse> => {
+export const postIndisponibilidades = async (indisponibilidadeRequestDTO: IndisponibilidadeRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postIndisponibilidadesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -6923,7 +6923,7 @@ export const postIndisponibilidades = async (indisponibilidadeRequestDTO: Indisp
     }
     return headers;
   };
-return clienteHttp<postIndisponibilidadesResponse>(getPostIndisponibilidadesUrl(),
+return clienteGerado<postIndisponibilidadesResponse>(getPostIndisponibilidadesUrl(),
   {
     ...options,
     method: 'POST',
@@ -6939,7 +6939,7 @@ return clienteHttp<postIndisponibilidadesResponse>(getPostIndisponibilidadesUrl(
 export const getPostIndisponibilidadesMutationKey = () => ['postIndisponibilidades'] as const;
 
 export const getPostIndisponibilidadesMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postIndisponibilidades>>, TError,PostIndisponibilidadesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postIndisponibilidades>>, TError,PostIndisponibilidadesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postIndisponibilidades>>, TError,PostIndisponibilidadesMutationVariables, TContext> => {
 
 const mutationKey = getPostIndisponibilidadesMutationKey();
@@ -6971,7 +6971,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostIndisponibilidadesMutationVariables = {data: IndisponibilidadeRequestDTO}
 
     export const usePostIndisponibilidades = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postIndisponibilidades>>, TError,PostIndisponibilidadesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postIndisponibilidades>>, TError,PostIndisponibilidadesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postIndisponibilidades>>,
         TError,
@@ -7008,9 +7008,9 @@ export const getGetFuncoesUrl = (params: GetFuncoesParams,) => {
   return stringifiedParams.length > 0 ? `/api/funcoes?${stringifiedParams}` : `/api/funcoes`
 }
 
-export const getFuncoes = async (params: GetFuncoesParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getFuncoesResponse> => {
+export const getFuncoes = async (params: GetFuncoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getFuncoesResponse> => {
 
-  return clienteHttp<getFuncoesResponse>(getGetFuncoesUrl(params),
+  return clienteGerado<getFuncoesResponse>(getGetFuncoesUrl(params),
   {
     ...options,
     method: 'GET'
@@ -7030,7 +7030,7 @@ export const getGetFuncoesQueryKey = (params?: GetFuncoesParams,) => {
     }
 
 
-export const getGetFuncoesQueryOptions = <TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetFuncoesQueryOptions = <TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -7059,7 +7059,7 @@ export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TE
           TError,
           Awaited<ReturnType<typeof getFuncoes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(
@@ -7069,16 +7069,16 @@ export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TE
           TError,
           Awaited<ReturnType<typeof getFuncoes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(
- params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetFuncoes<TData = Awaited<ReturnType<typeof getFuncoes>>, TError = unknown>(
- params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetFuncoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFuncoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -7115,7 +7115,7 @@ export const getPostFuncoesUrl = () => {
   return `/api/funcoes`
 }
 
-export const postFuncoes = async (funcaoRequestDTO: FuncaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postFuncoesResponse> => {
+export const postFuncoes = async (funcaoRequestDTO: FuncaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postFuncoesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -7131,7 +7131,7 @@ export const postFuncoes = async (funcaoRequestDTO: FuncaoRequestDTO, options?: 
     }
     return headers;
   };
-return clienteHttp<postFuncoesResponse>(getPostFuncoesUrl(),
+return clienteGerado<postFuncoesResponse>(getPostFuncoesUrl(),
   {
     ...options,
     method: 'POST',
@@ -7147,7 +7147,7 @@ return clienteHttp<postFuncoesResponse>(getPostFuncoesUrl(),
 export const getPostFuncoesMutationKey = () => ['postFuncoes'] as const;
 
 export const getPostFuncoesMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postFuncoes>>, TError,PostFuncoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postFuncoes>>, TError,PostFuncoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postFuncoes>>, TError,PostFuncoesMutationVariables, TContext> => {
 
 const mutationKey = getPostFuncoesMutationKey();
@@ -7179,7 +7179,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostFuncoesMutationVariables = {data: FuncaoRequestDTO}
 
     export const usePostFuncoes = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postFuncoes>>, TError,PostFuncoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postFuncoes>>, TError,PostFuncoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postFuncoes>>,
         TError,
@@ -7209,7 +7209,7 @@ export const getPostConfirmacoesResponderUrl = () => {
   return `/api/confirmacoes/responder`
 }
 
-export const postConfirmacoesResponder = async (confirmacaoRespostaRequestDTO: ConfirmacaoRespostaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postConfirmacoesResponderResponse> => {
+export const postConfirmacoesResponder = async (confirmacaoRespostaRequestDTO: ConfirmacaoRespostaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postConfirmacoesResponderResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -7225,7 +7225,7 @@ export const postConfirmacoesResponder = async (confirmacaoRespostaRequestDTO: C
     }
     return headers;
   };
-return clienteHttp<postConfirmacoesResponderResponse>(getPostConfirmacoesResponderUrl(),
+return clienteGerado<postConfirmacoesResponderResponse>(getPostConfirmacoesResponderUrl(),
   {
     ...options,
     method: 'POST',
@@ -7241,7 +7241,7 @@ return clienteHttp<postConfirmacoesResponderResponse>(getPostConfirmacoesRespond
 export const getPostConfirmacoesResponderMutationKey = () => ['postConfirmacoesResponder'] as const;
 
 export const getPostConfirmacoesResponderMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesResponder>>, TError,PostConfirmacoesResponderMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesResponder>>, TError,PostConfirmacoesResponderMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesResponder>>, TError,PostConfirmacoesResponderMutationVariables, TContext> => {
 
 const mutationKey = getPostConfirmacoesResponderMutationKey();
@@ -7273,7 +7273,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostConfirmacoesResponderMutationVariables = {data: ConfirmacaoRespostaRequestDTO}
 
     export const usePostConfirmacoesResponder = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesResponder>>, TError,PostConfirmacoesResponderMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesResponder>>, TError,PostConfirmacoesResponderMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postConfirmacoesResponder>>,
         TError,
@@ -7303,7 +7303,7 @@ export const getPostConfirmacoesDetalhesUrl = () => {
   return `/api/confirmacoes/detalhes`
 }
 
-export const postConfirmacoesDetalhes = async (confirmacaoTokenRequestDTO: ConfirmacaoTokenRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postConfirmacoesDetalhesResponse> => {
+export const postConfirmacoesDetalhes = async (confirmacaoTokenRequestDTO: ConfirmacaoTokenRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postConfirmacoesDetalhesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -7319,7 +7319,7 @@ export const postConfirmacoesDetalhes = async (confirmacaoTokenRequestDTO: Confi
     }
     return headers;
   };
-return clienteHttp<postConfirmacoesDetalhesResponse>(getPostConfirmacoesDetalhesUrl(),
+return clienteGerado<postConfirmacoesDetalhesResponse>(getPostConfirmacoesDetalhesUrl(),
   {
     ...options,
     method: 'POST',
@@ -7335,7 +7335,7 @@ return clienteHttp<postConfirmacoesDetalhesResponse>(getPostConfirmacoesDetalhes
 export const getPostConfirmacoesDetalhesMutationKey = () => ['postConfirmacoesDetalhes'] as const;
 
 export const getPostConfirmacoesDetalhesMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesDetalhes>>, TError,PostConfirmacoesDetalhesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesDetalhes>>, TError,PostConfirmacoesDetalhesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesDetalhes>>, TError,PostConfirmacoesDetalhesMutationVariables, TContext> => {
 
 const mutationKey = getPostConfirmacoesDetalhesMutationKey();
@@ -7367,7 +7367,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostConfirmacoesDetalhesMutationVariables = {data: ConfirmacaoTokenRequestDTO}
 
     export const usePostConfirmacoesDetalhes = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesDetalhes>>, TError,PostConfirmacoesDetalhesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postConfirmacoesDetalhes>>, TError,PostConfirmacoesDetalhesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postConfirmacoesDetalhes>>,
         TError,
@@ -7404,9 +7404,9 @@ export const getGetComunidadesUrl = (params: GetComunidadesParams,) => {
   return stringifiedParams.length > 0 ? `/api/comunidades?${stringifiedParams}` : `/api/comunidades`
 }
 
-export const getComunidades = async (params: GetComunidadesParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getComunidadesResponse> => {
+export const getComunidades = async (params: GetComunidadesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getComunidadesResponse> => {
 
-  return clienteHttp<getComunidadesResponse>(getGetComunidadesUrl(params),
+  return clienteGerado<getComunidadesResponse>(getGetComunidadesUrl(params),
   {
     ...options,
     method: 'GET'
@@ -7426,7 +7426,7 @@ export const getGetComunidadesQueryKey = (params?: GetComunidadesParams,) => {
     }
 
 
-export const getGetComunidadesQueryOptions = <TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetComunidadesQueryOptions = <TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -7455,7 +7455,7 @@ export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidad
           TError,
           Awaited<ReturnType<typeof getComunidades>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(
@@ -7465,16 +7465,16 @@ export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidad
           TError,
           Awaited<ReturnType<typeof getComunidades>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(
- params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetComunidades<TData = Awaited<ReturnType<typeof getComunidades>>, TError = unknown>(
- params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetComunidadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComunidades>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -7511,7 +7511,7 @@ export const getPostComunidadesUrl = () => {
   return `/api/comunidades`
 }
 
-export const postComunidades = async (comunidadeRequestDTO: ComunidadeRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postComunidadesResponse> => {
+export const postComunidades = async (comunidadeRequestDTO: ComunidadeRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postComunidadesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -7527,7 +7527,7 @@ export const postComunidades = async (comunidadeRequestDTO: ComunidadeRequestDTO
     }
     return headers;
   };
-return clienteHttp<postComunidadesResponse>(getPostComunidadesUrl(),
+return clienteGerado<postComunidadesResponse>(getPostComunidadesUrl(),
   {
     ...options,
     method: 'POST',
@@ -7543,7 +7543,7 @@ return clienteHttp<postComunidadesResponse>(getPostComunidadesUrl(),
 export const getPostComunidadesMutationKey = () => ['postComunidades'] as const;
 
 export const getPostComunidadesMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postComunidades>>, TError,PostComunidadesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postComunidades>>, TError,PostComunidadesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postComunidades>>, TError,PostComunidadesMutationVariables, TContext> => {
 
 const mutationKey = getPostComunidadesMutationKey();
@@ -7575,7 +7575,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostComunidadesMutationVariables = {data: ComunidadeRequestDTO}
 
     export const usePostComunidades = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postComunidades>>, TError,PostComunidadesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postComunidades>>, TError,PostComunidadesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postComunidades>>,
         TError,
@@ -7612,9 +7612,9 @@ export const getGetCompromissosAgendaUrl = (params: GetCompromissosAgendaParams,
   return stringifiedParams.length > 0 ? `/api/compromissos-agenda?${stringifiedParams}` : `/api/compromissos-agenda`
 }
 
-export const getCompromissosAgenda = async (params: GetCompromissosAgendaParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getCompromissosAgendaResponse> => {
+export const getCompromissosAgenda = async (params: GetCompromissosAgendaParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getCompromissosAgendaResponse> => {
 
-  return clienteHttp<getCompromissosAgendaResponse>(getGetCompromissosAgendaUrl(params),
+  return clienteGerado<getCompromissosAgendaResponse>(getGetCompromissosAgendaUrl(params),
   {
     ...options,
     method: 'GET'
@@ -7634,7 +7634,7 @@ export const getGetCompromissosAgendaQueryKey = (params?: GetCompromissosAgendaP
     }
 
 
-export const getGetCompromissosAgendaQueryOptions = <TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetCompromissosAgendaQueryOptions = <TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -7663,7 +7663,7 @@ export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCo
           TError,
           Awaited<ReturnType<typeof getCompromissosAgenda>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(
@@ -7673,16 +7673,16 @@ export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCo
           TError,
           Awaited<ReturnType<typeof getCompromissosAgenda>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(
- params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetCompromissosAgenda<TData = Awaited<ReturnType<typeof getCompromissosAgenda>>, TError = unknown>(
- params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetCompromissosAgendaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompromissosAgenda>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -7719,7 +7719,7 @@ export const getPostCompromissosAgendaUrl = () => {
   return `/api/compromissos-agenda`
 }
 
-export const postCompromissosAgenda = async (compromissoAgendaRequestDTO: CompromissoAgendaRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postCompromissosAgendaResponse> => {
+export const postCompromissosAgenda = async (compromissoAgendaRequestDTO: CompromissoAgendaRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postCompromissosAgendaResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -7735,7 +7735,7 @@ export const postCompromissosAgenda = async (compromissoAgendaRequestDTO: Compro
     }
     return headers;
   };
-return clienteHttp<postCompromissosAgendaResponse>(getPostCompromissosAgendaUrl(),
+return clienteGerado<postCompromissosAgendaResponse>(getPostCompromissosAgendaUrl(),
   {
     ...options,
     method: 'POST',
@@ -7751,7 +7751,7 @@ return clienteHttp<postCompromissosAgendaResponse>(getPostCompromissosAgendaUrl(
 export const getPostCompromissosAgendaMutationKey = () => ['postCompromissosAgenda'] as const;
 
 export const getPostCompromissosAgendaMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postCompromissosAgenda>>, TError,PostCompromissosAgendaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postCompromissosAgenda>>, TError,PostCompromissosAgendaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postCompromissosAgenda>>, TError,PostCompromissosAgendaMutationVariables, TContext> => {
 
 const mutationKey = getPostCompromissosAgendaMutationKey();
@@ -7783,7 +7783,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostCompromissosAgendaMutationVariables = {data: CompromissoAgendaRequestDTO}
 
     export const usePostCompromissosAgenda = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postCompromissosAgenda>>, TError,PostCompromissosAgendaMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postCompromissosAgenda>>, TError,PostCompromissosAgendaMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postCompromissosAgenda>>,
         TError,
@@ -7820,9 +7820,9 @@ export const getGetCelebracoesUrl = (params: GetCelebracoesParams,) => {
   return stringifiedParams.length > 0 ? `/api/celebracoes?${stringifiedParams}` : `/api/celebracoes`
 }
 
-export const getCelebracoes = async (params: GetCelebracoesParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getCelebracoesResponse> => {
+export const getCelebracoes = async (params: GetCelebracoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getCelebracoesResponse> => {
 
-  return clienteHttp<getCelebracoesResponse>(getGetCelebracoesUrl(params),
+  return clienteGerado<getCelebracoesResponse>(getGetCelebracoesUrl(params),
   {
     ...options,
     method: 'GET'
@@ -7842,7 +7842,7 @@ export const getGetCelebracoesQueryKey = (params?: GetCelebracoesParams,) => {
     }
 
 
-export const getGetCelebracoesQueryOptions = <TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetCelebracoesQueryOptions = <TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -7871,7 +7871,7 @@ export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebraco
           TError,
           Awaited<ReturnType<typeof getCelebracoes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(
@@ -7881,16 +7881,16 @@ export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebraco
           TError,
           Awaited<ReturnType<typeof getCelebracoes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(
- params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetCelebracoes<TData = Awaited<ReturnType<typeof getCelebracoes>>, TError = unknown>(
- params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetCelebracoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCelebracoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -7927,7 +7927,7 @@ export const getPostCelebracoesUrl = () => {
   return `/api/celebracoes`
 }
 
-export const postCelebracoes = async (celebracaoRequestDTO: CelebracaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postCelebracoesResponse> => {
+export const postCelebracoes = async (celebracaoRequestDTO: CelebracaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postCelebracoesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -7943,7 +7943,7 @@ export const postCelebracoes = async (celebracaoRequestDTO: CelebracaoRequestDTO
     }
     return headers;
   };
-return clienteHttp<postCelebracoesResponse>(getPostCelebracoesUrl(),
+return clienteGerado<postCelebracoesResponse>(getPostCelebracoesUrl(),
   {
     ...options,
     method: 'POST',
@@ -7959,7 +7959,7 @@ return clienteHttp<postCelebracoesResponse>(getPostCelebracoesUrl(),
 export const getPostCelebracoesMutationKey = () => ['postCelebracoes'] as const;
 
 export const getPostCelebracoesMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postCelebracoes>>, TError,PostCelebracoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postCelebracoes>>, TError,PostCelebracoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postCelebracoes>>, TError,PostCelebracoesMutationVariables, TContext> => {
 
 const mutationKey = getPostCelebracoesMutationKey();
@@ -7991,7 +7991,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostCelebracoesMutationVariables = {data: CelebracaoRequestDTO}
 
     export const usePostCelebracoes = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postCelebracoes>>, TError,PostCelebracoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postCelebracoes>>, TError,PostCelebracoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postCelebracoes>>,
         TError,
@@ -8021,9 +8021,9 @@ export const getPostAlteracoesPendentesPorIdDesfazerUrl = (id: number,) => {
   return `/api/alteracoes-pendentes/${id}/desfazer`
 }
 
-export const postAlteracoesPendentesPorIdDesfazer = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<postAlteracoesPendentesPorIdDesfazerResponse> => {
+export const postAlteracoesPendentesPorIdDesfazer = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<postAlteracoesPendentesPorIdDesfazerResponse> => {
 
-  return clienteHttp<postAlteracoesPendentesPorIdDesfazerResponse>(getPostAlteracoesPendentesPorIdDesfazerUrl(id),
+  return clienteGerado<postAlteracoesPendentesPorIdDesfazerResponse>(getPostAlteracoesPendentesPorIdDesfazerUrl(id),
   {
     ...options,
     method: 'POST'
@@ -8039,7 +8039,7 @@ export const postAlteracoesPendentesPorIdDesfazer = async (id: number, options?:
 export const getPostAlteracoesPendentesPorIdDesfazerMutationKey = () => ['postAlteracoesPendentesPorIdDesfazer'] as const;
 
 export const getPostAlteracoesPendentesPorIdDesfazerMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdDesfazer>>, TError,PostAlteracoesPendentesPorIdDesfazerMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdDesfazer>>, TError,PostAlteracoesPendentesPorIdDesfazerMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdDesfazer>>, TError,PostAlteracoesPendentesPorIdDesfazerMutationVariables, TContext> => {
 
 const mutationKey = getPostAlteracoesPendentesPorIdDesfazerMutationKey();
@@ -8071,7 +8071,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostAlteracoesPendentesPorIdDesfazerMutationVariables = {id: number}
 
     export const usePostAlteracoesPendentesPorIdDesfazer = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdDesfazer>>, TError,PostAlteracoesPendentesPorIdDesfazerMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdDesfazer>>, TError,PostAlteracoesPendentesPorIdDesfazerMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postAlteracoesPendentesPorIdDesfazer>>,
         TError,
@@ -8101,9 +8101,9 @@ export const getPostAlteracoesPendentesPorIdConfirmarUrl = (id: number,) => {
   return `/api/alteracoes-pendentes/${id}/confirmar`
 }
 
-export const postAlteracoesPendentesPorIdConfirmar = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<postAlteracoesPendentesPorIdConfirmarResponse> => {
+export const postAlteracoesPendentesPorIdConfirmar = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<postAlteracoesPendentesPorIdConfirmarResponse> => {
 
-  return clienteHttp<postAlteracoesPendentesPorIdConfirmarResponse>(getPostAlteracoesPendentesPorIdConfirmarUrl(id),
+  return clienteGerado<postAlteracoesPendentesPorIdConfirmarResponse>(getPostAlteracoesPendentesPorIdConfirmarUrl(id),
   {
     ...options,
     method: 'POST'
@@ -8119,7 +8119,7 @@ export const postAlteracoesPendentesPorIdConfirmar = async (id: number, options?
 export const getPostAlteracoesPendentesPorIdConfirmarMutationKey = () => ['postAlteracoesPendentesPorIdConfirmar'] as const;
 
 export const getPostAlteracoesPendentesPorIdConfirmarMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdConfirmar>>, TError,PostAlteracoesPendentesPorIdConfirmarMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdConfirmar>>, TError,PostAlteracoesPendentesPorIdConfirmarMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdConfirmar>>, TError,PostAlteracoesPendentesPorIdConfirmarMutationVariables, TContext> => {
 
 const mutationKey = getPostAlteracoesPendentesPorIdConfirmarMutationKey();
@@ -8151,7 +8151,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostAlteracoesPendentesPorIdConfirmarMutationVariables = {id: number}
 
     export const usePostAlteracoesPendentesPorIdConfirmar = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdConfirmar>>, TError,PostAlteracoesPendentesPorIdConfirmarMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlteracoesPendentesPorIdConfirmar>>, TError,PostAlteracoesPendentesPorIdConfirmarMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postAlteracoesPendentesPorIdConfirmar>>,
         TError,
@@ -8188,9 +8188,9 @@ export const getGetAlocacoesUrl = (params: GetAlocacoesParams,) => {
   return stringifiedParams.length > 0 ? `/api/alocacoes?${stringifiedParams}` : `/api/alocacoes`
 }
 
-export const getAlocacoes = async (params: GetAlocacoesParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getAlocacoesResponse> => {
+export const getAlocacoes = async (params: GetAlocacoesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getAlocacoesResponse> => {
 
-  return clienteHttp<getAlocacoesResponse>(getGetAlocacoesUrl(params),
+  return clienteGerado<getAlocacoesResponse>(getGetAlocacoesUrl(params),
   {
     ...options,
     method: 'GET'
@@ -8210,7 +8210,7 @@ export const getGetAlocacoesQueryKey = (params?: GetAlocacoesParams,) => {
     }
 
 
-export const getGetAlocacoesQueryOptions = <TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetAlocacoesQueryOptions = <TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -8239,7 +8239,7 @@ export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>
           TError,
           Awaited<ReturnType<typeof getAlocacoes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(
@@ -8249,16 +8249,16 @@ export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>
           TError,
           Awaited<ReturnType<typeof getAlocacoes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(
- params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAlocacoes<TData = Awaited<ReturnType<typeof getAlocacoes>>, TError = unknown>(
- params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetAlocacoesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlocacoes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -8295,7 +8295,7 @@ export const getPostAlocacoesUrl = () => {
   return `/api/alocacoes`
 }
 
-export const postAlocacoes = async (alocacaoRequestDTO: AlocacaoRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postAlocacoesResponse> => {
+export const postAlocacoes = async (alocacaoRequestDTO: AlocacaoRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postAlocacoesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -8311,7 +8311,7 @@ export const postAlocacoes = async (alocacaoRequestDTO: AlocacaoRequestDTO, opti
     }
     return headers;
   };
-return clienteHttp<postAlocacoesResponse>(getPostAlocacoesUrl(),
+return clienteGerado<postAlocacoesResponse>(getPostAlocacoesUrl(),
   {
     ...options,
     method: 'POST',
@@ -8327,7 +8327,7 @@ return clienteHttp<postAlocacoesResponse>(getPostAlocacoesUrl(),
 export const getPostAlocacoesMutationKey = () => ['postAlocacoes'] as const;
 
 export const getPostAlocacoesMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoes>>, TError,PostAlocacoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoes>>, TError,PostAlocacoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postAlocacoes>>, TError,PostAlocacoesMutationVariables, TContext> => {
 
 const mutationKey = getPostAlocacoesMutationKey();
@@ -8359,7 +8359,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostAlocacoesMutationVariables = {data: AlocacaoRequestDTO}
 
     export const usePostAlocacoes = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoes>>, TError,PostAlocacoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoes>>, TError,PostAlocacoesMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postAlocacoes>>,
         TError,
@@ -8390,7 +8390,7 @@ export const getPostAlocacoesPorIdSubstituirUrl = (id: number,) => {
 }
 
 export const postAlocacoesPorIdSubstituir = async (id: number,
-    escalarRequestDTO: EscalarRequestDTO, options?: Parameters<typeof clienteHttp>[1]): Promise<postAlocacoesPorIdSubstituirResponse> => {
+    escalarRequestDTO: EscalarRequestDTO, options?: Parameters<typeof clienteGerado>[1]): Promise<postAlocacoesPorIdSubstituirResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -8406,7 +8406,7 @@ export const postAlocacoesPorIdSubstituir = async (id: number,
     }
     return headers;
   };
-return clienteHttp<postAlocacoesPorIdSubstituirResponse>(getPostAlocacoesPorIdSubstituirUrl(id),
+return clienteGerado<postAlocacoesPorIdSubstituirResponse>(getPostAlocacoesPorIdSubstituirUrl(id),
   {
     ...options,
     method: 'POST',
@@ -8422,7 +8422,7 @@ return clienteHttp<postAlocacoesPorIdSubstituirResponse>(getPostAlocacoesPorIdSu
 export const getPostAlocacoesPorIdSubstituirMutationKey = () => ['postAlocacoesPorIdSubstituir'] as const;
 
 export const getPostAlocacoesPorIdSubstituirMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdSubstituir>>, TError,PostAlocacoesPorIdSubstituirMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdSubstituir>>, TError,PostAlocacoesPorIdSubstituirMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdSubstituir>>, TError,PostAlocacoesPorIdSubstituirMutationVariables, TContext> => {
 
 const mutationKey = getPostAlocacoesPorIdSubstituirMutationKey();
@@ -8454,7 +8454,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostAlocacoesPorIdSubstituirMutationVariables = {id: number;data: EscalarRequestDTO}
 
     export const usePostAlocacoesPorIdSubstituir = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdSubstituir>>, TError,PostAlocacoesPorIdSubstituirMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdSubstituir>>, TError,PostAlocacoesPorIdSubstituirMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postAlocacoesPorIdSubstituir>>,
         TError,
@@ -8493,9 +8493,9 @@ export const getPostAlocacoesPorIdResponderUrl = (id: number,
 }
 
 export const postAlocacoesPorIdResponder = async (id: number,
-    params: PostAlocacoesPorIdResponderParams, options?: Parameters<typeof clienteHttp>[1]): Promise<postAlocacoesPorIdResponderResponse> => {
+    params: PostAlocacoesPorIdResponderParams, options?: Parameters<typeof clienteGerado>[1]): Promise<postAlocacoesPorIdResponderResponse> => {
 
-  return clienteHttp<postAlocacoesPorIdResponderResponse>(getPostAlocacoesPorIdResponderUrl(id,params),
+  return clienteGerado<postAlocacoesPorIdResponderResponse>(getPostAlocacoesPorIdResponderUrl(id,params),
   {
     ...options,
     method: 'POST'
@@ -8511,7 +8511,7 @@ export const postAlocacoesPorIdResponder = async (id: number,
 export const getPostAlocacoesPorIdResponderMutationKey = () => ['postAlocacoesPorIdResponder'] as const;
 
 export const getPostAlocacoesPorIdResponderMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdResponder>>, TError,PostAlocacoesPorIdResponderMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdResponder>>, TError,PostAlocacoesPorIdResponderMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdResponder>>, TError,PostAlocacoesPorIdResponderMutationVariables, TContext> => {
 
 const mutationKey = getPostAlocacoesPorIdResponderMutationKey();
@@ -8543,7 +8543,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostAlocacoesPorIdResponderMutationVariables = {id: number;params: PostAlocacoesPorIdResponderParams}
 
     export const usePostAlocacoesPorIdResponder = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdResponder>>, TError,PostAlocacoesPorIdResponderMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdResponder>>, TError,PostAlocacoesPorIdResponderMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postAlocacoesPorIdResponder>>,
         TError,
@@ -8573,9 +8573,9 @@ export const getPostAlocacoesPorIdReenviarConviteUrl = (id: number,) => {
   return `/api/alocacoes/${id}/reenviar-convite`
 }
 
-export const postAlocacoesPorIdReenviarConvite = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<postAlocacoesPorIdReenviarConviteResponse> => {
+export const postAlocacoesPorIdReenviarConvite = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<postAlocacoesPorIdReenviarConviteResponse> => {
 
-  return clienteHttp<postAlocacoesPorIdReenviarConviteResponse>(getPostAlocacoesPorIdReenviarConviteUrl(id),
+  return clienteGerado<postAlocacoesPorIdReenviarConviteResponse>(getPostAlocacoesPorIdReenviarConviteUrl(id),
   {
     ...options,
     method: 'POST'
@@ -8591,7 +8591,7 @@ export const postAlocacoesPorIdReenviarConvite = async (id: number, options?: Pa
 export const getPostAlocacoesPorIdReenviarConviteMutationKey = () => ['postAlocacoesPorIdReenviarConvite'] as const;
 
 export const getPostAlocacoesPorIdReenviarConviteMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdReenviarConvite>>, TError,PostAlocacoesPorIdReenviarConviteMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdReenviarConvite>>, TError,PostAlocacoesPorIdReenviarConviteMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdReenviarConvite>>, TError,PostAlocacoesPorIdReenviarConviteMutationVariables, TContext> => {
 
 const mutationKey = getPostAlocacoesPorIdReenviarConviteMutationKey();
@@ -8623,7 +8623,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PostAlocacoesPorIdReenviarConviteMutationVariables = {id: number}
 
     export const usePostAlocacoesPorIdReenviarConvite = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdReenviarConvite>>, TError,PostAlocacoesPorIdReenviarConviteMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAlocacoesPorIdReenviarConvite>>, TError,PostAlocacoesPorIdReenviarConviteMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postAlocacoesPorIdReenviarConvite>>,
         TError,
@@ -8653,9 +8653,9 @@ export const getGetVagasPorIdCandidatosUrl = (id: number,) => {
   return `/api/vagas/${id}/candidatos`
 }
 
-export const getVagasPorIdCandidatos = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getVagasPorIdCandidatosResponse> => {
+export const getVagasPorIdCandidatos = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getVagasPorIdCandidatosResponse> => {
 
-  return clienteHttp<getVagasPorIdCandidatosResponse>(getGetVagasPorIdCandidatosUrl(id),
+  return clienteGerado<getVagasPorIdCandidatosResponse>(getGetVagasPorIdCandidatosUrl(id),
   {
     ...options,
     method: 'GET'
@@ -8675,7 +8675,7 @@ export const getGetVagasPorIdCandidatosQueryKey = (id: number,) => {
     }
 
 
-export const getGetVagasPorIdCandidatosQueryOptions = <TData = Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetVagasPorIdCandidatosQueryOptions = <TData = Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -8704,7 +8704,7 @@ export function useGetVagasPorIdCandidatos<TData = Awaited<ReturnType<typeof get
           TError,
           Awaited<ReturnType<typeof getVagasPorIdCandidatos>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetVagasPorIdCandidatos<TData = Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError = unknown>(
@@ -8714,16 +8714,16 @@ export function useGetVagasPorIdCandidatos<TData = Awaited<ReturnType<typeof get
           TError,
           Awaited<ReturnType<typeof getVagasPorIdCandidatos>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetVagasPorIdCandidatos<TData = Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetVagasPorIdCandidatos<TData = Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVagasPorIdCandidatos>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -8767,9 +8767,9 @@ export const getGetUsuariosBuscaUrl = (params: GetUsuariosBuscaParams,) => {
   return stringifiedParams.length > 0 ? `/api/usuarios/busca?${stringifiedParams}` : `/api/usuarios/busca`
 }
 
-export const getUsuariosBusca = async (params: GetUsuariosBuscaParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getUsuariosBuscaResponse> => {
+export const getUsuariosBusca = async (params: GetUsuariosBuscaParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getUsuariosBuscaResponse> => {
 
-  return clienteHttp<getUsuariosBuscaResponse>(getGetUsuariosBuscaUrl(params),
+  return clienteGerado<getUsuariosBuscaResponse>(getGetUsuariosBuscaUrl(params),
   {
     ...options,
     method: 'GET'
@@ -8789,7 +8789,7 @@ export const getGetUsuariosBuscaQueryKey = (params?: GetUsuariosBuscaParams,) =>
     }
 
 
-export const getGetUsuariosBuscaQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetUsuariosBuscaQueryOptions = <TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -8818,7 +8818,7 @@ export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuario
           TError,
           Awaited<ReturnType<typeof getUsuariosBusca>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(
@@ -8828,16 +8828,16 @@ export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuario
           TError,
           Awaited<ReturnType<typeof getUsuariosBusca>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(
- params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUsuariosBusca<TData = Awaited<ReturnType<typeof getUsuariosBusca>>, TError = unknown>(
- params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetUsuariosBuscaParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsuariosBusca>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -8874,9 +8874,9 @@ export const getGetRegrasCatalogoUrl = () => {
   return `/api/regras/catalogo`
 }
 
-export const getRegrasCatalogo = async ( options?: Parameters<typeof clienteHttp>[1]): Promise<getRegrasCatalogoResponse> => {
+export const getRegrasCatalogo = async ( options?: Parameters<typeof clienteGerado>[1]): Promise<getRegrasCatalogoResponse> => {
 
-  return clienteHttp<getRegrasCatalogoResponse>(getGetRegrasCatalogoUrl(),
+  return clienteGerado<getRegrasCatalogoResponse>(getGetRegrasCatalogoUrl(),
   {
     ...options,
     method: 'GET'
@@ -8896,7 +8896,7 @@ export const getGetRegrasCatalogoQueryKey = () => {
     }
 
 
-export const getGetRegrasCatalogoQueryOptions = <TData = Awaited<ReturnType<typeof getRegrasCatalogo>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRegrasCatalogo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetRegrasCatalogoQueryOptions = <TData = Awaited<ReturnType<typeof getRegrasCatalogo>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRegrasCatalogo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -8925,7 +8925,7 @@ export function useGetRegrasCatalogo<TData = Awaited<ReturnType<typeof getRegras
           TError,
           Awaited<ReturnType<typeof getRegrasCatalogo>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetRegrasCatalogo<TData = Awaited<ReturnType<typeof getRegrasCatalogo>>, TError = unknown>(
@@ -8935,16 +8935,16 @@ export function useGetRegrasCatalogo<TData = Awaited<ReturnType<typeof getRegras
           TError,
           Awaited<ReturnType<typeof getRegrasCatalogo>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetRegrasCatalogo<TData = Awaited<ReturnType<typeof getRegrasCatalogo>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRegrasCatalogo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRegrasCatalogo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetRegrasCatalogo<TData = Awaited<ReturnType<typeof getRegrasCatalogo>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRegrasCatalogo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRegrasCatalogo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -8981,9 +8981,9 @@ export const getGetPlataformaResumoUrl = () => {
   return `/api/plataforma/resumo`
 }
 
-export const getPlataformaResumo = async ( options?: Parameters<typeof clienteHttp>[1]): Promise<getPlataformaResumoResponse> => {
+export const getPlataformaResumo = async ( options?: Parameters<typeof clienteGerado>[1]): Promise<getPlataformaResumoResponse> => {
 
-  return clienteHttp<getPlataformaResumoResponse>(getGetPlataformaResumoUrl(),
+  return clienteGerado<getPlataformaResumoResponse>(getGetPlataformaResumoUrl(),
   {
     ...options,
     method: 'GET'
@@ -9003,7 +9003,7 @@ export const getGetPlataformaResumoQueryKey = () => {
     }
 
 
-export const getGetPlataformaResumoQueryOptions = <TData = Awaited<ReturnType<typeof getPlataformaResumo>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPlataformaResumoQueryOptions = <TData = Awaited<ReturnType<typeof getPlataformaResumo>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -9032,7 +9032,7 @@ export function useGetPlataformaResumo<TData = Awaited<ReturnType<typeof getPlat
           TError,
           Awaited<ReturnType<typeof getPlataformaResumo>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPlataformaResumo<TData = Awaited<ReturnType<typeof getPlataformaResumo>>, TError = unknown>(
@@ -9042,16 +9042,16 @@ export function useGetPlataformaResumo<TData = Awaited<ReturnType<typeof getPlat
           TError,
           Awaited<ReturnType<typeof getPlataformaResumo>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPlataformaResumo<TData = Awaited<ReturnType<typeof getPlataformaResumo>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPlataformaResumo<TData = Awaited<ReturnType<typeof getPlataformaResumo>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPlataformaResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9097,9 +9097,9 @@ export const getGetPastoraisPorPastoralIdPainelUrl = (pastoralId: number,
 }
 
 export const getPastoraisPorPastoralIdPainel = async (pastoralId: number,
-    params?: GetPastoraisPorPastoralIdPainelParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisPorPastoralIdPainelResponse> => {
+    params?: GetPastoraisPorPastoralIdPainelParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdPainelResponse> => {
 
-  return clienteHttp<getPastoraisPorPastoralIdPainelResponse>(getGetPastoraisPorPastoralIdPainelUrl(pastoralId,params),
+  return clienteGerado<getPastoraisPorPastoralIdPainelResponse>(getGetPastoraisPorPastoralIdPainelUrl(pastoralId,params),
   {
     ...options,
     method: 'GET'
@@ -9121,7 +9121,7 @@ export const getGetPastoraisPorPastoralIdPainelQueryKey = (pastoralId: number,
 
 
 export const getGetPastoraisPorPastoralIdPainelQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError = unknown>(pastoralId: number,
-    params?: GetPastoraisPorPastoralIdPainelParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    params?: GetPastoraisPorPastoralIdPainelParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -9151,7 +9151,7 @@ export function useGetPastoraisPorPastoralIdPainel<TData = Awaited<ReturnType<ty
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdPainel<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError = unknown>(
@@ -9162,18 +9162,18 @@ export function useGetPastoraisPorPastoralIdPainel<TData = Awaited<ReturnType<ty
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdPainel<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError = unknown>(
  pastoralId: number,
-    params?: GetPastoraisPorPastoralIdPainelParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    params?: GetPastoraisPorPastoralIdPainelParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdPainel<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError = unknown>(
  pastoralId: number,
-    params?: GetPastoraisPorPastoralIdPainelParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    params?: GetPastoraisPorPastoralIdPainelParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdPainel>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9210,9 +9210,9 @@ export const getGetPastoraisPorPastoralIdMembrosUrl = (pastoralId: number,) => {
   return `/api/pastorais/${pastoralId}/membros`
 }
 
-export const getPastoraisPorPastoralIdMembros = async (pastoralId: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisPorPastoralIdMembrosResponse> => {
+export const getPastoraisPorPastoralIdMembros = async (pastoralId: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdMembrosResponse> => {
 
-  return clienteHttp<getPastoraisPorPastoralIdMembrosResponse>(getGetPastoraisPorPastoralIdMembrosUrl(pastoralId),
+  return clienteGerado<getPastoraisPorPastoralIdMembrosResponse>(getGetPastoraisPorPastoralIdMembrosUrl(pastoralId),
   {
     ...options,
     method: 'GET'
@@ -9232,7 +9232,7 @@ export const getGetPastoraisPorPastoralIdMembrosQueryKey = (pastoralId: number,)
     }
 
 
-export const getGetPastoraisPorPastoralIdMembrosQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError = unknown>(pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPastoraisPorPastoralIdMembrosQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError = unknown>(pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -9261,7 +9261,7 @@ export function useGetPastoraisPorPastoralIdMembros<TData = Awaited<ReturnType<t
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdMembros<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError = unknown>(
@@ -9271,16 +9271,16 @@ export function useGetPastoraisPorPastoralIdMembros<TData = Awaited<ReturnType<t
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdMembros<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError = unknown>(
- pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdMembros<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError = unknown>(
- pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdMembros>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9317,9 +9317,9 @@ export const getGetPastoraisPorPastoralIdFinanceiroSaldoUrl = (pastoralId: numbe
   return `/api/pastorais/${pastoralId}/financeiro/saldo`
 }
 
-export const getPastoraisPorPastoralIdFinanceiroSaldo = async (pastoralId: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisPorPastoralIdFinanceiroSaldoResponse> => {
+export const getPastoraisPorPastoralIdFinanceiroSaldo = async (pastoralId: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdFinanceiroSaldoResponse> => {
 
-  return clienteHttp<getPastoraisPorPastoralIdFinanceiroSaldoResponse>(getGetPastoraisPorPastoralIdFinanceiroSaldoUrl(pastoralId),
+  return clienteGerado<getPastoraisPorPastoralIdFinanceiroSaldoResponse>(getGetPastoraisPorPastoralIdFinanceiroSaldoUrl(pastoralId),
   {
     ...options,
     method: 'GET'
@@ -9339,7 +9339,7 @@ export const getGetPastoraisPorPastoralIdFinanceiroSaldoQueryKey = (pastoralId: 
     }
 
 
-export const getGetPastoraisPorPastoralIdFinanceiroSaldoQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError = unknown>(pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPastoraisPorPastoralIdFinanceiroSaldoQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError = unknown>(pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -9368,7 +9368,7 @@ export function useGetPastoraisPorPastoralIdFinanceiroSaldo<TData = Awaited<Retu
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdFinanceiroSaldo<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError = unknown>(
@@ -9378,16 +9378,16 @@ export function useGetPastoraisPorPastoralIdFinanceiroSaldo<TData = Awaited<Retu
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdFinanceiroSaldo<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError = unknown>(
- pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdFinanceiroSaldo<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError = unknown>(
- pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdFinanceiroSaldo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9424,9 +9424,9 @@ export const getGetPastoraisPorPastoralIdConfigUrl = (pastoralId: number,) => {
   return `/api/pastorais/${pastoralId}/config`
 }
 
-export const getPastoraisPorPastoralIdConfig = async (pastoralId: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisPorPastoralIdConfigResponse> => {
+export const getPastoraisPorPastoralIdConfig = async (pastoralId: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdConfigResponse> => {
 
-  return clienteHttp<getPastoraisPorPastoralIdConfigResponse>(getGetPastoraisPorPastoralIdConfigUrl(pastoralId),
+  return clienteGerado<getPastoraisPorPastoralIdConfigResponse>(getGetPastoraisPorPastoralIdConfigUrl(pastoralId),
   {
     ...options,
     method: 'GET'
@@ -9446,7 +9446,7 @@ export const getGetPastoraisPorPastoralIdConfigQueryKey = (pastoralId: number,) 
     }
 
 
-export const getGetPastoraisPorPastoralIdConfigQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError = unknown>(pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetPastoraisPorPastoralIdConfigQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError = unknown>(pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -9475,7 +9475,7 @@ export function useGetPastoraisPorPastoralIdConfig<TData = Awaited<ReturnType<ty
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdConfig<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError = unknown>(
@@ -9485,16 +9485,16 @@ export function useGetPastoraisPorPastoralIdConfig<TData = Awaited<ReturnType<ty
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdConfig<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError = unknown>(
- pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdConfig<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError = unknown>(
- pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ pastoralId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdConfig>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9533,9 +9533,9 @@ export const getGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscalaUrl = (
 }
 
 export const getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala = async (pastoralId: number,
-    celebracaoId: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscalaResponse> => {
+    celebracaoId: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscalaResponse> => {
 
-  return clienteHttp<getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscalaResponse>(getGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscalaUrl(pastoralId,celebracaoId),
+  return clienteGerado<getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscalaResponse>(getGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscalaUrl(pastoralId,celebracaoId),
   {
     ...options,
     method: 'GET'
@@ -9557,7 +9557,7 @@ export const getGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscalaQueryKe
 
 
 export const getGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscalaQueryOptions = <TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError = unknown>(pastoralId: number,
-    celebracaoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    celebracaoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -9587,7 +9587,7 @@ export function useGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala<TDa
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError = unknown>(
@@ -9598,18 +9598,18 @@ export function useGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala<TDa
           TError,
           Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError = unknown>(
  pastoralId: number,
-    celebracaoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    celebracaoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala<TData = Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError = unknown>(
  pastoralId: number,
-    celebracaoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+    celebracaoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPastoraisPorPastoralIdCelebracoesPorCelebracaoIdEscala>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9646,9 +9646,9 @@ export const getGetMeUrl = () => {
   return `/api/me`
 }
 
-export const getMe = async ( options?: Parameters<typeof clienteHttp>[1]): Promise<getMeResponse> => {
+export const getMe = async ( options?: Parameters<typeof clienteGerado>[1]): Promise<getMeResponse> => {
 
-  return clienteHttp<getMeResponse>(getGetMeUrl(),
+  return clienteGerado<getMeResponse>(getGetMeUrl(),
   {
     ...options,
     method: 'GET'
@@ -9668,7 +9668,7 @@ export const getGetMeQueryKey = () => {
     }
 
 
-export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -9697,7 +9697,7 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = unk
           TError,
           Awaited<ReturnType<typeof getMe>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = unknown>(
@@ -9707,16 +9707,16 @@ export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = unk
           TError,
           Awaited<ReturnType<typeof getMe>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9760,9 +9760,9 @@ export const getGetMeEscalasUrl = (params?: GetMeEscalasParams,) => {
   return stringifiedParams.length > 0 ? `/api/me/escalas?${stringifiedParams}` : `/api/me/escalas`
 }
 
-export const getMeEscalas = async (params?: GetMeEscalasParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getMeEscalasResponse> => {
+export const getMeEscalas = async (params?: GetMeEscalasParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getMeEscalasResponse> => {
 
-  return clienteHttp<getMeEscalasResponse>(getGetMeEscalasUrl(params),
+  return clienteGerado<getMeEscalasResponse>(getGetMeEscalasUrl(params),
   {
     ...options,
     method: 'GET'
@@ -9782,7 +9782,7 @@ export const getGetMeEscalasQueryKey = (params?: GetMeEscalasParams,) => {
     }
 
 
-export const getGetMeEscalasQueryOptions = <TData = Awaited<ReturnType<typeof getMeEscalas>>, TError = unknown>(params?: GetMeEscalasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeEscalas>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetMeEscalasQueryOptions = <TData = Awaited<ReturnType<typeof getMeEscalas>>, TError = unknown>(params?: GetMeEscalasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeEscalas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -9811,7 +9811,7 @@ export function useGetMeEscalas<TData = Awaited<ReturnType<typeof getMeEscalas>>
           TError,
           Awaited<ReturnType<typeof getMeEscalas>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetMeEscalas<TData = Awaited<ReturnType<typeof getMeEscalas>>, TError = unknown>(
@@ -9821,16 +9821,16 @@ export function useGetMeEscalas<TData = Awaited<ReturnType<typeof getMeEscalas>>
           TError,
           Awaited<ReturnType<typeof getMeEscalas>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetMeEscalas<TData = Awaited<ReturnType<typeof getMeEscalas>>, TError = unknown>(
- params?: GetMeEscalasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeEscalas>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params?: GetMeEscalasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeEscalas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetMeEscalas<TData = Awaited<ReturnType<typeof getMeEscalas>>, TError = unknown>(
- params?: GetMeEscalasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeEscalas>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params?: GetMeEscalasParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeEscalas>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9874,9 +9874,9 @@ export const getGetFinanceiroResumoUrl = (params: GetFinanceiroResumoParams,) =>
   return stringifiedParams.length > 0 ? `/api/financeiro/resumo?${stringifiedParams}` : `/api/financeiro/resumo`
 }
 
-export const getFinanceiroResumo = async (params: GetFinanceiroResumoParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getFinanceiroResumoResponse> => {
+export const getFinanceiroResumo = async (params: GetFinanceiroResumoParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getFinanceiroResumoResponse> => {
 
-  return clienteHttp<getFinanceiroResumoResponse>(getGetFinanceiroResumoUrl(params),
+  return clienteGerado<getFinanceiroResumoResponse>(getGetFinanceiroResumoUrl(params),
   {
     ...options,
     method: 'GET'
@@ -9896,7 +9896,7 @@ export const getGetFinanceiroResumoQueryKey = (params?: GetFinanceiroResumoParam
     }
 
 
-export const getGetFinanceiroResumoQueryOptions = <TData = Awaited<ReturnType<typeof getFinanceiroResumo>>, TError = unknown>(params: GetFinanceiroResumoParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFinanceiroResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetFinanceiroResumoQueryOptions = <TData = Awaited<ReturnType<typeof getFinanceiroResumo>>, TError = unknown>(params: GetFinanceiroResumoParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFinanceiroResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -9925,7 +9925,7 @@ export function useGetFinanceiroResumo<TData = Awaited<ReturnType<typeof getFina
           TError,
           Awaited<ReturnType<typeof getFinanceiroResumo>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFinanceiroResumo<TData = Awaited<ReturnType<typeof getFinanceiroResumo>>, TError = unknown>(
@@ -9935,16 +9935,16 @@ export function useGetFinanceiroResumo<TData = Awaited<ReturnType<typeof getFina
           TError,
           Awaited<ReturnType<typeof getFinanceiroResumo>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFinanceiroResumo<TData = Awaited<ReturnType<typeof getFinanceiroResumo>>, TError = unknown>(
- params: GetFinanceiroResumoParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFinanceiroResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetFinanceiroResumoParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFinanceiroResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetFinanceiroResumo<TData = Awaited<ReturnType<typeof getFinanceiroResumo>>, TError = unknown>(
- params: GetFinanceiroResumoParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFinanceiroResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetFinanceiroResumoParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFinanceiroResumo>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -9988,9 +9988,9 @@ export const getGetAuthCsrfUrl = (params: GetAuthCsrfParams,) => {
   return stringifiedParams.length > 0 ? `/api/auth/csrf?${stringifiedParams}` : `/api/auth/csrf`
 }
 
-export const getAuthCsrf = async (params: GetAuthCsrfParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getAuthCsrfResponse> => {
+export const getAuthCsrf = async (params: GetAuthCsrfParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getAuthCsrfResponse> => {
 
-  return clienteHttp<getAuthCsrfResponse>(getGetAuthCsrfUrl(params),
+  return clienteGerado<getAuthCsrfResponse>(getGetAuthCsrfUrl(params),
   {
     ...options,
     method: 'GET'
@@ -10010,7 +10010,7 @@ export const getGetAuthCsrfQueryKey = (params?: GetAuthCsrfParams,) => {
     }
 
 
-export const getGetAuthCsrfQueryOptions = <TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetAuthCsrfQueryOptions = <TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -10039,7 +10039,7 @@ export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, 
           TError,
           Awaited<ReturnType<typeof getAuthCsrf>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(
@@ -10049,16 +10049,16 @@ export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, 
           TError,
           Awaited<ReturnType<typeof getAuthCsrf>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(
- params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAuthCsrf<TData = Awaited<ReturnType<typeof getAuthCsrf>>, TError = unknown>(
- params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetAuthCsrfParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthCsrf>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -10095,9 +10095,9 @@ export const getGetAuditLogsUrl = () => {
   return `/api/audit-logs`
 }
 
-export const getAuditLogs = async ( options?: Parameters<typeof clienteHttp>[1]): Promise<getAuditLogsResponse> => {
+export const getAuditLogs = async ( options?: Parameters<typeof clienteGerado>[1]): Promise<getAuditLogsResponse> => {
 
-  return clienteHttp<getAuditLogsResponse>(getGetAuditLogsUrl(),
+  return clienteGerado<getAuditLogsResponse>(getGetAuditLogsUrl(),
   {
     ...options,
     method: 'GET'
@@ -10117,7 +10117,7 @@ export const getGetAuditLogsQueryKey = () => {
     }
 
 
-export const getGetAuditLogsQueryOptions = <TData = Awaited<ReturnType<typeof getAuditLogs>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogs>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetAuditLogsQueryOptions = <TData = Awaited<ReturnType<typeof getAuditLogs>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogs>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -10146,7 +10146,7 @@ export function useGetAuditLogs<TData = Awaited<ReturnType<typeof getAuditLogs>>
           TError,
           Awaited<ReturnType<typeof getAuditLogs>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAuditLogs<TData = Awaited<ReturnType<typeof getAuditLogs>>, TError = unknown>(
@@ -10156,16 +10156,16 @@ export function useGetAuditLogs<TData = Awaited<ReturnType<typeof getAuditLogs>>
           TError,
           Awaited<ReturnType<typeof getAuditLogs>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAuditLogs<TData = Awaited<ReturnType<typeof getAuditLogs>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogs>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogs>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAuditLogs<TData = Awaited<ReturnType<typeof getAuditLogs>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogs>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogs>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -10202,9 +10202,9 @@ export const getGetAuditLogsPorIdUrl = (id: number,) => {
   return `/api/audit-logs/${id}`
 }
 
-export const getAuditLogsPorId = async (id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<getAuditLogsPorIdResponse> => {
+export const getAuditLogsPorId = async (id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<getAuditLogsPorIdResponse> => {
 
-  return clienteHttp<getAuditLogsPorIdResponse>(getGetAuditLogsPorIdUrl(id),
+  return clienteGerado<getAuditLogsPorIdResponse>(getGetAuditLogsPorIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -10224,7 +10224,7 @@ export const getGetAuditLogsPorIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetAuditLogsPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getAuditLogsPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogsPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetAuditLogsPorIdQueryOptions = <TData = Awaited<ReturnType<typeof getAuditLogsPorId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogsPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -10253,7 +10253,7 @@ export function useGetAuditLogsPorId<TData = Awaited<ReturnType<typeof getAuditL
           TError,
           Awaited<ReturnType<typeof getAuditLogsPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAuditLogsPorId<TData = Awaited<ReturnType<typeof getAuditLogsPorId>>, TError = unknown>(
@@ -10263,16 +10263,16 @@ export function useGetAuditLogsPorId<TData = Awaited<ReturnType<typeof getAuditL
           TError,
           Awaited<ReturnType<typeof getAuditLogsPorId>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAuditLogsPorId<TData = Awaited<ReturnType<typeof getAuditLogsPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogsPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogsPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAuditLogsPorId<TData = Awaited<ReturnType<typeof getAuditLogsPorId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogsPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuditLogsPorId>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -10316,9 +10316,9 @@ export const getGetAlteracoesPendentesUrl = (params: GetAlteracoesPendentesParam
   return stringifiedParams.length > 0 ? `/api/alteracoes-pendentes?${stringifiedParams}` : `/api/alteracoes-pendentes`
 }
 
-export const getAlteracoesPendentes = async (params: GetAlteracoesPendentesParams, options?: Parameters<typeof clienteHttp>[1]): Promise<getAlteracoesPendentesResponse> => {
+export const getAlteracoesPendentes = async (params: GetAlteracoesPendentesParams, options?: Parameters<typeof clienteGerado>[1]): Promise<getAlteracoesPendentesResponse> => {
 
-  return clienteHttp<getAlteracoesPendentesResponse>(getGetAlteracoesPendentesUrl(params),
+  return clienteGerado<getAlteracoesPendentesResponse>(getGetAlteracoesPendentesUrl(params),
   {
     ...options,
     method: 'GET'
@@ -10338,7 +10338,7 @@ export const getGetAlteracoesPendentesQueryKey = (params?: GetAlteracoesPendente
     }
 
 
-export const getGetAlteracoesPendentesQueryOptions = <TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+export const getGetAlteracoesPendentesQueryOptions = <TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -10367,7 +10367,7 @@ export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getA
           TError,
           Awaited<ReturnType<typeof getAlteracoesPendentes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(
@@ -10377,16 +10377,16 @@ export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getA
           TError,
           Awaited<ReturnType<typeof getAlteracoesPendentes>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof clienteHttp>}
+      >, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(
- params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAlteracoesPendentes<TData = Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError = unknown>(
- params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteHttp>}
+ params: GetAlteracoesPendentesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAlteracoesPendentes>>, TError, TData>>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -10425,9 +10425,9 @@ export const getDeletePastoraisPorPastoralIdFinanceiroPorIdUrl = (pastoralId: nu
 }
 
 export const deletePastoraisPorPastoralIdFinanceiroPorId = async (pastoralId: number,
-    id: number, options?: Parameters<typeof clienteHttp>[1]): Promise<deletePastoraisPorPastoralIdFinanceiroPorIdResponse> => {
+    id: number, options?: Parameters<typeof clienteGerado>[1]): Promise<deletePastoraisPorPastoralIdFinanceiroPorIdResponse> => {
 
-  return clienteHttp<deletePastoraisPorPastoralIdFinanceiroPorIdResponse>(getDeletePastoraisPorPastoralIdFinanceiroPorIdUrl(pastoralId,id),
+  return clienteGerado<deletePastoraisPorPastoralIdFinanceiroPorIdResponse>(getDeletePastoraisPorPastoralIdFinanceiroPorIdUrl(pastoralId,id),
   {
     ...options,
     method: 'DELETE'
@@ -10443,7 +10443,7 @@ export const deletePastoraisPorPastoralIdFinanceiroPorId = async (pastoralId: nu
 export const getDeletePastoraisPorPastoralIdFinanceiroPorIdMutationKey = () => ['deletePastoraisPorPastoralIdFinanceiroPorId'] as const;
 
 export const getDeletePastoraisPorPastoralIdFinanceiroPorIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdFinanceiroPorId>>, TError,DeletePastoraisPorPastoralIdFinanceiroPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdFinanceiroPorId>>, TError,DeletePastoraisPorPastoralIdFinanceiroPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdFinanceiroPorId>>, TError,DeletePastoraisPorPastoralIdFinanceiroPorIdMutationVariables, TContext> => {
 
 const mutationKey = getDeletePastoraisPorPastoralIdFinanceiroPorIdMutationKey();
@@ -10475,7 +10475,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeletePastoraisPorPastoralIdFinanceiroPorIdMutationVariables = {pastoralId: number;id: number}
 
     export const useDeletePastoraisPorPastoralIdFinanceiroPorId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdFinanceiroPorId>>, TError,DeletePastoraisPorPastoralIdFinanceiroPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteHttp>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePastoraisPorPastoralIdFinanceiroPorId>>, TError,DeletePastoraisPorPastoralIdFinanceiroPorIdMutationVariables, TContext>, request?: SecondParameter<typeof clienteGerado>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deletePastoraisPorPastoralIdFinanceiroPorId>>,
         TError,

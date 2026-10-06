@@ -4,6 +4,7 @@ import { garantirCsrf } from './api/cliente';
 import { App } from './App';
 import './tema/tokens.css';
 import './tema/componentes.css';
+import './tema/layout.css';
 
 // Ao abrir o app, pega o cookie XSRF-TOKEN uma vez; as escritas dependem dele.
 void garantirCsrf().catch(() => {

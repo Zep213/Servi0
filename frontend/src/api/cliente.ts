@@ -72,7 +72,13 @@ async function lerErro(resposta: Response): Promise<ErroApi> {
   return new ErroApi(resposta.status, detalhe, erros);
 }
 
-export async function clienteHttp<T>(url: string, opcoes: RequestInit = {}): Promise<T> {
+export interface RespostaHttp<T> {
+  data: T;
+  status: number;
+  headers: Headers;
+}
+
+async function executar<T>(url: string, opcoes: RequestInit = {}): Promise<RespostaHttp<T>> {
   const metodo = (opcoes.method ?? 'GET').toUpperCase();
   const cabecalhos = new Headers(opcoes.headers);
   if (opcoes.body !== undefined && !cabecalhos.has('Content-Type')) {
@@ -98,8 +104,19 @@ export async function clienteHttp<T>(url: string, opcoes: RequestInit = {}): Pro
   if (!resposta.ok) {
     throw await lerErro(resposta);
   }
-  if (resposta.status === 204) {
-    return undefined as T;
-  }
-  return (await resposta.json()) as T;
+  const data = resposta.status === 204 ? (undefined as T) : ((await resposta.json()) as T);
+  return { data, status: resposta.status, headers: resposta.headers };
+}
+
+/** Para o código escrito à mão: devolve só o corpo. */
+export async function clienteHttp<T>(url: string, opcoes: RequestInit = {}): Promise<T> {
+  return (await executar<T>(url, opcoes)).data;
+}
+
+/**
+ * Mutator do Orval. Orval passa o tipo da resposta completa ({ data, status, headers }, uma união
+ * por status) como T; o que sai daqui tem exatamente esse formato.
+ */
+export async function clienteGerado<T>(url: string, opcoes: RequestInit = {}): Promise<T> {
+  return (await executar<unknown>(url, opcoes)) as T;
 }
