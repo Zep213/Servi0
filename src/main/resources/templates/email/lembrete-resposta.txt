@@ -1,0 +1,9 @@
+Olá, [[${nome}]].
+
+Ainda falta sua resposta ao convite para [[${titulo}]] ([[${data}]], [[${hora}]], função [[${funcao}]]).
+
+O prazo termina em [[${prazo}]]. Depois disso, a vaga volta para o coordenador.
+
+Responda em: [[${link}]]
+
+Servio · mensagem automática, não responda.

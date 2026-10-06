@@ -6,8 +6,9 @@ public enum StatusConvite {
     PENDENTE,
     ACEITA,
     RECUSADA,
-    EXPIRADA;
+    EXPIRADA,
+    SUBSTITUIDA;
 
-    /** Status que ocupam de fato a vaga: RECUSADA e EXPIRADA liberam o lugar. */
+    /** Status que ocupam de fato a vaga: os demais liberam o lugar. */
     public static final Set<StatusConvite> OCUPANTES = Set.of(PENDENTE, ACEITA);
 }

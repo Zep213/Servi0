@@ -16,12 +16,21 @@ services:
       timeout: 3s
       retries: 10
 
+  mailpit:
+    image: axllent/mailpit:v1.21
+    container_name: servio-mailpit
+    ports:
+      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
+      - "127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025"
+
   app:
     build: .
     container_name: servio-app
     depends_on:
       db:
         condition: service_healthy
+      mailpit:
+        condition: service_started
     environment:
       DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-servio}
       DB_USER: ${POSTGRES_USER:-servio}
@@ -30,6 +39,16 @@ services:
       SERVIO_ADMIN_SENHA: ${SERVIO_ADMIN_SENHA:-}
       SERVIO_ADMIN_NOME: ${SERVIO_ADMIN_NOME:-Administrador}
       SERVIO_PAROQUIA_NOME: ${SERVIO_PAROQUIA_NOME:-Paróquia Inicial}
+      SERVIO_FRONT_URL: ${SERVIO_FRONT_URL:-http://localhost:5173}
+      SERVIO_FUSO: ${SERVIO_FUSO:-America/Fortaleza}
+      SERVIO_JOBS_ENABLED: ${SERVIO_JOBS_ENABLED:-true}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-mailpit}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-1025}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-}
+      SPRING_MAIL_SMTP_AUTH: ${SPRING_MAIL_SMTP_AUTH:-false}
+      SPRING_MAIL_STARTTLS: ${SPRING_MAIL_STARTTLS:-false}
+      SERVIO_MAIL_FROM: ${SERVIO_MAIL_FROM:-Servio <no-reply@servio.local>}
     ports:
       - "${APP_PORT:-8080}:8080"
 

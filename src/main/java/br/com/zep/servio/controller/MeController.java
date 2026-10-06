@@ -31,7 +31,8 @@ public class MeController {
                 usuario.getNome(),
                 usuario.getEmail(),
                 usuario.getPerfil(),
-                usuario.getParoquiaId());
+                usuario.getParoquiaId(),
+                meService.pastorais(usuario.getId()));
     }
 
     @PostMapping("/senha")

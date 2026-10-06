@@ -1,0 +1,13 @@
+Olá, [[${nome}]]!
+
+Amanhã você serve em [[${titulo}]]:
+
+Data: [[${data}]]
+Horário da celebração: [[${hora}]]
+[# th:if="${chegada != null}"]Chegar até: [[${chegada}]][/]
+Função: [[${funcao}]]
+[# th:if="${observacao != null}"]Observação: [[${observacao}]][/]
+
+Obrigado por servir!
+
+Servio · mensagem automática, não responda.

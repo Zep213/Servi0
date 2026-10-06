@@ -1,0 +1,7 @@
+Olá, [[${nome}]].
+
+[[${mensagem}]]
+
+Pastoral: [[${pastoral}]]
+
+Servio · mensagem automática, não responda.
