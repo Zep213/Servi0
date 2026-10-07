@@ -6,6 +6,7 @@
  */
 
 export type GetUsuariosBuscaParams = {
+nome?: string;
 /**
  * Zero-based page index (0..N)
  * @minimum 0

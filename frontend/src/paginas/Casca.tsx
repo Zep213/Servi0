@@ -2,28 +2,46 @@ import { Link, NavLink, Outlet } from 'react-router';
 import { Botao } from '../componentes/Botao';
 import { Icone } from '../componentes/Icone';
 import { useSessao } from '../auth/sessaoContexto';
-import { PAPEIS_DE_GESTAO } from '../auth/destino';
+import { acessoNaPastoral } from '../auth/acesso';
 
 /**
  * Moldura do app: barra lateral no computador, navegação inferior no celular. Os itens mudam
  * com o papel na pastoral ativa; a tela também confere (o front só esconde).
  */
 export function Casca() {
-  const { usuario, pastorais, pastoralAtiva, trocarPastoral, encerrar, papelAtivo } = useSessao();
-  const gere = papelAtivo !== null && PAPEIS_DE_GESTAO.includes(papelAtivo);
+  const { usuario, pastorais, pastoralAtiva, trocarPastoral, encerrar } = useSessao();
 
+  const pid = pastoralAtiva ? String(pastoralAtiva.id) : null;
+  const acesso = pastoralAtiva
+    ? acessoNaPastoral(usuario?.perfil ?? undefined, pastorais, pastoralAtiva.id)
+    : null;
   const itens = [
-    ...(gere && pastoralAtiva
-      ? [
-          {
-            para: `/pastoral/${String(pastoralAtiva.id)}/painel`,
-            rotulo: 'Painel',
-            icone: 'painel' as const,
-          },
-        ]
-      : []),
     { para: '/minhas-escalas', rotulo: 'Minhas escalas', icone: 'calendario' as const },
     { para: '/indisponibilidades', rotulo: 'Indisponibilidades', icone: 'relogio' as const },
+    ...(pid && acesso?.veGestao
+      ? [
+          { para: `/pastoral/${pid}/painel`, rotulo: 'Painel', icone: 'painel' as const },
+          { para: `/pastoral/${pid}/membros`, rotulo: 'Membros', icone: 'pessoas' as const },
+          {
+            para: `/pastoral/${pid}/financeiro`,
+            rotulo: 'Financeiro',
+            icone: 'financeiro' as const,
+          },
+          ...(acesso.coordena
+            ? [
+                {
+                  para: `/pastoral/${pid}/configuracoes`,
+                  rotulo: 'Configurações',
+                  icone: 'configuracoes' as const,
+                },
+              ]
+            : []),
+        ]
+      : []),
+    ...(pid &&
+    (acesso?.papel !== null || usuario?.perfil === 'PADRE' || usuario?.perfil === 'ADMIN')
+      ? [{ para: `/pastoral/${pid}/reunioes`, rotulo: 'Reuniões', icone: 'reuniao' as const }]
+      : []),
   ];
 
   return (

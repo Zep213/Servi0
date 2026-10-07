@@ -254,4 +254,16 @@ class LeituraIT {
         assertThat(escalasMuitas).isEqualTo(escalasPoucas);
         assertThat(escalaMuitas).isEqualTo(escalaPoucas);
     }
+
+    /** Busca por nome: parte do nome, sem diferenciar maiúsculas, e só dentro da paróquia de quem busca. */
+    @Test
+    void buscaDeUsuariosFiltraPorNomeDentroDaParoquia() throws Exception {
+        como(cenario.padreA, get("/api/usuarios/busca").param("nome", "MEMBRO1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].nome").value("membro1.pascom"));
+        como(cenario.padreB, get("/api/usuarios/busca").param("nome", "membro1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(0));
+    }
 }

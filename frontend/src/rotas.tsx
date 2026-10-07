@@ -5,7 +5,13 @@ import { Entrar } from './paginas/publico/Entrar';
 import { Convite } from './paginas/publico/Convite';
 import { NaoEncontrada } from './paginas/publico/NaoEncontrada';
 import { TrocarSenha } from './paginas/conta/TrocarSenha';
-import { ExigeSessao, RedirecionaInicio } from './auth/rotas';
+import { ExigeParticipa, ExigeSessao, ExigeVeGestao, RedirecionaInicio } from './auth/rotas';
+import { Painel } from './paginas/pastoral/Painel';
+import { EscalaCelebracao } from './paginas/pastoral/EscalaCelebracao';
+import { Membros } from './paginas/pastoral/Membros';
+import { Reunioes } from './paginas/pastoral/Reunioes';
+import { Financeiro } from './paginas/pastoral/Financeiro';
+import { Configuracoes } from './paginas/pastoral/Configuracoes';
 import { MinhasEscalas } from './paginas/servidor/MinhasEscalas';
 import { Indisponibilidades } from './paginas/servidor/Indisponibilidades';
 
@@ -25,6 +31,25 @@ export const rotas = [
           { path: '/conta/senha', element: <TrocarSenha /> },
           { path: '/minhas-escalas', element: <MinhasEscalas /> },
           { path: '/indisponibilidades', element: <Indisponibilidades /> },
+          {
+            path: '/pastoral/:pastoralId',
+            children: [
+              {
+                element: <ExigeVeGestao />,
+                children: [
+                  { path: 'painel', element: <Painel /> },
+                  { path: 'celebracoes/:celebracaoId', element: <EscalaCelebracao /> },
+                  { path: 'membros', element: <Membros /> },
+                  { path: 'financeiro', element: <Financeiro /> },
+                  { path: 'configuracoes', element: <Configuracoes /> },
+                ],
+              },
+              {
+                element: <ExigeParticipa />,
+                children: [{ path: 'reunioes', element: <Reunioes /> }],
+              },
+            ],
+          },
         ],
       },
     ],

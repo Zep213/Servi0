@@ -2,6 +2,7 @@ import { Link, Navigate, Outlet, useLocation } from 'react-router';
 import { EstadoVazio } from '../componentes/EstadoVazio';
 import { Esqueleto } from '../componentes/Esqueleto';
 import { destinoInicial, PAPEIS_DE_GESTAO } from './destino';
+import { useAcessoDaPastoral } from './useAcesso';
 import { useSessao } from './sessaoContexto';
 
 /** Só entra quem tem sessão. Sem sessão, vai ao login e lembra de onde veio. */
@@ -35,6 +36,28 @@ export function ExigePapelDeGestao() {
     usuario.perfil === 'PADRE' ||
     (papelAtivo !== null && PAPEIS_DE_GESTAO.includes(papelAtivo));
   return podeGerir ? <Outlet /> : <SemAcesso />;
+}
+
+/** Gestão de uma pastoral específica (:pastoralId da rota). Quem não gere aquela pastoral vê a tela de acesso. */
+export function ExigeVeGestao() {
+  const { usuario } = useSessao();
+  const { acesso } = useAcessoDaPastoral();
+  if (!usuario) return null;
+  return acesso.veGestao ? <Outlet /> : <SemAcesso />;
+}
+
+/** Participa da pastoral (qualquer papel) ou é PADRE/ADMIN. Para o que membros também usam, como reuniões. */
+export function ExigeParticipa() {
+  const { usuario } = useSessao();
+  const { pastoralId } = useAcessoDaPastoral();
+  const { pastorais } = useSessao();
+  if (!usuario) return null;
+  const participa = pastorais.some((p) => p.id === pastoralId);
+  return participa || usuario.perfil === 'PADRE' || usuario.perfil === 'ADMIN' ? (
+    <Outlet />
+  ) : (
+    <SemAcesso />
+  );
 }
 
 export function RedirecionaInicio() {
