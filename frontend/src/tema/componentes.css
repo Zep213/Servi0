@@ -1,0 +1,458 @@
+/* Componentes base. Cores vêm dos tokens; a cor da pastoral entra por --accent e --accent-text. */
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-2);
+  min-height: var(--alvo-minimo);
+  min-width: var(--alvo-minimo);
+  padding: var(--espaco-2) var(--espaco-4);
+  border-radius: var(--raio);
+  border: 2px solid transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.botao:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.botao:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.botao--primario {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.botao--secundario {
+  background: var(--superficie);
+  color: var(--texto);
+  border-color: var(--borda);
+}
+.botao--perigo {
+  background: var(--erro);
+  color: #ffffff;
+}
+
+.card {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-grande);
+  padding: var(--espaco-4);
+  margin-bottom: var(--espaco-4);
+}
+.card__cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-2);
+  margin-bottom: var(--espaco-3);
+}
+.card__titulo {
+  font-size: 1.125rem;
+  margin: 0;
+}
+.card__acoes {
+  display: flex;
+  gap: var(--espaco-2);
+}
+
+.card-estatistica {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-grande);
+  padding: var(--espaco-4);
+}
+.card-estatistica__valor {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--accent);
+}
+.card-estatistica__rotulo {
+  margin: var(--espaco-1) 0 0;
+  color: var(--texto-secundario);
+}
+.card-estatistica__detalhe {
+  margin: var(--espaco-1) 0 0;
+  font-size: 0.875rem;
+  color: var(--texto-secundario);
+}
+
+.selo {
+  display: inline-block;
+  padding: var(--espaco-1) var(--espaco-3);
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.selo--pendente {
+  background: var(--atencao-fundo);
+  color: var(--atencao);
+}
+.selo--confirmado {
+  background: var(--sucesso-fundo);
+  color: var(--sucesso);
+}
+.selo--recusado,
+.selo--expirado {
+  background: var(--erro-fundo);
+  color: var(--erro);
+}
+.selo--neutro {
+  background: var(--neutro-fundo);
+  color: var(--neutro);
+}
+.selo--atencao {
+  background: var(--atencao-fundo);
+  color: var(--atencao);
+}
+
+/* Tabela no computador; no celular cada linha vira um cartão com o nome de cada campo. */
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tabela th,
+.tabela td {
+  text-align: left;
+  padding: var(--espaco-3);
+  border-bottom: 1px solid var(--borda);
+}
+@media (max-width: 640px) {
+  .tabela thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .tabela,
+  .tabela tbody,
+  .tabela tr,
+  .tabela td {
+    display: block;
+    width: 100%;
+  }
+  .tabela tr {
+    background: var(--superficie);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    margin-bottom: var(--espaco-3);
+    padding: var(--espaco-2) 0;
+  }
+  .tabela td {
+    border: 0;
+    padding: var(--espaco-1) var(--espaco-3);
+  }
+  .tabela td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--texto-secundario);
+  }
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+  margin-bottom: var(--espaco-4);
+}
+.campo__rotulo {
+  font-weight: 600;
+}
+.campo__input {
+  min-height: var(--alvo-minimo);
+  padding: var(--espaco-2) var(--espaco-3);
+  font: inherit;
+  border: 2px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  color: var(--texto);
+}
+.campo__input:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 1px;
+}
+.campo--erro .campo__input {
+  border-color: var(--erro);
+}
+.campo__ajuda {
+  margin: 0;
+  color: var(--texto-secundario);
+  font-size: 0.875rem;
+}
+.campo__erro {
+  margin: 0;
+  color: var(--erro);
+  font-weight: 600;
+}
+
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  background: rgb(17 24 39 / 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-4);
+  z-index: 50;
+}
+.modal {
+  background: var(--superficie);
+  border-radius: var(--raio-grande);
+  width: min(560px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: var(--espaco-4);
+}
+.modal:focus {
+  outline: none;
+}
+.modal__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-2);
+  margin-bottom: var(--espaco-3);
+}
+.modal__titulo {
+  font-size: 1.25rem;
+  margin: 0;
+}
+.acoes-modal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--espaco-2);
+  margin-top: var(--espaco-4);
+}
+/* No celular o diálogo vira folha que sobe de baixo. */
+@media (max-width: 640px) {
+  .modal-fundo {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal {
+    width: 100%;
+    border-radius: var(--raio-grande) var(--raio-grande) 0 0;
+    max-height: 85vh;
+  }
+}
+
+.texto-corpo {
+  margin: 0 0 var(--espaco-3);
+  line-height: 1.5;
+}
+.estado-vazio {
+  text-align: center;
+  padding: var(--espaco-8) var(--espaco-4);
+  color: var(--texto-secundario);
+}
+.estado-vazio__titulo {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--texto);
+  margin: 0 0 var(--espaco-2);
+}
+
+.esqueleto__linha {
+  height: 16px;
+  margin: var(--espaco-3) 0;
+  border-radius: var(--raio-pequeno);
+  background: var(--neutro-100);
+}
+
+.toasts {
+  position: fixed;
+  left: var(--espaco-4);
+  right: var(--espaco-4);
+  bottom: var(--espaco-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  z-index: 60;
+  pointer-events: none;
+}
+.toast {
+  margin: 0;
+  padding: var(--espaco-3) var(--espaco-4);
+  border-radius: var(--raio);
+  background: var(--texto);
+  color: var(--neutro-0);
+  font-weight: 600;
+  max-width: 480px;
+}
+.toast--erro {
+  background: var(--erro);
+}
+.toast--sucesso {
+  background: var(--sucesso);
+}
+
+/* Barra persistente (atualização do app, convite para instalar): some só quando a pessoa decide. */
+.pwa-barra {
+  position: fixed;
+  left: var(--espaco-4);
+  right: var(--espaco-4);
+  bottom: var(--espaco-4);
+  z-index: 70;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-3);
+  padding: var(--espaco-3) var(--espaco-4);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  box-shadow: 0 4px 16px rgba(17, 24, 39, 0.12);
+  max-width: 480px;
+  margin: 0 auto;
+}
+.pwa-barra p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.titulo-pagina {
+  font-size: 1.5rem;
+  margin: 0 0 var(--espaco-4);
+}
+.abas {
+  display: flex;
+  gap: var(--espaco-2);
+  margin-bottom: var(--espaco-4);
+}
+.escala__cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-2);
+}
+.escala__data {
+  margin: 0;
+  color: var(--texto-secundario);
+  text-transform: capitalize;
+}
+.escala__titulo {
+  font-size: 1.25rem;
+  margin: var(--espaco-2) 0 var(--espaco-3);
+}
+.escala__resposta {
+  margin-top: var(--espaco-4);
+  border-top: 1px solid var(--borda);
+  padding-top: var(--espaco-4);
+}
+.convite__dados {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--espaco-2) var(--espaco-4);
+  margin: 0 0 var(--espaco-4);
+}
+.convite__dados dt {
+  color: var(--texto-secundario);
+}
+.convite__dados dd {
+  margin: 0;
+  font-weight: 600;
+}
+.convite__destaque {
+  color: var(--accent);
+  font-size: 1.25rem;
+}
+.convite__botoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+}
+.convite__grande {
+  width: 100%;
+  font-size: 1.125rem;
+}
+.convite__saudacao {
+  font-size: 1.5rem;
+  margin: 0 0 var(--espaco-2);
+}
+.convite__pedido {
+  margin: 0 0 var(--espaco-3);
+}
+.convite {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--espaco-4);
+}
+.convite__marca {
+  font-size: 1rem;
+  color: var(--accent);
+  margin: var(--espaco-4) 0;
+}
+
+/* Calendário mensal das celebrações (área do padre). A lista abaixo dele é a via acessível. */
+.calendario {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--borda);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+}
+.calendario__semana {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+.calendario__cabecalho-dia {
+  padding: var(--espaco-2);
+  background: var(--superficie);
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  text-align: center;
+}
+.calendario__dia {
+  min-height: 72px;
+  padding: var(--espaco-1);
+  background: var(--superficie);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+}
+.calendario__dia--fora {
+  background: var(--fundo);
+  color: var(--texto-secundario);
+}
+.calendario__numero {
+  font-size: 0.85rem;
+}
+.calendario__celebracao {
+  font-size: 0.8rem;
+  padding: 2px var(--espaco-1);
+  border-radius: var(--raio-pequeno);
+  background: var(--accent-soft);
+  color: var(--texto);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.calendario__celebracao:focus-visible {
+  outline: 2px solid var(--accent);
+}
+@media (max-width: 640px) {
+  .calendario__cabecalho-dia {
+    font-size: 0.7rem;
+    padding: var(--espaco-1);
+  }
+  .calendario__dia {
+    min-height: 52px;
+  }
+  .calendario__celebracao {
+    font-size: 0.7rem;
+  }
+}

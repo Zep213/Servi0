@@ -33,4 +33,23 @@ public interface CelebracaoRepository extends TenantRepository<Celebracao> {
     Page<Celebracao> findVisiveisPorPastorais(@Param("paroquiaId") Long paroquiaId,
                                                @Param("pastoraisIds") List<Long> pastoraisIds,
                                                Pageable pageable);
+
+    /** Celebrações do período, de uma paróquia (PADRE/ADMIN veem todas). */
+    Page<Celebracao> findByParoquiaIdAndActiveTrueAndDataBetween(Long paroquiaId, LocalDate de, LocalDate ate, Pageable pageable);
+
+    /** Celebrações do período com vaga de alguma das pastorais visíveis ao usuário. */
+    @Query(value = """
+            select distinct c from Celebracao c join Vaga v on v.celebracao = c and v.active = true
+            where c.paroquiaId = :paroquiaId and c.active = true and v.funcao.pastoral.id in :pastoraisIds
+              and c.data between :de and :ate
+            """,
+            countQuery = """
+            select count(distinct c) from Celebracao c join Vaga v on v.celebracao = c and v.active = true
+            where c.paroquiaId = :paroquiaId and c.active = true and v.funcao.pastoral.id in :pastoraisIds
+              and c.data between :de and :ate
+            """)
+    Page<Celebracao> findVisiveisPorPastoraisNoPeriodo(@Param("paroquiaId") Long paroquiaId,
+                                                       @Param("pastoraisIds") List<Long> pastoraisIds,
+                                                       @Param("de") LocalDate de, @Param("ate") LocalDate ate,
+                                                       Pageable pageable);
 }

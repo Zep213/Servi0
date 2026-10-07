@@ -39,7 +39,7 @@ services:
       SERVIO_ADMIN_SENHA: ${SERVIO_ADMIN_SENHA:-}
       SERVIO_ADMIN_NOME: ${SERVIO_ADMIN_NOME:-Administrador}
       SERVIO_PAROQUIA_NOME: ${SERVIO_PAROQUIA_NOME:-Paróquia Inicial}
-      SERVIO_FRONT_URL: ${SERVIO_FRONT_URL:-http://localhost:5173}
+      SERVIO_FRONT_URL: ${SERVIO_FRONT_URL:-http://localhost}
       SERVIO_FUSO: ${SERVIO_FUSO:-America/Fortaleza}
       SERVIO_JOBS_ENABLED: ${SERVIO_JOBS_ENABLED:-true}
       SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-mailpit}
@@ -49,8 +49,14 @@ services:
       SPRING_MAIL_SMTP_AUTH: ${SPRING_MAIL_SMTP_AUTH:-false}
       SPRING_MAIL_STARTTLS: ${SPRING_MAIL_STARTTLS:-false}
       SERVIO_MAIL_FROM: ${SERVIO_MAIL_FROM:-Servio <no-reply@servio.local>}
+
+  web:
+    build: ./frontend
+    container_name: servio-web
+    depends_on:
+      - app
     ports:
-      - "${APP_PORT:-8080}:8080"
+      - "${WEB_PORT:-80}:8080"
 
 volumes:
   servio-db-data:

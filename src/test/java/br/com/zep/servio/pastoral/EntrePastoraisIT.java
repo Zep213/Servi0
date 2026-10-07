@@ -337,4 +337,14 @@ class EntrePastoraisIT {
                         .with(user(cenario.principal(cenario.coordenadorPascom))).with(csrf()))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void leiturasDoEccParaCoordenadorDoPascomDao404() throws Exception {
+        mvc.perform(get("/api/pastorais/{id}/membros", cenario.ecc.getId())
+                        .with(user(cenario.principal(cenario.coordenadorPascom))))
+                .andExpect(status().isNotFound());
+        mvc.perform(get("/api/pastorais/{id}/celebracoes/{c}/escala", cenario.ecc.getId(), 1L)
+                        .with(user(cenario.principal(cenario.coordenadorPascom))))
+                .andExpect(status().isNotFound());
+    }
 }

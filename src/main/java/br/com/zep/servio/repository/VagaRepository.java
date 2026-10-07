@@ -71,4 +71,15 @@ public interface VagaRepository extends TenantRepository<Vaga> {
             """)
     List<Celebracao> celebracoesDaPastoral(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId,
                                            @Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
+
+    /** Vagas de uma pastoral numa celebração, com a função carregada (tela de escala). */
+    @Query("""
+            select v from Vaga v
+            join fetch v.funcao f
+            where v.paroquiaId = :paroquiaId and v.active = true
+              and v.celebracao.id = :celebracaoId and f.pastoral.id = :pastoralId
+            order by f.nome, v.id
+            """)
+    List<Vaga> vagasDaPastoralNaCelebracao(@Param("paroquiaId") Long paroquiaId, @Param("pastoralId") Long pastoralId,
+                                           @Param("celebracaoId") Long celebracaoId);
 }

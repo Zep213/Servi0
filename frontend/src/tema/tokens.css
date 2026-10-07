@@ -1,0 +1,58 @@
+/* Tokens do tema. Toda cor de texto tem contraste mínimo de 4,5:1 sobre o fundo em que aparece. */
+:root {
+  --neutro-0: #ffffff;
+  --neutro-50: #f7f7f8;
+  --neutro-100: #eef0f3;
+  --neutro-300: #cdd2da;
+  --neutro-600: #5b6472;
+  --neutro-900: #111827;
+
+  --fundo: var(--neutro-50);
+  --superficie: var(--neutro-0);
+  --texto: var(--neutro-900);
+  --texto-secundario: var(--neutro-600);
+  --borda: var(--neutro-300);
+
+  --sucesso: #166534;
+  --sucesso-fundo: #dcfce7;
+  --atencao: #854d0e;
+  --atencao-fundo: #fef9c3;
+  --erro: #b91c1c;
+  --erro-fundo: #fee2e2;
+  --neutro: #374151;
+  --neutro-fundo: #e5e7eb;
+
+  --accent: #1d4ed8;
+  --accent-soft: #dbeafe;
+  --accent-text: #ffffff;
+
+  --raio-pequeno: 6px;
+  --raio: 10px;
+  --raio-grande: 16px;
+
+  --espaco-1: 4px;
+  --espaco-2: 8px;
+  --espaco-3: 12px;
+  --espaco-4: 16px;
+  --espaco-6: 24px;
+  --espaco-8: 32px;
+
+  --texto-base: 16px;
+  --alvo-minimo: 44px;
+
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-size: var(--texto-base);
+  color: var(--texto);
+  background: var(--fundo);
+}
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+}

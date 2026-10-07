@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
+import br.com.zep.servio.exception.RegraNegocioException;
 
 @Service
 @RequiredArgsConstructor
@@ -101,6 +103,29 @@ public class CelebracaoService extends CrudService<Celebracao, CelebracaoRequest
             return Page.empty(pageable);
         }
         return repository.findVisiveisPorPastorais(paroquiaId(), visiveis.get(), pageable).map(this::paraResposta);
+    }
+
+    /** Mesma regra de visibilidade do listar(pageable), filtrada pelo período (de/ate, opcionais). */
+    @Transactional(readOnly = true)
+    public Page<CelebracaoResponseDTO> listar(LocalDate de, LocalDate ate, Pageable pageable) {
+        if (de == null && ate == null) {
+            return listar(pageable);
+        }
+        LocalDate inicio = de == null ? LocalDate.of(1900, 1, 1) : de;
+        LocalDate fim = ate == null ? LocalDate.of(9999, 12, 31) : ate;
+        if (fim.isBefore(inicio)) {
+            throw new RegraNegocioException("A data final não pode ser antes da inicial");
+        }
+        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
+        if (visiveis.isEmpty()) {
+            return repository.findByParoquiaIdAndActiveTrueAndDataBetween(paroquiaId(), inicio, fim, pageable)
+                    .map(this::paraResposta);
+        }
+        if (visiveis.get().isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return repository.findVisiveisPorPastoraisNoPeriodo(paroquiaId(), visiveis.get(), inicio, fim, pageable)
+                .map(this::paraResposta);
     }
 
     @Override

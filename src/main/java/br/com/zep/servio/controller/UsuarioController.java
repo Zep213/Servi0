@@ -31,8 +31,9 @@ public class UsuarioController {
 
     /** Para achar quem adicionar a uma pastoral: id, nome e e-mail, nada sensível. */
     @GetMapping("/busca")
-    public Page<UsuarioResumoDTO> buscar(@PageableDefault(size = 20, sort = "nome") Pageable pageable) {
-        return service.buscarResumo(pageable);
+    public Page<UsuarioResumoDTO> buscar(@RequestParam(required = false) String nome,
+                                         @PageableDefault(size = 20, sort = "nome") Pageable pageable) {
+        return service.buscarResumo(nome, pageable);
     }
 
     @GetMapping("/{id}")

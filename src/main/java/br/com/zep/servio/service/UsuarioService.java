@@ -89,12 +89,15 @@ public class UsuarioService extends CrudService<Usuario, UsuarioRequestDTO, Usua
 
     /** Para achar quem adicionar a uma pastoral: PADRE, ADMIN ou coordenador de alguma pastoral. */
     @Transactional(readOnly = true)
-    public Page<UsuarioResumoDTO> buscarResumo(Pageable pageable) {
+    /** Busca resumida por nome (parte do nome, sem diferenciar maiúsculas) dentro da paróquia. */
+    public Page<UsuarioResumoDTO> buscarResumo(String nome, Pageable pageable) {
         if (!pastoraisPermissao.ehAdmin() && !pastoraisPermissao.ehPadre() && !pastoraisPermissao.ehCoordenadorDeAlgumaPastoral()) {
             throw new AccessDeniedException("Você não tem permissão para buscar usuários");
         }
-        return repository.findByParoquiaIdAndActiveTrue(paroquiaId(), pageable)
-                .map(u -> new UsuarioResumoDTO(u.getId(), u.getNome(), u.getEmail()));
+        Page<Usuario> pagina = nome == null || nome.isBlank()
+                ? repository.findByParoquiaIdAndActiveTrue(paroquiaId(), pageable)
+                : repository.findByParoquiaIdAndActiveTrueAndNomeContainingIgnoreCase(paroquiaId(), nome.trim(), pageable);
+        return pagina.map(u -> new UsuarioResumoDTO(u.getId(), u.getNome(), u.getEmail()));
     }
 
     @Transactional
