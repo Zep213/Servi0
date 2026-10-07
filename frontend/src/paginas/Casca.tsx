@@ -15,9 +15,17 @@ export function Casca() {
   const acesso = pastoralAtiva
     ? acessoNaPastoral(usuario?.perfil ?? undefined, pastorais, pastoralAtiva.id)
     : null;
+  const ehPadreOuAdmin = usuario?.perfil === 'PADRE' || usuario?.perfil === 'ADMIN';
   const itens = [
     { para: '/minhas-escalas', rotulo: 'Minhas escalas', icone: 'calendario' as const },
     { para: '/indisponibilidades', rotulo: 'Indisponibilidades', icone: 'relogio' as const },
+    ...(ehPadreOuAdmin
+      ? [
+          { para: '/celebracoes', rotulo: 'Celebrações', icone: 'calendario' as const },
+          { para: '/pastorais', rotulo: 'Pastorais', icone: 'pessoas' as const },
+          { para: '/financeiro', rotulo: 'Financeiro', icone: 'financeiro' as const },
+        ]
+      : []),
     ...(pid && acesso?.veGestao
       ? [
           { para: `/pastoral/${pid}/painel`, rotulo: 'Painel', icone: 'painel' as const },

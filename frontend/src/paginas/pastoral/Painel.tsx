@@ -19,30 +19,20 @@ import { Esqueleto } from '../../componentes/Esqueleto';
 import { SeloStatus, type StatusSelo } from '../../componentes/SeloStatus';
 import { Tabela, type ColunaTabela } from '../../componentes/Tabela';
 import { useToast } from '../../componentes/toastContexto';
-import { dataPorExtenso, horaCurta, hojeIso, prazoLegivel } from '../../utilidades/datas';
+import {
+  dataPorExtenso,
+  deslocarMes,
+  horaCurta,
+  mesAtual,
+  nomeDoMes,
+  prazoLegivel,
+} from '../../utilidades/datas';
 
 const STATUS_DA_CELEBRACAO: Record<string, { selo: StatusSelo; texto: string }> = {
   NAO_INICIADO: { selo: 'neutro', texto: 'Ainda não começou' },
   PENDENTE: { selo: 'atencao', texto: 'Em andamento' },
   COMPLETO: { selo: 'confirmado', texto: 'Completo' },
 };
-
-function mesAtual(): string {
-  return hojeIso().slice(0, 7);
-}
-
-function deslocarMes(mes: string, quantidade: number): string {
-  const [ano, m] = mes.split('-').map(Number) as [number, number];
-  const data = new Date(ano, m - 1 + quantidade, 1);
-  return `${String(data.getFullYear())}-${String(data.getMonth() + 1).padStart(2, '0')}`;
-}
-
-function nomeDoMes(mes: string): string {
-  const [ano, m] = mes.split('-').map(Number) as [number, number];
-  return new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(
-    new Date(ano, m - 1, 1),
-  );
-}
 
 /** Painel do coordenador: cartões do mês, celebrações com o que falta, e o que pede atenção. */
 export function Painel() {

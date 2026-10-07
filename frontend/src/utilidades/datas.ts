@@ -78,3 +78,32 @@ function dataIso(data: Date): string {
   const dia = String(data.getDate()).padStart(2, '0');
   return `${ano}-${mes}-${dia}`;
 }
+
+const NOMES_DO_MES = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
+
+/** O mês de hoje, em AAAA-MM. Navegação por mês (painel, celebrações, financeiro) parte daqui. */
+export function mesAtual(): string {
+  return hojeIso().slice(0, 7);
+}
+
+/** Desloca um mês AAAA-MM pela quantidade de meses (negativa para o anterior). */
+export function deslocarMes(mes: string, quantidade: number): string {
+  const [ano, m] = mes.split('-').map(Number) as [number, number];
+  const data = new Date(ano, m - 1 + quantidade, 1);
+  return `${String(data.getFullYear())}-${String(data.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/** "2026-10" → "outubro de 2026". */
+export function nomeDoMes(mes: string): string {
+  const [ano, m] = mes.split('-').map(Number) as [number, number];
+  return NOMES_DO_MES.format(new Date(ano, m - 1, 1));
+}
+
+/** Primeiro e último dia (AAAA-MM-DD) de um mês AAAA-MM, para filtrar por período. */
+export function limitesDoMes(mes: string): { de: string; ate: string } {
+  const [ano, m] = mes.split('-').map(Number) as [number, number];
+  return {
+    de: `${mes}-01`,
+    ate: dataIso(new Date(ano, m, 0)),
+  };
+}

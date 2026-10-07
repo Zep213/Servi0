@@ -367,3 +367,67 @@
   color: var(--accent);
   margin: var(--espaco-4) 0;
 }
+
+/* Calendário mensal das celebrações (área do padre). A lista abaixo dele é a via acessível. */
+.calendario {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--borda);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+}
+.calendario__semana {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+.calendario__cabecalho-dia {
+  padding: var(--espaco-2);
+  background: var(--superficie);
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  text-align: center;
+}
+.calendario__dia {
+  min-height: 72px;
+  padding: var(--espaco-1);
+  background: var(--superficie);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+}
+.calendario__dia--fora {
+  background: var(--fundo);
+  color: var(--texto-secundario);
+}
+.calendario__numero {
+  font-size: 0.85rem;
+}
+.calendario__celebracao {
+  font-size: 0.8rem;
+  padding: 2px var(--espaco-1);
+  border-radius: var(--raio-pequeno);
+  background: var(--accent-soft);
+  color: var(--texto);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.calendario__celebracao:focus-visible {
+  outline: 2px solid var(--accent);
+}
+@media (max-width: 640px) {
+  .calendario__cabecalho-dia {
+    font-size: 0.7rem;
+    padding: var(--espaco-1);
+  }
+  .calendario__dia {
+    min-height: 52px;
+  }
+  .calendario__celebracao {
+    font-size: 0.7rem;
+  }
+}
