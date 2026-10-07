@@ -120,6 +120,22 @@ describe('Minhas escalas', () => {
     renderizarRotas('/minhas-escalas');
     expect(await screen.findByText('Você não tem escalas marcadas')).toBeInTheDocument();
   });
+
+  it('sem conexão, avisa que está mostrando as escalas salvas', async () => {
+    Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
+    servidor.use(
+      http.get('/api/me', () => HttpResponse.json(eu)),
+      http.get('/api/me/escalas', () => HttpResponse.json([escalaPendente])),
+    );
+    try {
+      renderizarRotas('/minhas-escalas');
+      expect(
+        await screen.findByText('Você está sem conexão. Mostrando as últimas escalas salvas.'),
+      ).toBeInTheDocument();
+    } finally {
+      Object.defineProperty(window.navigator, 'onLine', { value: true, configurable: true });
+    }
+  });
 });
 
 describe('Minhas indisponibilidades', () => {

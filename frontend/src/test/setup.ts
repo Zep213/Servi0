@@ -1,7 +1,10 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterAll, afterEach, beforeAll } from 'vitest';
+import { toHaveNoViolations } from 'jest-axe';
+import { afterAll, afterEach, beforeAll, expect } from 'vitest';
 import { servidor } from './servidor';
+
+expect.extend(toHaveNoViolations);
 
 // No Node, fetch não aceita caminho relativo: os testes resolvem /api/... na origem da página,
 // como o navegador faz.

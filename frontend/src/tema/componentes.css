@@ -294,6 +294,31 @@
   background: var(--sucesso);
 }
 
+/* Barra persistente (atualização do app, convite para instalar): some só quando a pessoa decide. */
+.pwa-barra {
+  position: fixed;
+  left: var(--espaco-4);
+  right: var(--espaco-4);
+  bottom: var(--espaco-4);
+  z-index: 70;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-3);
+  padding: var(--espaco-3) var(--espaco-4);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  box-shadow: 0 4px 16px rgba(17, 24, 39, 0.12);
+  max-width: 480px;
+  margin: 0 auto;
+}
+.pwa-barra p {
+  margin: 0;
+  font-weight: 600;
+}
+
 .titulo-pagina {
   font-size: 1.5rem;
   margin: 0 0 var(--espaco-4);

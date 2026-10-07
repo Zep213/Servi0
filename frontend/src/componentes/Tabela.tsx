@@ -25,7 +25,7 @@ export function Tabela<T>({ titulo, colunas, linhas, chaveDaLinha }: TabelaProps
           <tr>
             {colunas.map((c) => (
               <th key={c.chave} scope="col">
-                {c.titulo}
+                {c.titulo || <span className="sr-only">Ações</span>}
               </th>
             ))}
           </tr>

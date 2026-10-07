@@ -13,6 +13,7 @@ import { EstadoVazio } from '../../componentes/EstadoVazio';
 import { Esqueleto } from '../../componentes/Esqueleto';
 import { SeloStatus, type StatusSelo } from '../../componentes/SeloStatus';
 import { useToast } from '../../componentes/toastContexto';
+import { useConexao } from '../../pwa/useConexao';
 import {
   dataPorExtenso,
   horaCurta,
@@ -43,6 +44,7 @@ const SELO_DO_STATUS: Record<string, StatusSelo> = {
 export function MinhasEscalas() {
   const [aba, definirAba] = useState<Aba>('proximas');
   const params = periodo(aba);
+  const online = useConexao();
   const consulta = useQuery({
     queryKey: getGetMeEscalasQueryKey(params),
     queryFn: async () => (await getMeEscalas(params)).data,
@@ -51,6 +53,11 @@ export function MinhasEscalas() {
   return (
     <>
       <h1 className="titulo-pagina">Minhas escalas</h1>
+      {!online ? (
+        <p className="aviso" role="status">
+          Você está sem conexão. Mostrando as últimas escalas salvas.
+        </p>
+      ) : null}
       <div className="abas" role="group" aria-label="Período">
         <Botao
           variante={aba === 'proximas' ? 'primario' : 'secundario'}

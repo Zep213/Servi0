@@ -32,7 +32,8 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.config.{js,ts}', 'vite.config.ts'],
+    files: ['**/*.config.{js,ts}', 'vite.config.ts', 'e2e/**/*.ts'],
     extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: { globals: globals.node },
   },
 );

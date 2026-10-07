@@ -3,6 +3,8 @@ import { RouterProvider } from 'react-router';
 import { queryClient } from './api/queryClient';
 import { SessaoProvider } from './auth/SessaoProvider';
 import { ProvedorToast } from './componentes/Toast';
+import { AvisoAtualizacao } from './pwa/AvisoAtualizacao';
+import { ConviteInstalar } from './pwa/ConviteInstalar';
 import { roteador } from './rotas';
 
 export function App() {
@@ -11,6 +13,8 @@ export function App() {
       <SessaoProvider>
         <ProvedorToast>
           <RouterProvider router={roteador} />
+          <AvisoAtualizacao />
+          <ConviteInstalar />
         </ProvedorToast>
       </SessaoProvider>
     </QueryClientProvider>
