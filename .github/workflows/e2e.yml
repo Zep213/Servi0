@@ -13,7 +13,7 @@ jobs:
       SERVIO_ADMIN_SENHA: senha-e2e-${{ github.run_id }}
       COOKIE_SECURE: 'false'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Subir a stack (db descartável, mailpit, app, web)
         run: docker compose up -d --build
