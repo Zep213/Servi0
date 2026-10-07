@@ -30,6 +30,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -57,6 +58,8 @@ class ConviteRespostaIT {
 
     @Autowired
     MockMvc mvc;
+    @Autowired
+    Clock clock;
     @Autowired
     ParoquiaRepository paroquiaRepository;
     @Autowired
@@ -179,7 +182,7 @@ class ConviteRespostaIT {
     @Test
     void prazoVencidoDaErroEStatusViraExpiradaNoBanco() throws Exception {
         Usuario convidado = candidatoFresco();
-        Alocacao alocacao = criarConvitePendente(convidado, LocalDateTime.now().minusMinutes(1));
+        Alocacao alocacao = criarConvitePendente(convidado, LocalDateTime.now(clock).minusMinutes(1));
 
         mvc.perform(post("/api/alocacoes/{id}/responder?aceitar=true", alocacao.getId())
                         .with(user(cenario.principal(convidado))).with(csrf()))

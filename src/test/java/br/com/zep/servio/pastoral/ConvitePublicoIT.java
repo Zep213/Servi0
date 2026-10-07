@@ -34,6 +34,7 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -61,6 +62,8 @@ class ConvitePublicoIT {
 
     @Autowired
     MockMvc mvc;
+    @Autowired
+    Clock clock;
     @Autowired
     tools.jackson.databind.ObjectMapper json;
     @Autowired
@@ -227,7 +230,7 @@ class ConvitePublicoIT {
     void prazoVencidoDa410EGravaExpiradaNoBanco() throws Exception {
         Convite convite = convidar();
         Alocacao alocacao = alocacaoRepository.findById(convite.id()).orElseThrow();
-        alocacao.setDataLimiteResposta(LocalDateTime.now().minusMinutes(1));
+        alocacao.setDataLimiteResposta(LocalDateTime.now(clock).minusMinutes(1));
         alocacaoRepository.save(alocacao);
 
         responder(convite.token(), true, null, ipUnico()).andExpect(status().isGone());
