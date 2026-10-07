@@ -33,7 +33,8 @@ function exigirEnv(nome: string): string {
 
 /**
  * Semeia pela API (sem UI) o mínimo pra sortear uma missa: comunidade, pastoral, função,
- * celebração de domingo, um coordenador, um servidor membro e a vaga (quantidade=1) pronta.
+ * celebração de domingo, um coordenador (indisponível no dia), um servidor membro e a vaga
+ * (quantidade=1) pronta.
  * A UI entra só depois, no teste, pra sortear e confirmar — ver `escalacao.spec.ts`.
  */
 export default async function globalSetup(): Promise<void> {
@@ -76,6 +77,13 @@ export default async function globalSetup(): Promise<void> {
     usuarioId: usuarioCoordenador.id,
     pastoralId: pastoral.id,
     papel: 'COORDENADOR',
+  });
+  // Coordenadora também é candidata no sorteio; indisponível no dia, só a servidora pode sair.
+  await api.post('/api/indisponibilidades', {
+    usuarioId: usuarioCoordenador.id,
+    dataInicio: celebracaoData,
+    dataFim: celebracaoData,
+    motivo: 'E2E: deixa só a servidora elegível',
   });
 
   const usuarioServidor = await api.post<{ id: number }>('/api/usuarios', {
