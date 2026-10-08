@@ -134,17 +134,18 @@
     gap: var(--espaco-1);
     padding: var(--espaco-2);
     z-index: 40;
-    /* Coordenação chega a 7 itens: em vez de cortar os últimos, a barra rola de lado. */
-    overflow-x: auto;
-    scrollbar-width: none;
   }
+  /* Os itens dividem a largura; rótulo longo quebra em duas linhas ("Minhas / escalas"). */
   .casca__inferior-link {
-    flex: 1 0 auto;
+    flex: 1 1 0;
+    min-width: 0;
     flex-direction: column;
+    justify-content: center;
     gap: var(--espaco-1);
+    padding: var(--espaco-2) var(--espaco-1);
     font-size: 0.8125rem;
-    min-width: 72px;
-    padding: var(--espaco-2);
+    line-height: 1.2;
+    text-align: center;
   }
 }
 
@@ -171,7 +172,7 @@
 .casca__mais {
   border: 0;
   background: none;
-  font: inherit;
+  font-family: inherit;
   font-weight: 600;
   color: var(--texto);
   cursor: pointer;

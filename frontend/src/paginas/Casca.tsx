@@ -15,7 +15,6 @@ export function Casca() {
   const { usuario, pastorais, pastoralAtiva, trocarPastoral, encerrar } = useSessao();
   const navegar = useNavigate();
   const local = useLocation();
-  const barraInferior = useRef<HTMLElement>(null);
 
   // Quem abre /pastoral/2/... (link, favorito, voltar do navegador) passa a trabalhar na 2. Só
   // reage quando a URL muda: trocar no seletor já navega para a nova pastoral.
@@ -27,12 +26,6 @@ export function Casca() {
     sincronizado.current = idNaUrl;
     trocarPastoral(idNaUrl);
   }, [idNaUrl, pastorais, trocarPastoral]);
-
-  useEffect(() => {
-    barraInferior.current
-      ?.querySelector('[aria-current="page"]')
-      ?.scrollIntoView({ block: 'nearest', inline: 'center' });
-  }, [local.pathname]);
 
   const escolherPastoral = (id: number) => {
     trocarPastoral(id);
@@ -182,7 +175,7 @@ export function Casca() {
           <Outlet />
         </main>
       </div>
-      <nav className="casca__inferior" aria-label="Navegação" ref={barraInferior}>
+      <nav className="casca__inferior" aria-label="Navegação">
         {naBarra.map((i) => (
           <NavLink key={i.para} to={i.para} className="casca__inferior-link">
             <Icone nome={i.icone} />

@@ -16,9 +16,6 @@ globalThis.fetch = (entrada: RequestInfo | URL, opcoes?: RequestInit) => {
   return fetchOriginal(entrada, opcoes);
 };
 
-// O jsdom não implementa rolagem; a navegação inferior chama scrollIntoView.
-Element.prototype.scrollIntoView = () => undefined;
-
 beforeAll(() => {
   servidor.listen();
 });
