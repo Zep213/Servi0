@@ -128,7 +128,9 @@ describe('Acessibilidade (axe) das páginas principais', () => {
           ],
         }),
       ),
-      http.get('/api/comunidades', () => HttpResponse.json({ content: [{ id: 5, nome: 'Matriz' }] })),
+      http.get('/api/comunidades', () =>
+        HttpResponse.json({ content: [{ id: 5, nome: 'Matriz' }] }),
+      ),
     );
     renderizarRotas('/celebracoes');
     await screen.findByText('Matriz');

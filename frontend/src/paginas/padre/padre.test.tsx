@@ -223,7 +223,13 @@ describe('Financeiro consolidado (área do padre)', () => {
           totalSaidas: 200,
           saldo: 300,
           porPastoral: [
-            { pastoralId: 2, pastoralNome: 'Pascom', totalEntradas: 500, totalSaidas: 200, saldo: 300 },
+            {
+              pastoralId: 2,
+              pastoralNome: 'Pascom',
+              totalEntradas: 500,
+              totalSaidas: 200,
+              saldo: 300,
+            },
           ],
         }),
       ),

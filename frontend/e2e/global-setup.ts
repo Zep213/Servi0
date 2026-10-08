@@ -64,7 +64,10 @@ export default async function globalSetup(): Promise<void> {
     tipo: 'MISSA_DOMINICAL',
   });
 
-  const coordenador = { email: `coordenador.e2e.${String(sufixo)}@exemplo.com`, senha: 'senha-e2e-123' };
+  const coordenador = {
+    email: `coordenador.e2e.${String(sufixo)}@exemplo.com`,
+    senha: 'senha-e2e-123',
+  };
   const servidor = { email: `servidor.e2e.${String(sufixo)}@exemplo.com`, senha: 'senha-e2e-123' };
 
   const usuarioCoordenador = await api.post<{ id: number }>('/api/usuarios', {

@@ -2,7 +2,12 @@ import type { UseFormReturn } from 'react-hook-form';
 import type { z } from 'zod';
 import type { ComunidadeResponseDTO } from '../../api/generated/modelos';
 import { Campo } from '../../componentes/Campo';
-import { esquemaCelebracao, NOME_DO_TIPO, NOME_DO_TIPO_DATA, type DadosCelebracao } from './celebracaoCampos';
+import {
+  esquemaCelebracao,
+  NOME_DO_TIPO,
+  NOME_DO_TIPO_DATA,
+  type DadosCelebracao,
+} from './celebracaoCampos';
 
 /** Campos do formulário de celebração (comunidade, data, hora, tipo, título), para criar e editar. */
 export function CamposCelebracao({
