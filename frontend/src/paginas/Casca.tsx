@@ -1,8 +1,10 @@
-import { Link, NavLink, Outlet } from 'react-router';
+import { useEffect, useRef } from 'react';
+import { Link, NavLink, Outlet, useLocation, useMatch, useNavigate } from 'react-router';
 import { Botao } from '../componentes/Botao';
 import { Icone } from '../componentes/Icone';
 import { useSessao } from '../auth/sessaoContexto';
 import { acessoNaPastoral } from '../auth/acesso';
+import { destinoInicial } from '../auth/destino';
 
 /**
  * Moldura do app: barra lateral no computador, navegação inferior no celular. Os itens mudam
@@ -10,6 +12,34 @@ import { acessoNaPastoral } from '../auth/acesso';
  */
 export function Casca() {
   const { usuario, pastorais, pastoralAtiva, trocarPastoral, encerrar } = useSessao();
+  const navegar = useNavigate();
+  const local = useLocation();
+  const barraInferior = useRef<HTMLElement>(null);
+
+  // Quem abre /pastoral/2/... (link, favorito, voltar do navegador) passa a trabalhar na 2. Só
+  // reage quando a URL muda: trocar no seletor já navega para a nova pastoral.
+  const idNaUrl = Number(useMatch('/pastoral/:pastoralId/*')?.params.pastoralId ?? NaN);
+  const sincronizado = useRef<number | null>(null);
+  useEffect(() => {
+    if (!Number.isInteger(idNaUrl) || idNaUrl === sincronizado.current) return;
+    if (!pastorais.some((p) => p.id === idNaUrl)) return;
+    sincronizado.current = idNaUrl;
+    trocarPastoral(idNaUrl);
+  }, [idNaUrl, pastorais, trocarPastoral]);
+
+  useEffect(() => {
+    barraInferior.current
+      ?.querySelector('[aria-current="page"]')
+      ?.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }, [local.pathname]);
+
+  const escolherPastoral = (id: number) => {
+    trocarPastoral(id);
+    if (Number.isInteger(idNaUrl) && usuario) {
+      sincronizado.current = id;
+      void navegar(destinoInicial(usuario, pastorais, id));
+    }
+  };
 
   const pid = pastoralAtiva ? String(pastoralAtiva.id) : null;
   const acesso = pastoralAtiva
@@ -79,7 +109,7 @@ export function Casca() {
               <select
                 value={pastoralAtiva?.id ?? ''}
                 onChange={(e) => {
-                  trocarPastoral(Number(e.target.value));
+                  escolherPastoral(Number(e.target.value));
                 }}
               >
                 {pastorais.map((p) => (
@@ -105,7 +135,7 @@ export function Casca() {
           <Outlet />
         </main>
       </div>
-      <nav className="casca__inferior" aria-label="Navegação">
+      <nav className="casca__inferior" aria-label="Navegação" ref={barraInferior}>
         {itens.map((i) => (
           <NavLink key={i.para} to={i.para} className="casca__inferior-link">
             <Icone nome={i.icone} />

@@ -17,6 +17,22 @@ export interface PastoralDoUsuario {
 }
 
 /**
+ * A pastoral escolhida, se a pessoa ainda participa dela; senão a primeira em que tem papel de
+ * gestão (quem coordena uma e é membro de outra cai na que coordena); senão a primeira.
+ */
+export function pastoralPadrao(
+  pastorais: readonly PastoralDoUsuario[],
+  escolhida: number | null,
+): PastoralDoUsuario | null {
+  return (
+    pastorais.find((p) => p.id === escolhida) ??
+    pastorais.find((p) => PAPEIS_DE_GESTAO.includes(p.papel)) ??
+    pastorais[0] ??
+    null
+  );
+}
+
+/**
  * Para onde a pessoa vai ao entrar. MEMBRO vai às suas escalas; quem tem papel de gestão vai ao
  * painel da pastoral ativa; PADRE e ADMIN sem papel vão às celebrações.
  */
@@ -25,7 +41,7 @@ export function destinoInicial(
   pastorais: readonly PastoralDoUsuario[],
   pastoralAtiva: number | null,
 ): string {
-  const ativa = pastorais.find((p) => p.id === pastoralAtiva) ?? pastorais[0];
+  const ativa = pastoralPadrao(pastorais, pastoralAtiva);
   if (ativa && PAPEIS_DE_GESTAO.includes(ativa.papel)) {
     return `/pastoral/${String(ativa.id)}/painel`;
   }

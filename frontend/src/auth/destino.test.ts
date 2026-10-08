@@ -3,6 +3,7 @@ import {
   destinoInicial,
   lerPastoralSalva,
   papelNaPastoral,
+  pastoralPadrao,
   salvarPastoral,
   type PastoralDoUsuario,
 } from './destino';
@@ -64,5 +65,21 @@ describe('pastoral salva', () => {
     } finally {
       espiao.mockRestore();
     }
+  });
+});
+
+describe('pastoralPadrao', () => {
+  it('usa a escolhida enquanto a pessoa participa dela', () => {
+    expect(pastoralPadrao([pascomComoMembro, eccComoVice], 1)?.id).toBe(1);
+  });
+
+  it('sem escolha válida, prefere a pastoral com papel de gestão à primeira da lista', () => {
+    expect(pastoralPadrao([pascomComoMembro, eccComoVice], null)?.id).toBe(2);
+    expect(pastoralPadrao([pascomComoMembro, eccComoVice], 99)?.id).toBe(2);
+  });
+
+  it('só membro em tudo: fica a primeira; sem pastoral, nenhuma', () => {
+    expect(pastoralPadrao([pascomComoMembro], null)?.id).toBe(1);
+    expect(pastoralPadrao([], null)).toBeNull();
   });
 });

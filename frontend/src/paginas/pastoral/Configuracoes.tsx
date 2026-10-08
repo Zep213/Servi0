@@ -95,6 +95,11 @@ export function Configuracoes() {
   const atualConfig = (chave: string): PastoralConfigResponseDTO | undefined =>
     (configs.data ?? []).find((c) => c.chave === chave);
 
+  // O catálogo também traz PRAZO_RESPOSTA, que já tem campo próprio em "Prazos": sem repetir.
+  const regrasDoCatalogo = (catalogo.data ?? []).filter(
+    (regra) => !AJUSTES.some((ajuste) => ajuste.chave === regra.codigo),
+  );
+
   return (
     <>
       <h1 className="titulo-pagina">Configurações</h1>
@@ -121,10 +126,10 @@ export function Configuracoes() {
       </Card>
 
       <Card titulo="Quem pode servir">
-        {(catalogo.data ?? []).length === 0 && catalogo.isSuccess ? (
+        {regrasDoCatalogo.length === 0 && catalogo.isSuccess ? (
           <EstadoVazio titulo="Nenhuma regra disponível" />
         ) : null}
-        {(catalogo.data ?? []).map((regra: RegraCatalogoDTO) => (
+        {regrasDoCatalogo.map((regra: RegraCatalogoDTO) => (
           <ItemConfiguracao
             key={regra.codigo}
             pastoralId={pastoralId}

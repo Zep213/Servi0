@@ -399,6 +399,11 @@ describe('Configurações', () => {
             descricao: 'Intervalo mínimo entre escalas',
             padroes: { dias: 7 },
           },
+          {
+            codigo: 'PRAZO_RESPOSTA',
+            descricao: 'Prazo para o convidado responder à escalação',
+            padroes: { horas: 24 },
+          },
         ]),
       ),
       http.get('/api/pastorais/:id/config', () => HttpResponse.json([])),
@@ -411,6 +416,11 @@ describe('Configurações', () => {
     );
     renderizarRotas('/pastoral/1/configuracoes');
     expect(await screen.findByText('Intervalo mínimo entre escalas')).toBeInTheDocument();
+    // PRAZO_RESPOSTA vem no catálogo mas já tem campo em "Prazos": aparece uma vez só.
+    expect(screen.getByText('Prazo para responder ao convite')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Prazo para o convidado responder à escalação'),
+    ).not.toBeInTheDocument();
     const dias = screen.getByLabelText<HTMLInputElement>('Dias');
     await userEvent.clear(dias);
     await userEvent.type(dias, '14');
@@ -421,5 +431,62 @@ describe('Configurações', () => {
       expect(chave).toBe('INTERVALO_MINIMO');
       expect(corpo).toMatchObject({ ativa: true, parametros: { dias: 14 } });
     });
+  });
+});
+
+describe('Pastoral ativa', () => {
+  const coordenaPascomEMembroDoEcc = {
+    ...eu('COORDENADOR'),
+    pastorais: [
+      { id: 2, nome: 'ECC', papel: 'MEMBRO' },
+      { id: 1, nome: 'Pascom', papel: 'COORDENADOR' },
+    ],
+  };
+
+  it('quem abre o link de outra pastoral passa a ver a moldura dela', async () => {
+    window.localStorage.setItem('servio.pastoralAtiva', '2');
+    servidor.use(
+      http.get('/api/me', () => HttpResponse.json(coordenaPascomEMembroDoEcc)),
+      ...handlersBase('COORDENADOR'),
+    );
+    renderizarRotas('/pastoral/1/painel');
+
+    expect(await screen.findByText('Vagas no mês')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByLabelText('Pastoral')).toHaveValue('1');
+    });
+    expect(screen.getAllByRole('link', { name: 'Membros' }).length).toBeGreaterThan(0);
+    expect(window.localStorage.getItem('servio.pastoralAtiva')).toBe('1');
+  });
+
+  it('sem escolha salva, entra pela pastoral que coordena, não pela primeira da lista', async () => {
+    window.localStorage.removeItem('servio.pastoralAtiva');
+    servidor.use(
+      http.get('/api/me', () => HttpResponse.json(coordenaPascomEMembroDoEcc)),
+      ...handlersBase('COORDENADOR'),
+    );
+    const { roteador } = renderizarRotas('/');
+
+    await waitFor(() => {
+      expect(roteador.state.location.pathname).toBe('/pastoral/1/painel');
+    });
+  });
+
+  it('trocar no seletor, dentro da gestão, leva à tela inicial da pastoral escolhida', async () => {
+    window.localStorage.setItem('servio.pastoralAtiva', '1');
+    servidor.use(
+      http.get('/api/me', () => HttpResponse.json(coordenaPascomEMembroDoEcc)),
+      ...handlersBase('COORDENADOR'),
+      http.get('/api/me/escalas', () => HttpResponse.json([])),
+    );
+    const { roteador } = renderizarRotas('/pastoral/1/painel');
+    expect(await screen.findByText('Vagas no mês')).toBeInTheDocument();
+
+    await userEvent.selectOptions(screen.getByLabelText('Pastoral'), '2');
+
+    await waitFor(() => {
+      expect(roteador.state.location.pathname).toBe('/minhas-escalas');
+    });
+    expect(screen.getByLabelText('Pastoral')).toHaveValue('2');
   });
 });
