@@ -32,6 +32,7 @@ const CAMINHOS: Record<NomeIcone, ReactNode> = {
     </>
   ),
   sair: <path d="M9 4H5v16h4M14 8l4 4-4 4M18 12H9" />,
+  mais: <path d="M5 12h.01M12 12h.01M19 12h.01" strokeWidth="3" strokeLinecap="round" />,
   check: <path d="M4 12.5 9.5 18 20 6.5" />,
   fechar: <path d="M6 6l12 12M18 6 6 18" />,
   alerta: (
@@ -62,6 +63,7 @@ export type NomeIcone =
   | 'reuniao'
   | 'configuracoes'
   | 'sair'
+  | 'mais'
   | 'check'
   | 'fechar'
   | 'alerta'

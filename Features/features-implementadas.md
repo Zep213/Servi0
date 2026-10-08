@@ -80,6 +80,7 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
 - **Relógio único** (`ClockConfig`, `servio.fuso`, padrão `America/Fortaleza`): todo "agora" de escalação, convite e jobs passa pelo `Clock`; testes usam relógio fixo.
 - **Motor de escalação** (`service/escalacao/`):
   - `ElegibilidadeService.avaliar(vaga)` lista os membros da pastoral dona da função, com motivos de impedimento e data da última vez que serviram.
+  - Só quem tem papel MEMBRO é sorteado (desde a etapa 7): coordenação, secretaria, tesouraria, técnico de TI e redes sociais ficam fora do sorteio, mas podem ser escalados à mão.
   - `SorteioService` embaralha os elegíveis e ordena por quem está há mais tempo sem servir (quem nunca serviu primeiro); o embaralhamento decide os empates. Usa `RandomGenerator` trocável por semente nos testes.
   - `EscalacaoService` (cada operação numa transação): sortear uma celebração de missa dominical ou uma vaga; listar candidatos; escalar (com `forcar` só para COORDENADOR, PADRE ou ADMIN); substituir; reenviar convite (no máximo 1 por hora).
   - Vaga sem gente suficiente fica aberta e o coordenador é avisado; a regra nunca é relaxada sozinha.
@@ -120,7 +121,9 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
   - Servidor: minhas escalas (responder convite, aba de passadas) e indisponibilidades.
   - Gestão da pastoral: painel (Sortear em missa, Escalar em evento, Definir vagas sem quantidade, aprovar/desfazer alteração do vice), escala da celebração (sortear celebração ou vaga, escalar com motivos, escalar mesmo assim, substituir, reenviar), membros (buscar, criar conta de SERVIDOR, mudar papel, remover), configurações geradas do catálogo de regras, reuniões e financeiro.
   - Padre: celebrações (calendário e lista), responsabilizar pastoral, pastorais e financeiro consolidado.
-  - Conta: trocar senha e troca de pastoral (salva no `localStorage`).
+  - Conta: trocar senha; quem participa de mais de uma pastoral escolhe em qual vai trabalhar a cada login (`/escolher-pastoral`); a escolha fica no `localStorage` e a pastoral de um link aberto vira a ativa.
+  - Celular: barra inferior com até 5 itens; acima disso, os 4 principais e um "Mais".
+- **Cargos novos na pastoral** (migration `V13__cargos_tecnico_redes_sociais.sql`): `TECNICO` (técnico de TI, mesmo acesso do VICE) e `REDES_SOCIAIS` (quem posta nas redes da paróquia, acesso de MEMBRO). No máximo um de cada por pastoral, garantido no service e por índice único parcial.
 - **PWA**: manifest e ícones gerados de um SVG, aviso de nova versão, convite para instalar depois do primeiro login, service worker com `NetworkFirst` só para `GET /api/me/escalas` e aviso de sem conexão.
 - **Publicação**: `frontend/Dockerfile` (Node → nginx sem root) e `nginx.conf` (fallback da SPA, `/api` para `app:8080` com `X-Forwarded-*`, gzip, cache longo só para arquivos com hash, CSP sem `unsafe-inline`/`unsafe-eval`). No `docker-compose.yml`, o serviço `web` fica na porta 80 e o `app` deixa de publicar porta.
 - **CI**: job `frontend` (lint, formatação, tipos, testes, build), Dependabot para `npm` e `docker` em `frontend/` e workflow `e2e.yml` manual (`workflow_dispatch`).

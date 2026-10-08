@@ -490,3 +490,35 @@ describe('Pastoral ativa', () => {
     expect(screen.getByLabelText('Pastoral')).toHaveValue('2');
   });
 });
+
+describe('Barra inferior do celular', () => {
+  it('com mais de 5 itens, mostra os 4 principais e o resto fica em "Mais"', async () => {
+    servidor.use(...handlersBase('COORDENADOR'));
+    renderizarRotas('/pastoral/1/painel');
+    const barra = await screen.findByRole('navigation', { name: 'Navegação' });
+
+    expect(
+      within(barra)
+        .getAllByRole('link')
+        .map((l) => l.textContent),
+    ).toEqual(['Painel', 'Minhas escalas', 'Membros', 'Reuniões']);
+    await userEvent.click(within(barra).getByRole('button', { name: 'Mais' }));
+    const mais = await screen.findByRole('dialog', { name: 'Mais opções' });
+    expect(
+      within(mais)
+        .getAllByRole('link')
+        .map((l) => l.textContent),
+    ).toEqual(['Indisponibilidades', 'Financeiro', 'Configurações']);
+  });
+
+  it('membro, com poucos itens, vê todos na barra e nenhum "Mais"', async () => {
+    servidor.use(
+      ...handlersBase('MEMBRO'),
+      http.get('/api/me/escalas', () => HttpResponse.json([])),
+    );
+    renderizarRotas('/minhas-escalas');
+    const barra = await screen.findByRole('navigation', { name: 'Navegação' });
+    expect(within(barra).getAllByRole('link')).toHaveLength(3);
+    expect(within(barra).queryByRole('button', { name: 'Mais' })).not.toBeInTheDocument();
+  });
+});
