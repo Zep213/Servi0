@@ -232,6 +232,93 @@ describe('Membros', () => {
       expect(removido).toBe('5');
     });
   });
+
+  async function abrirCriarConta() {
+    renderizarRotas('/pastoral/1/membros');
+    await userEvent.click(await screen.findByRole('button', { name: 'Adicionar pessoa' }));
+    const busca = await screen.findByRole('dialog', { name: 'Adicionar pessoa' });
+    await userEvent.click(within(busca).getByRole('button', { name: 'Criar conta nova' }));
+    return screen.findByRole('dialog', { name: 'Criar conta nova' });
+  }
+
+  it('coordenador cria conta de SERVIDOR e já a coloca na pastoral com o papel escolhido', async () => {
+    let contaCriada: unknown = null;
+    let vinculo: unknown = null;
+    servidor.use(
+      ...handlersBase('COORDENADOR'),
+      http.get('/api/pastorais/:id/membros', () => HttpResponse.json(membros)),
+      http.post('/api/usuarios', async ({ request }) => {
+        contaCriada = await request.json();
+        return HttpResponse.json({ id: 77, nome: 'João Lima' }, { status: 201 });
+      }),
+      http.post('/api/usuarios-pastorais', async ({ request }) => {
+        vinculo = await request.json();
+        return HttpResponse.json({ id: 8 }, { status: 201 });
+      }),
+    );
+    const dialogo = await abrirCriarConta();
+
+    await userEvent.type(within(dialogo).getByLabelText('Nome completo'), 'João Lima');
+    await userEvent.type(within(dialogo).getByLabelText('E-mail'), 'joao@exemplo.com');
+    await userEvent.type(within(dialogo).getByLabelText('Senha inicial'), 'senha-forte-1');
+    await userEvent.selectOptions(within(dialogo).getByLabelText('Papel'), 'SECRETARIO');
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Criar conta e adicionar' }));
+
+    expect(await screen.findByText('Conta criada e pessoa adicionada')).toBeInTheDocument();
+    expect(contaCriada).toEqual({
+      nome: 'João Lima',
+      email: 'joao@exemplo.com',
+      senha: 'senha-forte-1',
+      perfil: 'SERVIDOR',
+    });
+    expect(vinculo).toEqual({ usuarioId: 77, pastoralId: 1, papel: 'SECRETARIO' });
+  });
+
+  it('senha curta não chega ao servidor', async () => {
+    let chamou = false;
+    servidor.use(
+      ...handlersBase('COORDENADOR'),
+      http.get('/api/pastorais/:id/membros', () => HttpResponse.json(membros)),
+      http.post('/api/usuarios', () => {
+        chamou = true;
+        return HttpResponse.json({ id: 1 }, { status: 201 });
+      }),
+    );
+    const dialogo = await abrirCriarConta();
+
+    await userEvent.type(within(dialogo).getByLabelText('Nome completo'), 'João');
+    await userEvent.type(within(dialogo).getByLabelText('E-mail'), 'joao@exemplo.com');
+    await userEvent.type(within(dialogo).getByLabelText('Senha inicial'), '1234');
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Criar conta e adicionar' }));
+
+    expect(
+      await within(dialogo).findByText('A senha precisa de pelo menos 8 caracteres'),
+    ).toBeInTheDocument();
+    expect(chamou).toBe(false);
+  });
+
+  it('e-mail já usado (409): mostra a mensagem do backend no campo de e-mail', async () => {
+    servidor.use(
+      ...handlersBase('COORDENADOR'),
+      http.get('/api/pastorais/:id/membros', () => HttpResponse.json(membros)),
+      http.post('/api/usuarios', () =>
+        HttpResponse.json(
+          { status: 409, detail: 'Já existe um usuário ativo com este e-mail' },
+          { status: 409 },
+        ),
+      ),
+    );
+    const dialogo = await abrirCriarConta();
+
+    await userEvent.type(within(dialogo).getByLabelText('Nome completo'), 'Ana');
+    await userEvent.type(within(dialogo).getByLabelText('E-mail'), 'ana@exemplo.com');
+    await userEvent.type(within(dialogo).getByLabelText('Senha inicial'), 'senha-forte-1');
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Criar conta e adicionar' }));
+
+    expect(
+      await within(dialogo).findByText('Já existe um usuário ativo com este e-mail'),
+    ).toBeInTheDocument();
+  });
 });
 
 describe('Acesso às telas de gestão', () => {

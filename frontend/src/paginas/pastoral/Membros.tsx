@@ -1,10 +1,14 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
   deleteUsuariosPastoraisPorId,
   getGetPastoraisPorPastoralIdMembrosQueryKey,
   getPastoraisPorPastoralIdMembros,
   getUsuariosBusca,
+  postUsuarios,
   postUsuariosPastorais,
   putUsuariosPastoraisPorId,
 } from '../../api/generated/servio';
@@ -189,6 +193,135 @@ export function Membros() {
   );
 }
 
+const esquemaContaNova = z.object({
+  nome: z.string().trim().min(1, 'Informe o nome'),
+  email: z.email('Informe um e-mail válido'),
+  senha: z
+    .string()
+    .min(8, 'A senha precisa de pelo menos 8 caracteres')
+    .max(72, 'A senha pode ter no máximo 72 caracteres'),
+});
+type DadosContaNova = z.infer<typeof esquemaContaNova>;
+const CAMPOS_CONTA_NOVA = ['nome', 'email', 'senha'] as const;
+
+function SeletorPapel({
+  papel,
+  onMudar,
+}: {
+  papel: (typeof PAPEIS)[number];
+  onMudar: (papel: (typeof PAPEIS)[number]) => void;
+}) {
+  return (
+    <label className="campo">
+      <span className="campo__rotulo">Papel</span>
+      <select
+        value={papel}
+        onChange={(e) => {
+          onMudar(e.target.value as (typeof PAPEIS)[number]);
+        }}
+      >
+        {PAPEIS.map((p) => (
+          <option key={p} value={p}>
+            {NOME_DO_PAPEL[p]}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function CriarConta({
+  pastoralId,
+  onVoltar,
+  onAdicionado,
+}: {
+  pastoralId: number;
+  onVoltar: () => void;
+  onAdicionado: () => void;
+}) {
+  const { mostrar } = useToast();
+  const [papel, definirPapel] = useState<(typeof PAPEIS)[number]>('MEMBRO');
+  const formulario = useForm<DadosContaNova>({
+    resolver: zodResolver(esquemaContaNova),
+    defaultValues: { nome: '', email: '', senha: '' },
+  });
+
+  const criar = useMutation({
+    mutationFn: async (dados: DadosContaNova) => {
+      const conta = await postUsuarios({
+        nome: dados.nome,
+        email: dados.email,
+        senha: dados.senha,
+        perfil: 'SERVIDOR',
+      });
+      try {
+        await postUsuariosPastorais({ usuarioId: conta.data.id as number, pastoralId, papel });
+      } catch (erro) {
+        // A conta já existe: avisar para buscá-la pelo nome em vez de criar de novo.
+        throw new ErroApi(
+          erro instanceof ErroApi ? erro.status : 0,
+          `A conta foi criada, mas não entrou na pastoral: ${mensagem(erro, 'tente de novo')}. Busque pelo nome para adicionar.`,
+        );
+      }
+    },
+    onSuccess: () => {
+      mostrar('Conta criada e pessoa adicionada', 'sucesso');
+      onAdicionado();
+    },
+    onError: (erro: unknown) => {
+      // 409 do backend é sempre e-mail já usado por outra conta ativa.
+      if (erro instanceof ErroApi && erro.status === 409) {
+        formulario.setError('email', { message: erro.message });
+        return;
+      }
+      const porCampo = erro instanceof ErroApi ? erro.erros : {};
+      const conhecidos = CAMPOS_CONTA_NOVA.filter((c) => porCampo[c]);
+      for (const campo of conhecidos) formulario.setError(campo, { message: porCampo[campo] });
+      if (conhecidos.length === 0) mostrar(mensagem(erro, 'Não foi possível criar agora'), 'erro');
+    },
+  });
+
+  const enviar = formulario.handleSubmit((dados) => {
+    criar.mutate(dados);
+  });
+  const erros = formulario.formState.errors;
+
+  return (
+    <form
+      onSubmit={(e) => {
+        void enviar(e);
+      }}
+      noValidate
+    >
+      <Campo rotulo="Nome completo" erro={erros.nome?.message} {...formulario.register('nome')} />
+      <Campo
+        rotulo="E-mail"
+        type="email"
+        autoComplete="off"
+        erro={erros.email?.message}
+        {...formulario.register('email')}
+      />
+      <Campo
+        rotulo="Senha inicial"
+        type="password"
+        autoComplete="new-password"
+        ajuda="Passe esta senha para a pessoa. Ela pode trocar depois, em Trocar senha."
+        erro={erros.senha?.message}
+        {...formulario.register('senha')}
+      />
+      <SeletorPapel papel={papel} onMudar={definirPapel} />
+      <div className="acoes-linha">
+        <Botao type="submit" disabled={criar.isPending}>
+          Criar conta e adicionar
+        </Botao>
+        <Botao type="button" variante="secundario" onClick={onVoltar}>
+          Voltar para a busca
+        </Botao>
+      </div>
+    </form>
+  );
+}
+
 function AdicionarPessoa({
   pastoralId,
   onFechar,
@@ -199,6 +332,7 @@ function AdicionarPessoa({
   onAdicionado: () => void;
 }) {
   const { mostrar } = useToast();
+  const [criandoConta, definirCriandoConta] = useState(false);
   const [nome, definirNome] = useState('');
   const [buscado, definirBuscado] = useState('');
   const [papel, definirPapel] = useState<(typeof PAPEIS)[number]>('MEMBRO');
@@ -219,6 +353,20 @@ function AdicionarPessoa({
     },
   });
 
+  if (criandoConta) {
+    return (
+      <Modal titulo="Criar conta nova" aberto onFechar={onFechar}>
+        <CriarConta
+          pastoralId={pastoralId}
+          onVoltar={() => {
+            definirCriandoConta(false);
+          }}
+          onAdicionado={onAdicionado}
+        />
+      </Modal>
+    );
+  }
+
   return (
     <Modal titulo="Adicionar pessoa" aberto onFechar={onFechar}>
       <form
@@ -234,24 +382,27 @@ function AdicionarPessoa({
             definirNome(e.target.value);
           }}
         />
-        <label className="campo">
-          <span className="campo__rotulo">Papel</span>
-          <select
-            value={papel}
-            onChange={(e) => {
-              definirPapel(e.target.value as (typeof PAPEIS)[number]);
+        <SeletorPapel papel={papel} onMudar={definirPapel} />
+        <div className="acoes-linha">
+          <Botao type="submit">Buscar</Botao>
+          <Botao
+            type="button"
+            variante="secundario"
+            onClick={() => {
+              definirCriandoConta(true);
             }}
           >
-            {PAPEIS.map((p) => (
-              <option key={p} value={p}>
-                {NOME_DO_PAPEL[p]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <Botao type="submit">Buscar</Botao>
+            Criar conta nova
+          </Botao>
+        </div>
       </form>
       {busca.isPending && buscado.length >= 2 ? <Esqueleto linhas={2} /> : null}
+      {busca.isSuccess && (busca.data.content ?? []).length === 0 ? (
+        <EstadoVazio
+          titulo="Ninguém com esse nome"
+          texto="Se a pessoa ainda não tem conta, use Criar conta nova."
+        />
+      ) : null}
       {(busca.data?.content ?? []).map((pessoa) => (
         <div key={pessoa.id} className="candidato">
           <div>
