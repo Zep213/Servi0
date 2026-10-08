@@ -113,14 +113,16 @@ export function EscalaCelebracao() {
         </p>
       ) : null}
       {acesso.escala && info?.tipo === 'MISSA_DOMINICAL' ? (
-        <Botao
-          disabled={sortearCelebracao.isPending}
-          onClick={() => {
-            sortearCelebracao.mutate();
-          }}
-        >
-          Sortear esta celebração
-        </Botao>
+        <div className="acoes-linha acoes-linha--pagina">
+          <Botao
+            disabled={sortearCelebracao.isPending}
+            onClick={() => {
+              sortearCelebracao.mutate();
+            }}
+          >
+            Sortear esta celebração
+          </Botao>
+        </div>
       ) : null}
 
       {escala.isPending ? <Esqueleto linhas={6} /> : null}

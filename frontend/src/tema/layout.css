@@ -131,14 +131,19 @@
     bottom: 0;
     background: var(--superficie);
     border-top: 1px solid var(--borda);
-    justify-content: space-around;
+    gap: var(--espaco-1);
     padding: var(--espaco-2);
     z-index: 40;
+    /* Coordenação chega a 7 itens: em vez de cortar os últimos, a barra rola de lado. */
+    overflow-x: auto;
+    scrollbar-width: none;
   }
   .casca__inferior-link {
+    flex: 1 0 auto;
     flex-direction: column;
     gap: var(--espaco-1);
     font-size: 0.8125rem;
-    min-width: var(--alvo-minimo);
+    min-width: 72px;
+    padding: var(--espaco-2);
   }
 }
