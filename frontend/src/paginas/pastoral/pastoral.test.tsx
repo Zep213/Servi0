@@ -43,6 +43,18 @@ const painel = {
       status: 'NAO_INICIADO',
       aguardandoQuantidade: false,
     },
+    {
+      id: 3,
+      data: '2031-03-16',
+      hora: '08:00:00',
+      titulo: 'Missa da quaresma',
+      tipo: 'MISSA_DOMINICAL',
+      vagasTotais: 0,
+      ocupadas: 0,
+      confirmadas: 0,
+      status: 'NAO_INICIADO',
+      aguardandoQuantidade: true,
+    },
   ],
   pendencias: {
     convitesVencendo: [],
@@ -97,7 +109,7 @@ function handlersBase(papel: string, perfil = 'SERVIDOR') {
 }
 
 describe('Painel do coordenador', () => {
-  it('mostra os cartões, e "Sortear" só nas missas', async () => {
+  it('mostra os cartões, "Sortear" só nas missas e "Escalar" só nos eventos', async () => {
     servidor.use(...handlersBase('COORDENADOR'));
     renderizarRotas('/pastoral/1/painel');
 
@@ -105,7 +117,24 @@ describe('Painel do coordenador', () => {
     const linhaMissa = (await screen.findByText('Missa dominical')).closest('tr') as HTMLElement;
     const linhaFesta = screen.getByText('Festa da padroeira').closest('tr') as HTMLElement;
     expect(within(linhaMissa).getByRole('button', { name: 'Sortear' })).toBeInTheDocument();
+    expect(within(linhaMissa).queryByRole('link', { name: 'Escalar' })).not.toBeInTheDocument();
     expect(within(linhaFesta).queryByRole('button', { name: 'Sortear' })).not.toBeInTheDocument();
+    expect(within(linhaFesta).getByRole('link', { name: 'Escalar' })).toHaveAttribute(
+      'href',
+      '/pastoral/1/celebracoes/2',
+    );
+  });
+
+  it('sem quantidade definida, a ação é "Definir vagas", sem sortear', async () => {
+    servidor.use(...handlersBase('COORDENADOR'));
+    renderizarRotas('/pastoral/1/painel');
+
+    const linha = (await screen.findByText('Missa da quaresma')).closest('tr') as HTMLElement;
+    expect(within(linha).getByRole('link', { name: 'Definir vagas' })).toHaveAttribute(
+      'href',
+      '/pastoral/1/celebracoes/3',
+    );
+    expect(within(linha).queryByRole('button', { name: 'Sortear' })).not.toBeInTheDocument();
   });
 
   it('aprovar a alteração do vice só aparece para coordenação', async () => {
