@@ -3,7 +3,7 @@ import path from 'node:path';
 import { expect, test } from '@playwright/test';
 import type { DadosSemeados } from './global-setup';
 import type { Page } from '@playwright/test';
-import { esperarEmailPara, limparCaixaDeEntrada, tokenDoConvite } from './mailpit';
+import { esperarEmailPara, limparCaixaDeEntrada, linkDoConvite } from './mailpit';
 
 const ARQUIVO_SEMEADURA = path.join(import.meta.dirname, '..', 'test-results', 'semeadura.json');
 
@@ -22,7 +22,7 @@ async function irParaOMesDaCelebracao(page: Page, celebracaoData: string): Promi
 
 /**
  * Ponta a ponta: a coordenadora entra, sorteia a missa de domingo; o convite chega por e-mail
- * (lido via API do Mailpit); a pessoa sorteada confirma pelo link; o painel passa a mostrar a
+ * (lido via API do Mailpit); a pessoa sorteada abre o link do e-mail e confirma; o painel passa a mostrar a
  * confirmação. Dados de partida vêm do `global-setup.ts` (semeados pela API, sem passar pela UI).
  */
 test('coordenadora sorteia, servidora confirma pelo e-mail, painel mostra a confirmação', async ({
@@ -43,10 +43,9 @@ test('coordenadora sorteia, servidora confirma pelo e-mail, painel mostra a conf
   await expect(page.getByText(/Sorteio feito/)).toBeVisible();
 
   const corpoDoEmail = await esperarEmailPara(dados.servidor.email);
-  const token = tokenDoConvite(corpoDoEmail);
 
   const paginaDoConvite = await context.newPage();
-  await paginaDoConvite.goto(`/convite#${token}`);
+  await paginaDoConvite.goto(linkDoConvite(corpoDoEmail));
   await expect(paginaDoConvite.getByText(/Olá,/)).toBeVisible();
   await paginaDoConvite.getByRole('button', { name: 'Confirmo minha presença' }).click();
   await expect(paginaDoConvite.getByText('Presença confirmada')).toBeVisible();
