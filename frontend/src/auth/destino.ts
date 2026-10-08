@@ -1,6 +1,7 @@
 import type { MeResponseDTO } from '../api/generated/modelos';
 
-export type PapelPastoral = 'COORDENADOR' | 'VICE' | 'SECRETARIO' | 'TESOUREIRO' | 'MEMBRO';
+export type PapelPastoral =
+  'COORDENADOR' | 'VICE' | 'SECRETARIO' | 'TESOUREIRO' | 'TECNICO' | 'REDES_SOCIAIS' | 'MEMBRO';
 
 /** Papéis que enxergam a gestão da pastoral (o painel e o que vem dele). */
 export const PAPEIS_DE_GESTAO: readonly PapelPastoral[] = [
@@ -8,7 +9,18 @@ export const PAPEIS_DE_GESTAO: readonly PapelPastoral[] = [
   'VICE',
   'SECRETARIO',
   'TESOUREIRO',
+  'TECNICO',
 ];
+
+export const NOME_DO_PAPEL: Record<PapelPastoral, string> = {
+  COORDENADOR: 'Coordenador',
+  VICE: 'Vice',
+  SECRETARIO: 'Secretário',
+  TESOUREIRO: 'Tesoureiro',
+  TECNICO: 'Técnico de TI',
+  REDES_SOCIAIS: 'Redes sociais',
+  MEMBRO: 'Membro',
+};
 
 export interface PastoralDoUsuario {
   id: number;

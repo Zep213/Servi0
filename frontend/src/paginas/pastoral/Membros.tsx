@@ -14,6 +14,7 @@ import {
 } from '../../api/generated/servio';
 import type { MembroPastoralDTO, ReferenciaDTO } from '../../api/generated/modelos';
 import { ErroApi } from '../../api/cliente';
+import { NOME_DO_PAPEL } from '../../auth/destino';
 import { useAcessoDaPastoral } from '../../auth/useAcesso';
 import { Botao } from '../../componentes/Botao';
 import { Campo } from '../../componentes/Campo';
@@ -25,14 +26,15 @@ import { Modal } from '../../componentes/Modal';
 import { Tabela, type ColunaTabela } from '../../componentes/Tabela';
 import { useToast } from '../../componentes/toastContexto';
 
-const PAPEIS = ['COORDENADOR', 'VICE', 'SECRETARIO', 'TESOUREIRO', 'MEMBRO'] as const;
-const NOME_DO_PAPEL: Record<string, string> = {
-  COORDENADOR: 'Coordenador',
-  VICE: 'Vice',
-  SECRETARIO: 'Secretário',
-  TESOUREIRO: 'Tesoureiro',
-  MEMBRO: 'Membro',
-};
+const PAPEIS = [
+  'COORDENADOR',
+  'VICE',
+  'SECRETARIO',
+  'TESOUREIRO',
+  'TECNICO',
+  'REDES_SOCIAIS',
+  'MEMBRO',
+] as const;
 
 function mensagem(erro: unknown, padrao: string): string {
   return erro instanceof ErroApi ? erro.message : padrao;
@@ -110,7 +112,7 @@ export function Membros() {
             ))}
           </select>
         ) : (
-          (NOME_DO_PAPEL[m.papel ?? 'MEMBRO'] ?? '')
+          NOME_DO_PAPEL[m.papel ?? 'MEMBRO']
         ),
     },
     ...(acesso.coordena

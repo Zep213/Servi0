@@ -22,6 +22,7 @@ import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.repository.VagaRepository;
 import br.com.zep.servio.seguranca.TestcontainersConfig;
 import br.com.zep.servio.service.notification.Notificador;
+import br.com.zep.servio.model.enumerated.PapelPastoral;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -172,6 +173,25 @@ class AlteracaoPendenteIT {
         assertThat(pendente.getVagaNova().getId()).isEqualTo(vaga.getId());
         assertThat(pendente.getAutor().getId()).isEqualTo(cenario.vicePascom.getId());
         assertThat(pendente.getPastoral().getId()).isEqualTo(cenario.pascom.getId());
+    }
+
+    @Test
+    void tecnicoTrocaPessoaComoOViceEGeraPendencia() throws Exception {
+        Usuario tecnico = cenario.naPascom("tecnico.pascom", PapelPastoral.TECNICO);
+        Usuario antigo = candidatoFresco();
+        Usuario novo = candidatoFresco();
+        Alocacao alocacao = criarAlocacaoDireta(antigo);
+
+        String corpo = json(new AlocacaoRequestDTO(vaga.getId(), novo.getId()));
+        mvc.perform(put("/api/alocacoes/{id}", alocacao.getId())
+                        .with(user(cenario.principal(tecnico))).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(corpo))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.usuarioId").value(novo.getId()));
+
+        List<AlteracaoPendente> pendentes = alteracaoPendenteRepository.findByAlocacaoId(alocacao.getId());
+        assertThat(pendentes).hasSize(1);
+        assertThat(pendentes.get(0).getAutor().getId()).isEqualTo(tecnico.getId());
     }
 
     @Test

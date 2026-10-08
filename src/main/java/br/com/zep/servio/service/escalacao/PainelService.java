@@ -44,7 +44,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PainelService {
 
-    private static final List<String> PAPEIS_QUE_VEEM = List.of("COORDENADOR", "VICE", "SECRETARIO", "TESOUREIRO");
+    private static final List<String> PAPEIS_QUE_VEEM = List.of("COORDENADOR", "VICE", "SECRETARIO", "TESOUREIRO", "TECNICO");
 
     private final VagaRepository vagaRepository;
     private final AlocacaoRepository alocacaoRepository;

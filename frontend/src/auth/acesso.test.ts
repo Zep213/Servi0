@@ -21,6 +21,20 @@ describe('acessoNaPastoral', () => {
     expect(a.coordena).toBe(false);
   });
 
+  it('técnico de TI tem exatamente o acesso do vice', () => {
+    expect(acessoNaPastoral('SERVIDOR', pastorais('TECNICO'), 1)).toEqual({
+      ...acessoNaPastoral('SERVIDOR', pastorais('VICE'), 1),
+      papel: 'TECNICO',
+    });
+  });
+
+  it('redes sociais tem exatamente o acesso de membro', () => {
+    expect(acessoNaPastoral('SERVIDOR', pastorais('REDES_SOCIAIS'), 1)).toEqual({
+      ...acessoNaPastoral('SERVIDOR', pastorais('MEMBRO'), 1),
+      papel: 'REDES_SOCIAIS',
+    });
+  });
+
   it('coordenador escala, força, vê e-mail e coordena; não lança financeiro', () => {
     const a = acessoNaPastoral('SERVIDOR', pastorais('COORDENADOR'), 1);
     expect(a).toMatchObject({

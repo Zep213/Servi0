@@ -6,6 +6,7 @@ import br.com.zep.servio.model.Funcao;
 import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.model.Vaga;
 import br.com.zep.servio.model.enumerated.Perfil;
+import br.com.zep.servio.model.enumerated.PapelPastoral;
 import br.com.zep.servio.model.enumerated.StatusConvite;
 import br.com.zep.servio.model.enumerated.TipoCelebracao;
 import br.com.zep.servio.repository.AlocacaoRepository;
@@ -85,6 +86,7 @@ class SorteioIT {
 
     CenarioParoquia cenario;
     CenarioEscalacao escala;
+    List<Usuario> membrosExtras;
     Comunidade comunidade;
     Funcao funcaoLeitura;
 
@@ -94,6 +96,11 @@ class SorteioIT {
                 funcaoRepository, usuarioPastoralRepository, passwordEncoder).criar();
         escala = new CenarioEscalacao(comunidadeRepository, celebracaoRepository, vagaRepository, alocacaoRepository);
         comunidade = escala.comunidade(cenario.paroquiaA);
+        // Só MEMBRO é sorteado: com 5 a mais, a Pascom tem 7 sorteáveis (fora a coordenação).
+        membrosExtras = new java.util.ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            membrosExtras.add(cenario.naPascom("membro.extra" + i + ".pascom", PapelPastoral.MEMBRO));
+        }
 
         funcaoLeitura = new Funcao();
         funcaoLeitura.setNome("Leitura");
@@ -102,10 +109,11 @@ class SorteioIT {
         funcaoLeitura = funcaoRepository.save(funcaoLeitura);
     }
 
-    /** Pascom: 7 membros (todos os papéis). ECC: 3 membros, que não podem ser tocados pelo sorteio da Pascom. */
+    /** Pascom: 7 sorteáveis (papel MEMBRO). ECC: 3 membros, que não podem ser tocados pelo sorteio da Pascom. */
     private List<Usuario> membrosPascom() {
-        return List.of(cenario.coordenadorPascom, cenario.vicePascom, cenario.secretario1Pascom,
-                cenario.secretario2Pascom, cenario.tesoureiroPascom, cenario.membro1Pascom, cenario.membro2Pascom);
+        List<Usuario> membros = new java.util.ArrayList<>(List.of(cenario.membro1Pascom, cenario.membro2Pascom));
+        membros.addAll(membrosExtras);
+        return membros;
     }
 
     private Celebracao missa() {
@@ -282,6 +290,43 @@ class SorteioIT {
         sortearCelebracao(cenario.coordenadorEcc, celebracao).andExpect(status().isNotFound());
         sortearVaga(cenario.coordenadorEcc, vaga).andExpect(status().isNotFound());
         assertThat(usuariosAtivos(vaga)).isEmpty();
+    }
+
+    @Test
+    void soMembroESorteadoCoordenacaoECargosFicamDeFora() throws Exception {
+        Usuario tecnico = cenario.naPascom("tecnico.pascom", PapelPastoral.TECNICO);
+        Usuario redes = cenario.naPascom("redes.pascom", PapelPastoral.REDES_SOCIAIS);
+        Celebracao celebracao = missa();
+        Vaga vaga = vagaComunicacao(celebracao, 20);
+
+        sortearCelebracao(cenario.coordenadorPascom, celebracao)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.convidados.length()").value(7))
+                .andExpect(jsonPath("$.vagasIncompletas[0].faltam").value(13));
+
+        assertThat(usuariosAtivos(vaga)).isEqualTo(ids(membrosPascom()))
+                .doesNotContainAnyElementsOf(ids(List.of(cenario.coordenadorPascom, cenario.vicePascom,
+                        cenario.secretario1Pascom, cenario.secretario2Pascom, cenario.tesoureiroPascom, tecnico, redes)));
+    }
+
+    @Test
+    void tecnicoSorteiaComoOVice() throws Exception {
+        Usuario tecnico = cenario.naPascom("tecnico.pascom", PapelPastoral.TECNICO);
+        Celebracao celebracao = missa();
+        vagaComunicacao(celebracao, 2);
+
+        sortearCelebracao(tecnico, celebracao)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.convidados.length()").value(2));
+    }
+
+    @Test
+    void redesSociaisNaoSorteia() throws Exception {
+        Usuario redes = cenario.naPascom("redes.pascom", PapelPastoral.REDES_SOCIAIS);
+        Celebracao celebracao = missa();
+        vagaComunicacao(celebracao, 2);
+
+        sortearCelebracao(redes, celebracao).andExpect(status().isForbidden());
     }
 
     @Test

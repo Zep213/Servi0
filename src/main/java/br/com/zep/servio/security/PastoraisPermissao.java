@@ -33,7 +33,8 @@ public class PastoraisPermissao {
     /**
      * Verdadeiro se o usuário tem este papel na pastoral. ADMIN tem qualquer papel em
      * qualquer pastoral; PADRE tem o papel COORDENADOR em qualquer pastoral da própria
-     * paróquia (ele indica o coordenador de cada uma, então pode agir como um).
+     * paróquia (ele indica o coordenador de cada uma, então pode agir como um). TECNICO
+     * passa em toda checagem de VICE: tem o mesmo acesso.
      */
     public boolean temPapel(Long pastoralId, String papel) {
         if (ehAdmin()) {
@@ -41,6 +42,9 @@ public class PastoraisPermissao {
         }
         PapelPastoral alvo = PapelPastoral.valueOf(papel);
         if (ehPadre() && alvo == PapelPastoral.COORDENADOR) {
+            return true;
+        }
+        if (alvo == PapelPastoral.VICE && temPapelReal(pastoralId, PapelPastoral.TECNICO)) {
             return true;
         }
         return temPapelReal(pastoralId, alvo);
@@ -94,7 +98,7 @@ public class PastoraisPermissao {
     }
 
     /**
-     * Ids das pastorais que o usuário GERENCIA (COORDENADOR ou VICE) — mais estrito que
+     * Ids das pastorais que o usuário GERENCIA (COORDENADOR, VICE ou TECNICO) — mais estrito que
      * pastoraisVisiveis() (Parte 4: alterações pendentes só aparecem para quem pode agir
      * nelas). Vazio (Optional.empty) significa "sem restrição": PADRE/ADMIN.
      */
@@ -103,7 +107,8 @@ public class PastoraisPermissao {
             return Optional.empty();
         }
         List<Long> ids = usuarioPastoralRepository.findByUsuarioIdAndActiveTrue(usuarioLogado.id()).stream()
-                .filter(up -> up.getPapel() == PapelPastoral.COORDENADOR || up.getPapel() == PapelPastoral.VICE)
+                .filter(up -> up.getPapel() == PapelPastoral.COORDENADOR || up.getPapel() == PapelPastoral.VICE
+                        || up.getPapel() == PapelPastoral.TECNICO)
                 .map(up -> up.getPastoral().getId()).distinct().toList();
         return Optional.of(ids);
     }

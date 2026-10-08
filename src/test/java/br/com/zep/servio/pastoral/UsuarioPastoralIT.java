@@ -29,6 +29,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.List;
 
 /** Parte 5.8: limites e regras de {@code UsuarioPastoral} — máximo de secretários, duplicidade e independência entre pastorais. */
 @SpringBootTest
@@ -89,6 +90,33 @@ class UsuarioPastoralIT {
         mvc.perform(post("/api/usuarios-pastorais").with(user(cenario.principal(cenario.coordenadorPascom))).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content(corpo))
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void segundoTecnicoOuSegundaPessoaDeRedesSociaisNaMesmaPastoralDaErro() throws Exception {
+        for (PapelPastoral cargo : List.of(PapelPastoral.TECNICO, PapelPastoral.REDES_SOCIAIS)) {
+            String primeiro = json(new UsuarioPastoralRequestDTO(candidatoFresco().getId(), cenario.pascom.getId(), cargo));
+            mvc.perform(post("/api/usuarios-pastorais").with(user(cenario.principal(cenario.coordenadorPascom))).with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON).content(primeiro))
+                    .andExpect(status().isCreated());
+
+            String segundo = json(new UsuarioPastoralRequestDTO(candidatoFresco().getId(), cenario.pascom.getId(), cargo));
+            mvc.perform(post("/api/usuarios-pastorais").with(user(cenario.principal(cenario.coordenadorPascom))).with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON).content(segundo))
+                    .andExpect(status().isUnprocessableEntity());
+        }
+    }
+
+    @Test
+    void tecnicoEmOutraPastoralNaoContaParaOLimite() throws Exception {
+        String naPascom = json(new UsuarioPastoralRequestDTO(candidatoFresco().getId(), cenario.pascom.getId(), PapelPastoral.TECNICO));
+        mvc.perform(post("/api/usuarios-pastorais").with(user(cenario.principal(cenario.coordenadorPascom))).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(naPascom))
+                .andExpect(status().isCreated());
+        String noEcc = json(new UsuarioPastoralRequestDTO(candidatoFresco().getId(), cenario.ecc.getId(), PapelPastoral.TECNICO));
+        mvc.perform(post("/api/usuarios-pastorais").with(user(cenario.principal(cenario.coordenadorEcc))).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(noEcc))
+                .andExpect(status().isCreated());
     }
 
     @Test

@@ -21,6 +21,7 @@ import br.com.zep.servio.model.enumerated.TipoCelebracao;
 import br.com.zep.servio.model.enumerated.TipoNotificacao;
 import br.com.zep.servio.repository.AlocacaoRepository;
 import br.com.zep.servio.repository.CelebracaoRepository;
+import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.repository.VagaRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
@@ -37,7 +38,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,6 +62,7 @@ public class EscalacaoService {
     private final AlocacaoRepository alocacaoRepository;
     private final CelebracaoRepository celebracaoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioPastoralRepository usuarioPastoralRepository;
     private final ElegibilidadeService elegibilidadeService;
     private final SorteioService sorteioService;
     private final ConviteService conviteService;
@@ -207,6 +211,7 @@ public class EscalacaoService {
     private ResultadoSorteioDTO sortear(List<Vaga> vagas) {
         List<AlocacaoResponseDTO> convidados = new ArrayList<>();
         List<VagaIncompletaDTO> incompletas = new ArrayList<>();
+        Map<Long, Set<Long>> membrosPorPastoral = new HashMap<>();
 
         for (Vaga vaga : vagas) {
             int faltam = vaga.getQuantidade() - (int) ocupantes(vaga.getId(), 0L);
@@ -217,7 +222,10 @@ public class EscalacaoService {
                     .filter(a -> RECUSARAM.contains(a.getStatus()))
                     .map(a -> a.getUsuario().getId())
                     .collect(Collectors.toSet());
+            Set<Long> sorteaveis = membrosPorPastoral.computeIfAbsent(
+                    vaga.getFuncao().getPastoral().getId(), pastoralId -> membrosSorteaveis(pastoralId, vaga.getParoquiaId()));
             List<CandidatoAvaliado> candidatos = elegibilidadeService.avaliar(vaga).stream()
+                    .filter(c -> sorteaveis.contains(c.usuario().getId()))
                     .filter(c -> !recusaram.contains(c.usuario().getId()))
                     .toList();
             List<Usuario> escolhidos = sorteioService.escolher(candidatos, faltam);
@@ -231,6 +239,16 @@ public class EscalacaoService {
             }
         }
         return new ResultadoSorteioDTO(convidados, incompletas);
+    }
+
+    /**
+     * Só MEMBRO é sorteado. Coordenação, secretaria, tesouraria, técnico e redes sociais servem
+     * de outra forma; continuam podendo ser escalados à mão.
+     */
+    private Set<Long> membrosSorteaveis(Long pastoralId, Long paroquiaId) {
+        return usuarioPastoralRepository.findUsuariosPorPapel(pastoralId, paroquiaId, PapelPastoral.MEMBRO).stream()
+                .map(Usuario::getId)
+                .collect(Collectors.toSet());
     }
 
     // ---------------------------------------------------------------- regras

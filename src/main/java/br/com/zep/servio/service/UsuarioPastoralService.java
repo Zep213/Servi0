@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Map;
 
 /**
  * Quem tem papel dentro de uma pastoral é decisão do COORDENADOR daquela pastoral
@@ -28,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioPastoralService extends CrudService<UsuarioPastoral, UsuarioPastoralRequestDTO, UsuarioPastoralResponseDTO> {
 
     private static final int MAX_SECRETARIOS_POR_PASTORAL = 2;
+    private static final Map<PapelPastoral, String> CARGOS_UNICOS = Map.of(
+            PapelPastoral.TECNICO, "um técnico de TI",
+            PapelPastoral.REDES_SOCIAIS, "uma pessoa nas redes sociais");
 
     private final UsuarioPastoralRepository repository;
     private final UsuarioPastoralMapper mapper;
@@ -79,6 +83,10 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
                 && repository.countByPastoralIdAndPapelAndActiveTrueAndIdNot(pastoralId, PapelPastoral.SECRETARIO, id)
                     >= MAX_SECRETARIOS_POR_PASTORAL) {
             throw new RegraNegocioException("Esta pastoral já tem o máximo de " + MAX_SECRETARIOS_POR_PASTORAL + " secretários");
+        }
+        if (CARGOS_UNICOS.containsKey(entidade.getPapel())
+                && repository.countByPastoralIdAndPapelAndActiveTrueAndIdNot(pastoralId, entidade.getPapel(), id) >= 1) {
+            throw new RegraNegocioException("Esta pastoral já tem " + CARGOS_UNICOS.get(entidade.getPapel()));
         }
     }
 
