@@ -1,6 +1,6 @@
 # Features implementadas / em desenvolvimento
 
-Estado do projeto em 2026-10-06.
+Estado do projeto em 2026-10-07.
 
 ## Implementado
 
@@ -104,6 +104,27 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
   - Quem vê: COORDENADOR, VICE, SECRETARIO, TESOUREIRO, PADRE e ADMIN. MEMBRO recebe 403; pastoral de outra paróquia ou fora do alcance recebe 404.
   - `GET /api/me` passa a trazer `pastorais: [{id, nome, papel}]`.
 - **Testes** (`*IT` com Testcontainers): `SorteioServiceTest`, `TokenConviteTest`, `SorteioIT`, `EscalacaoManualIT`, `ConvitePublicoIT`, `NotificacaoIT`, `JobsIT`, `PainelIT`, além de linhas novas em `EntrePastoraisIT`, `EntreParoquiasIT` e `PermissaoPorPapelIT`. Na última rodada completa: 58 unitários e 144 de integração, sem falhas.
+- **Corrigido na etapa 7**: os e-mails nunca chegavam a ser enviados (o motor Thymeleaf exigia OGNL, o prefixo dos templates estava errado e a mensagem não era multipart). Os ITs mockam o `Notificador`, por isso não pegaram; `EmailTemplatesTest` e `EmailNotificadorTest` agora renderizam e montam a mensagem de verdade.
+
+### Front-end React/PWA (etapa 7)
+- **Rotas de leitura no backend** (Parte 1), com nomes já resolvidos e poucas consultas (`LeituraIT` conta os statements do Hibernate com 20 alocações):
+  - `GET /api/me/escalas?de=&ate=` (padrão hoje até +60 dias), só do usuário logado.
+  - `GET /api/pastorais/{id}/celebracoes/{celebracaoId}/escala`, com a mesma permissão do painel.
+  - `GET /api/pastorais/{id}/membros` (e-mail só para COORDENADOR, PADRE e ADMIN) e `GET /api/usuarios/busca?nome=`.
+  - Filtros `GET /api/celebracoes?de=&ate=` e `GET /api/funcoes?pastoralId=`; `GET /api/indisponibilidades` devolve só as próprias para quem não é PADRE nem ADMIN.
+  - OpenAPI (springdoc) em `/v3/api-docs` e Swagger UI, ligados só com `OPENAPI_ENABLED=true`.
+- **Front em `frontend/`**: Vite + React 19 + TypeScript strict, Node 22 (`.nvmrc`), React Router, TanStack Query, react-hook-form + zod. Cliente da API gerado pelo Orval (`npm run gen:api`, código gerado commitado) sobre um cliente HTTP único: CSRF, `ProblemDetail` virando `ErroApi` e 401 levando ao login (exceto o de `/api/me`, que só quer dizer "ninguém logado").
+- **Tema**: tokens em CSS, contraste mínimo de 4,5:1, cor por pastoral só no front (`pascom` azul, `ecc` vermelho, demais por id numa paleta fixa) com `textoSobre(cor)` testado.
+- **Telas**:
+  - Público: entrar, página do convite (`/convite#token`, apaga o fragmento da URL, todos os estados: confirmado, recusado, 410, 404, 429, sem conexão), 404 e erro geral.
+  - Servidor: minhas escalas (responder convite, aba de passadas) e indisponibilidades.
+  - Gestão da pastoral: painel (Sortear em missa, Escalar em evento, Definir vagas sem quantidade, aprovar/desfazer alteração do vice), escala da celebração (sortear celebração ou vaga, escalar com motivos, escalar mesmo assim, substituir, reenviar), membros (buscar, criar conta de SERVIDOR, mudar papel, remover), configurações geradas do catálogo de regras, reuniões e financeiro.
+  - Padre: celebrações (calendário e lista), responsabilizar pastoral, pastorais e financeiro consolidado.
+  - Conta: trocar senha e troca de pastoral (salva no `localStorage`).
+- **PWA**: manifest e ícones gerados de um SVG, aviso de nova versão, convite para instalar depois do primeiro login, service worker com `NetworkFirst` só para `GET /api/me/escalas` e aviso de sem conexão.
+- **Publicação**: `frontend/Dockerfile` (Node → nginx sem root) e `nginx.conf` (fallback da SPA, `/api` para `app:8080` com `X-Forwarded-*`, gzip, cache longo só para arquivos com hash, CSP sem `unsafe-inline`/`unsafe-eval`). No `docker-compose.yml`, o serviço `web` fica na porta 80 e o `app` deixa de publicar porta.
+- **CI**: job `frontend` (lint, formatação, tipos, testes, build), Dependabot para `npm` e `docker` em `frontend/` e workflow `e2e.yml` manual (`workflow_dispatch`).
+- **Testes**: Vitest + Testing Library + MSW nas telas, axe nas páginas principais e Playwright de ponta a ponta contra o `docker compose` com Mailpit (a coordenadora sorteia, o teste abre o link do e-mail, a servidora confirma e o painel mostra "Completo").
 
 ## Em desenvolvimento
 - Ligar `AuditLogService` às regras de negócio (login já audita; as demais ações ainda não). `Notificador` já é usado pela escalação e pelas reuniões.
