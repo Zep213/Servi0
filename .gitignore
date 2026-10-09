@@ -33,5 +33,6 @@ build/
 .vscode/
 
 ### Env ###
-.env
-.env.prod
+.env*
+!.env.example
+!.env.prod.example
