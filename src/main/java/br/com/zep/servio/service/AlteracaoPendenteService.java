@@ -11,11 +11,12 @@ import br.com.zep.servio.model.Vaga;
 import br.com.zep.servio.model.dto.AlteracaoPendenteResponseDTO;
 import br.com.zep.servio.model.enumerated.StatusAlteracaoPendente;
 import br.com.zep.servio.model.enumerated.StatusConvite;
+import br.com.zep.servio.model.enumerated.TipoNotificacao;
 import br.com.zep.servio.repository.AlocacaoRepository;
 import br.com.zep.servio.repository.AlteracaoPendenteRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
 import br.com.zep.servio.security.UsuarioLogado;
-import br.com.zep.servio.service.escalacao.ConfiguracaoPastoralService;
+import br.com.zep.servio.service.escalacao.ConviteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public class AlteracaoPendenteService {
     private final AlteracaoPendenteRepository repository;
     private final AlteracaoPendenteMapper mapper;
     private final AlocacaoRepository alocacaoRepository;
-    private final ConfiguracaoPastoralService configuracaoPastoralService;
+    private final ConviteService conviteService;
     private final PastoraisPermissao pastoraisPermissao;
     private final UsuarioLogado usuarioLogado;
 
@@ -97,9 +97,10 @@ public class AlteracaoPendenteService {
         alocacao.setVaga(pendente.getVagaAnterior());
         alocacao.setUsuario(pendente.getUsuarioAnterior());
         alocacao.setStatus(StatusConvite.PENDENTE);
-        long prazoHoras = configuracaoPastoralService.prazoRespostaHoras(pendente.getPastoral().getId());
-        alocacao.setDataLimiteResposta(LocalDateTime.now().plusHours(prazoHoras));
+        alocacao.setDataLimiteResposta(conviteService.novoPrazo(pendente.getPastoral().getId()));
         alocacaoRepository.save(alocacao);
+        // Quem tinha o link antes da alteração perde o acesso; a pessoa restaurada recebe um convite novo.
+        conviteService.emitir(alocacao, TipoNotificacao.CONVITE_REENVIO);
 
         pendente.setStatus(StatusAlteracaoPendente.DESFEITA);
         return mapper.toResponse(repository.save(pendente));

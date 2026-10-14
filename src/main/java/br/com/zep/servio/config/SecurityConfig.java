@@ -4,6 +4,7 @@ import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.AuditoriaAdminAssumidoFilter;
 import br.com.zep.servio.security.LoginHandlers;
 import br.com.zep.servio.security.LoginRateLimitFilter;
+import br.com.zep.servio.security.SomenteLeituraFilter;
 import br.com.zep.servio.security.TentativasLogin;
 import br.com.zep.servio.security.UsuarioLogado;
 import br.com.zep.servio.service.AuditLogService;
@@ -45,7 +46,8 @@ public class SecurityConfig {
     private static final String[] GESTAO_POR_PASTORAL = {
             "/api/pastorais/*/config/**", "/api/pastorais/*/financeiro/**", "/api/pastorais/*/reunioes/**",
             "/api/pastorais/*/modelos-vaga/**", "/api/alocacoes/**", "/api/usuarios-pastorais/**",
-            "/api/celebracoes/**", "/api/vagas/**"
+            "/api/celebracoes/**", "/api/vagas/**", "/api/pastorais/*/celebracoes/**", "/api/pastorais/*/painel",
+            "/api/pastorais/*/membros"
     };
 
     private final TentativasLogin tentativasLogin;
@@ -53,6 +55,17 @@ public class SecurityConfig {
     private final UsuarioLogado usuarioLogado;
     private final AuditLogService auditLogService;
     private final UsuarioRepository usuarioRepository;
+
+    /** Documentação da API só quando ligada por propriedade (OPENAPI_ENABLED). */
+    @Value("${springdoc.api-docs.enabled:false}")
+    private boolean openApiHabilitado;
+
+    /** E-mail das contas de demonstração (somente leitura) — vazio desliga a trava. */
+    @Value("${servio.demo.email:}")
+    private String demoEmail;
+
+    @Value("${servio.demo-membro.email:}")
+    private String demoMembroEmail;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -94,7 +107,11 @@ public class SecurityConfig {
                         .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
                         .deleteCookies("SERVIO_SESSION"))
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .authorizeHttpRequests(a -> a
+                .authorizeHttpRequests(a -> {
+                    if (openApiHabilitado) {
+                        a.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
+                    }
+                    a
                         // públicas
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf").permitAll()
                         .requestMatchers("/api/confirmacoes/**").permitAll()
@@ -141,14 +158,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/audit-logs/**").hasAnyRole("ADMIN", "PADRE")
 
                         // rota nova nasce bloqueada até ser liberada de propósito
-                        .anyRequest().denyAll())
+                        .anyRequest().denyAll();
+                })
                 .headers(h -> h
                         .contentSecurityPolicy(c -> c.policyDirectives("default-src 'none'; frame-ancestors 'none'"))
                         .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny))
                 .addFilterBefore(new LoginRateLimitFilter(tentativasLogin), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new SomenteLeituraFilter(demoEmail + "," + demoMembroEmail), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new AuditoriaAdminAssumidoFilter(usuarioLogado, auditLogService, usuarioRepository),
-                        UsernamePasswordAuthenticationFilter.class)
+                        SomenteLeituraFilter.class)
                 .build();
     }
 }

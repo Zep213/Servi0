@@ -547,4 +547,18 @@ class PermissaoPorPapelIT {
             como(u, get("/api/plataforma/resumo")).andExpect(status().isForbidden());
         }
     }
+
+    @Test
+    void painelSegueOPapelNaPastoral() throws Exception {
+        comoAdmin(get("/api/pastorais/{id}/painel", cenario.pascom.getId())).andExpect(status().isOk());
+        como(cenario.padreA, get("/api/pastorais/{id}/painel", cenario.pascom.getId())).andExpect(status().isOk());
+        for (Usuario ator : List.of(cenario.coordenadorPascom, cenario.vicePascom,
+                cenario.secretario1Pascom, cenario.tesoureiroPascom)) {
+            como(ator, get("/api/pastorais/{id}/painel", cenario.pascom.getId())).andExpect(status().isOk());
+        }
+        como(cenario.membro1Pascom, get("/api/pastorais/{id}/painel", cenario.pascom.getId()))
+                .andExpect(status().isForbidden());
+        como(cenario.coordenadorEcc, get("/api/pastorais/{id}/painel", cenario.pascom.getId()))
+                .andExpect(status().isNotFound());
+    }
 }

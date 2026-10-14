@@ -1,0 +1,12 @@
+package br.com.zep.servio.model.enumerated;
+
+public enum TipoNotificacao {
+    CONVITE,
+    CONVITE_REENVIO,
+    LEMBRETE_RESPOSTA,
+    LEMBRETE_SERVICO,
+    SUBSTITUICAO,
+    AVISO_COORDENADOR_RECUSA,
+    AVISO_COORDENADOR_EXPIRADO,
+    AVISO_COORDENADOR_SEM_ELEGIVEIS
+}
