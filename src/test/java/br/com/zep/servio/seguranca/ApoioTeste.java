@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /** Helpers repetidos nos testes de segurança: criar paróquia/usuário e logar de verdade. */
-final class ApoioTeste {
+public final class ApoioTeste {
 
     private ApoioTeste() {
     }
@@ -46,7 +46,7 @@ final class ApoioTeste {
         return criarUsuario(usuarioRepo, encoder, paroquia.getId(), email, senha, perfil);
     }
 
-    static Cookie login(MockMvc mvc, String email, String senha) throws Exception {
+    public static Cookie login(MockMvc mvc, String email, String senha) throws Exception {
         MvcResult resultado = mvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("email", email)

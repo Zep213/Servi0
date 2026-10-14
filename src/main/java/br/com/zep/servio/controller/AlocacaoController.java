@@ -50,4 +50,10 @@ public class AlocacaoController {
     public void desativar(@PathVariable Long id) {
         service.desativar(id);
     }
+
+    @PostMapping("/{id}/responder")
+    public AlocacaoResponseDTO responder(@PathVariable Long id, @RequestParam boolean aceitar,
+                                         @RequestParam(required = false) String justificativa) {
+        return service.responder(id, aceitar, justificativa);
+    }
 }

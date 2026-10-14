@@ -1,16 +1,40 @@
 package br.com.zep.servio.service;
 
 import br.com.zep.servio.exception.ConflitoException;
+import br.com.zep.servio.exception.RecursoNaoEncontradoException;
+import br.com.zep.servio.exception.RegraNegocioException;
+import br.com.zep.servio.exception.ServioException;
 import br.com.zep.servio.mapper.AlocacaoMapper;
 import br.com.zep.servio.model.Alocacao;
+import br.com.zep.servio.model.Pastoral;
+import br.com.zep.servio.model.Usuario;
+import br.com.zep.servio.model.Vaga;
 import br.com.zep.servio.model.dto.AlocacaoRequestDTO;
 import br.com.zep.servio.model.dto.AlocacaoResponseDTO;
+import br.com.zep.servio.model.enumerated.PapelPastoral;
+import br.com.zep.servio.model.enumerated.StatusConvite;
+import br.com.zep.servio.model.enumerated.TipoNotificacao;
 import br.com.zep.servio.repository.AlocacaoRepository;
 import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.repository.VagaRepository;
+import br.com.zep.servio.security.PastoraisPermissao;
+import br.com.zep.servio.service.escalacao.ConviteService;
+import br.com.zep.servio.service.escalacao.ElegibilidadeService;
+import br.com.zep.servio.service.escalacao.EscalacaoService;
+import br.com.zep.servio.service.escalacao.RespostaConviteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +44,13 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     private final AlocacaoMapper mapper;
     private final VagaRepository vagaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ElegibilidadeService elegibilidadeService;
+    private final EscalacaoService escalacaoService;
+    private final ConviteService conviteService;
+    private final RespostaConviteService respostaConviteService;
+    private final PastoraisPermissao pastoraisPermissao;
+    private final AlteracaoPendenteService alteracaoPendenteService;
+    private final Clock clock;
 
     @Override
     protected TenantRepository<Alocacao> repository() {
@@ -38,9 +69,40 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
 
     @Override
     protected void validar(Alocacao entidade) {
-        if (repository.existsByVagaIdAndUsuarioId(entidade.getVaga().getId(), entidade.getUsuario().getId())) {
+        Long pastoralId = entidade.getVaga().getFuncao().getPastoral().getId();
+        exigirVisivel(pastoralId, idOuZero(entidade));
+        exigirGestorPastoral(pastoralId);
+
+        Long id = idOuZero(entidade);
+        Long vagaId = entidade.getVaga().getId();
+        Long usuarioId = entidade.getUsuario().getId();
+
+        if (repository.existsByVagaIdAndUsuarioIdAndActiveTrueAndStatusInAndIdNot(
+                vagaId, usuarioId, StatusConvite.OCUPANTES, id)) {
             throw new ConflitoException("Usuário já alocado nesta vaga");
         }
+
+        List<String> impedimentos = elegibilidadeService.impedimentos(entidade.getUsuario(), entidade.getVaga(), id);
+        if (!impedimentos.isEmpty()) {
+            throw new RegraNegocioException(String.join("; ", impedimentos));
+        }
+
+        Integer quantidade = entidade.getVaga().getQuantidade();
+        if (quantidade == null) {
+            throw new RegraNegocioException("Defina a quantidade da vaga primeiro");
+        }
+        long ocupantes = repository.countByVagaIdAndActiveTrueAndStatusInAndIdNot(vagaId, StatusConvite.OCUPANTES, id);
+        if (ocupantes >= quantidade) {
+            throw new RegraNegocioException("Vaga já está com todas as posições preenchidas");
+        }
+
+    }
+
+    /** Um caminho só para criar alocação: a escalação manual, sem forçar (forçar tem rota própria). */
+    @Override
+    @Transactional
+    public AlocacaoResponseDTO criar(AlocacaoRequestDTO request) {
+        return escalacaoService.escalar(request.vagaId(), request.usuarioId(), false);
     }
 
     @Override
@@ -59,5 +121,123 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
     private void resolverRelacoes(AlocacaoRequestDTO request, Alocacao entity) {
         entity.setVaga(referencia(vagaRepository, request.vagaId(), "Vaga"));
         entity.setUsuario(referencia(usuarioRepository, request.usuarioId(), "Usuario"));
+    }
+
+    /**
+     * Quando quem edita é o vice da pastoral (não o coordenador), a mudança é aplicada
+     * normalmente mas fica registrada como pendente até o coordenador confirmar ou desfazer.
+     */
+    @Override
+    @Transactional
+    public AlocacaoResponseDTO atualizar(Long id, AlocacaoRequestDTO request) {
+        Alocacao entidade = obterAtivo(id);
+        Vaga vagaAnterior = entidade.getVaga();
+        Usuario usuarioAnterior = entidade.getUsuario();
+        Pastoral pastoralAnterior = vagaAnterior.getFuncao().getPastoral();
+        boolean mudouEscalacao = !vagaAnterior.getId().equals(request.vagaId())
+                || !usuarioAnterior.getId().equals(request.usuarioId());
+
+        // 1.1: exige gestão tanto na pastoral de origem quanto na de destino (validar()
+        // abaixo checa a de destino, já com a vaga/usuário novos aplicados).
+        exigirVisivel(pastoralAnterior.getId(), id);
+        exigirGestorPastoral(pastoralAnterior.getId());
+
+        // Trava a vaga de destino antes de contar ocupantes (validar), como faz o caminho de escalação.
+        vagaRepository.findByIdParaEscalarComLock(request.vagaId(), paroquiaId());
+        atualizarEntidade(request, entidade);
+        validar(entidade);
+        if (mudouEscalacao) {
+            // Quem recebe a vaga ganha prazo novo; o token antigo deixa de valer, então o link que
+            // o convidado anterior tinha não responde mais por esta alocação.
+            Long pastoralNovaId = entidade.getVaga().getFuncao().getPastoral().getId();
+            entidade.setStatus(StatusConvite.PENDENTE);
+            entidade.setDataLimiteResposta(conviteService.novoPrazo(pastoralNovaId));
+        }
+        Alocacao salva = repository.save(entidade);
+        if (mudouEscalacao) {
+            conviteService.emitir(salva, TipoNotificacao.CONVITE_REENVIO);
+        }
+
+        boolean isVice = pastoraisPermissao.temPapel(pastoralAnterior.getId(), PapelPastoral.VICE.name());
+        boolean isCoordenador = pastoraisPermissao.temPapel(pastoralAnterior.getId(), PapelPastoral.COORDENADOR.name());
+        if (isVice && !isCoordenador) {
+            Usuario autor = referencia(usuarioRepository, usuarioId(), "Usuario");
+            alteracaoPendenteService.registrar(salva, pastoralAnterior, autor, vagaAnterior, usuarioAnterior);
+        }
+
+        return paraResposta(salva);
+    }
+
+    /** Escala é gerida por quem cadastra pessoas nela: só COORDENADOR ou VICE da pastoral. */
+    @Override
+    @Transactional
+    public void desativar(Long id) {
+        Alocacao entidade = obterAtivo(id);
+        Long pastoralId = entidade.getVaga().getFuncao().getPastoral().getId();
+        exigirVisivel(pastoralId, id);
+        exigirGestorPastoral(pastoralId);
+        entidade.setActive(false);
+        repository.save(entidade);
+    }
+
+    /** Parte 4: alocações visíveis a quem não é PADRE/ADMIN são só as de funções de pastorais do usuário. */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AlocacaoResponseDTO> listar(Pageable pageable) {
+        Optional<List<Long>> visiveis = pastoraisPermissao.pastoraisVisiveis();
+        if (visiveis.isEmpty()) {
+            return super.listar(pageable);
+        }
+        if (visiveis.get().isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return repository.findByParoquiaIdAndVagaFuncaoPastoralIdInAndActiveTrue(paroquiaId(), visiveis.get(), pageable)
+                .map(this::paraResposta);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AlocacaoResponseDTO buscar(Long id) {
+        Alocacao entidade = obterAtivo(id);
+        exigirVisivel(entidade.getVaga().getFuncao().getPastoral().getId(), id);
+        return paraResposta(entidade);
+    }
+
+    /** Pastoral fora do alcance do usuário (Parte 4): 404, pra não revelar nem a existência do recurso. */
+    private void exigirVisivel(Long pastoralId, Long id) {
+        if (!pastoraisPermissao.visivel(pastoralId)) {
+            throw new RecursoNaoEncontradoException(nomeRecurso(), id);
+        }
+    }
+
+    private void exigirGestorPastoral(Long pastoralId) {
+        if (!pastoraisPermissao.temQualquerPapel(pastoralId, PapelPastoral.COORDENADOR.name(), PapelPastoral.VICE.name())) {
+            throw new AccessDeniedException("Só o coordenador ou vice da pastoral gerencia a escala");
+        }
+    }
+
+    /**
+     * O convidado aceita ou recusa a própria escalação, dentro do prazo configurado pela pastoral.
+     * noRollbackFor: a expiração gravada abaixo tem que valer mesmo a chamada terminando em erro.
+     */
+    @Transactional(noRollbackFor = RegraNegocioException.class)
+    public AlocacaoResponseDTO responder(Long id, boolean aceitar, String justificativa) {
+        Alocacao entidade = obterAtivo(id);
+        if (!entidade.getUsuario().getId().equals(usuarioId())) {
+            throw new ServioException("Você só pode responder ao próprio convite", HttpStatus.FORBIDDEN);
+        }
+        if (entidade.getStatus() != StatusConvite.PENDENTE) {
+            throw new RegraNegocioException("Este convite já foi respondido");
+        }
+        if (justificativa != null && justificativa.length() > RespostaConviteService.TAMANHO_MAXIMO_JUSTIFICATIVA) {
+            throw new RegraNegocioException("Justificativa muito longa");
+        }
+        StatusConvite resultado = respostaConviteService.aplicar(entidade, aceitar, justificativa);
+        Alocacao salva = repository.save(entidade);
+        if (resultado == StatusConvite.EXPIRADA) {
+            // a expiração já está gravada (noRollbackFor acima); só o erro vai para quem chamou
+            throw new RegraNegocioException("Prazo de resposta deste convite expirou");
+        }
+        return paraResposta(salva);
     }
 }

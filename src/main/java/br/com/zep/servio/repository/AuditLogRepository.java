@@ -8,4 +8,6 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
     List<AuditLog> findByUsuarioId(Long usuarioId);
 
     List<AuditLog> findByTipoEventoAndReferenciaId(String tipoEvento, Long referenciaId);
+
+    List<AuditLog> findByParoquiaId(Long paroquiaId);
 }

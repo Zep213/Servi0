@@ -1,5 +1,6 @@
 package br.com.zep.servio.model.dto;
 
+import br.com.zep.servio.model.enumerated.TipoCelebracao;
 import br.com.zep.servio.model.enumerated.TipoData;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -12,5 +13,8 @@ public record CelebracaoRequestDTO(
     LocalDate data,
     @NotNull
     LocalTime hora,
-    TipoData tipoData
+    TipoData tipoData,
+    TipoCelebracao tipo,
+    @Size(max = 120)
+    String titulo
 ) {}
