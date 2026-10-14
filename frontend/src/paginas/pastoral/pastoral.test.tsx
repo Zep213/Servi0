@@ -43,6 +43,18 @@ const painel = {
       status: 'NAO_INICIADO',
       aguardandoQuantidade: false,
     },
+    {
+      id: 3,
+      data: '2031-03-16',
+      hora: '08:00:00',
+      titulo: 'Missa da quaresma',
+      tipo: 'MISSA_DOMINICAL',
+      vagasTotais: 0,
+      ocupadas: 0,
+      confirmadas: 0,
+      status: 'NAO_INICIADO',
+      aguardandoQuantidade: true,
+    },
   ],
   pendencias: {
     convitesVencendo: [],
@@ -97,7 +109,7 @@ function handlersBase(papel: string, perfil = 'SERVIDOR') {
 }
 
 describe('Painel do coordenador', () => {
-  it('mostra os cartões, e "Sortear" só nas missas', async () => {
+  it('mostra os cartões, "Sortear" só nas missas e "Escalar" só nos eventos', async () => {
     servidor.use(...handlersBase('COORDENADOR'));
     renderizarRotas('/pastoral/1/painel');
 
@@ -105,7 +117,24 @@ describe('Painel do coordenador', () => {
     const linhaMissa = (await screen.findByText('Missa dominical')).closest('tr') as HTMLElement;
     const linhaFesta = screen.getByText('Festa da padroeira').closest('tr') as HTMLElement;
     expect(within(linhaMissa).getByRole('button', { name: 'Sortear' })).toBeInTheDocument();
+    expect(within(linhaMissa).queryByRole('link', { name: 'Escalar' })).not.toBeInTheDocument();
     expect(within(linhaFesta).queryByRole('button', { name: 'Sortear' })).not.toBeInTheDocument();
+    expect(within(linhaFesta).getByRole('link', { name: 'Escalar' })).toHaveAttribute(
+      'href',
+      '/pastoral/1/celebracoes/2',
+    );
+  });
+
+  it('sem quantidade definida, a ação é "Definir vagas", sem sortear', async () => {
+    servidor.use(...handlersBase('COORDENADOR'));
+    renderizarRotas('/pastoral/1/painel');
+
+    const linha = (await screen.findByText('Missa da quaresma')).closest('tr') as HTMLElement;
+    expect(within(linha).getByRole('link', { name: 'Definir vagas' })).toHaveAttribute(
+      'href',
+      '/pastoral/1/celebracoes/3',
+    );
+    expect(within(linha).queryByRole('button', { name: 'Sortear' })).not.toBeInTheDocument();
   });
 
   it('aprovar a alteração do vice só aparece para coordenação', async () => {
@@ -203,6 +232,93 @@ describe('Membros', () => {
       expect(removido).toBe('5');
     });
   });
+
+  async function abrirCriarConta() {
+    renderizarRotas('/pastoral/1/membros');
+    await userEvent.click(await screen.findByRole('button', { name: 'Adicionar pessoa' }));
+    const busca = await screen.findByRole('dialog', { name: 'Adicionar pessoa' });
+    await userEvent.click(within(busca).getByRole('button', { name: 'Criar conta nova' }));
+    return screen.findByRole('dialog', { name: 'Criar conta nova' });
+  }
+
+  it('coordenador cria conta de SERVIDOR e já a coloca na pastoral com o papel escolhido', async () => {
+    let contaCriada: unknown = null;
+    let vinculo: unknown = null;
+    servidor.use(
+      ...handlersBase('COORDENADOR'),
+      http.get('/api/pastorais/:id/membros', () => HttpResponse.json(membros)),
+      http.post('/api/usuarios', async ({ request }) => {
+        contaCriada = await request.json();
+        return HttpResponse.json({ id: 77, nome: 'João Lima' }, { status: 201 });
+      }),
+      http.post('/api/usuarios-pastorais', async ({ request }) => {
+        vinculo = await request.json();
+        return HttpResponse.json({ id: 8 }, { status: 201 });
+      }),
+    );
+    const dialogo = await abrirCriarConta();
+
+    await userEvent.type(within(dialogo).getByLabelText('Nome completo'), 'João Lima');
+    await userEvent.type(within(dialogo).getByLabelText('E-mail'), 'joao@exemplo.com');
+    await userEvent.type(within(dialogo).getByLabelText('Senha inicial'), 'senha-forte-1');
+    await userEvent.selectOptions(within(dialogo).getByLabelText('Papel'), 'SECRETARIO');
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Criar conta e adicionar' }));
+
+    expect(await screen.findByText('Conta criada e pessoa adicionada')).toBeInTheDocument();
+    expect(contaCriada).toEqual({
+      nome: 'João Lima',
+      email: 'joao@exemplo.com',
+      senha: 'senha-forte-1',
+      perfil: 'SERVIDOR',
+    });
+    expect(vinculo).toEqual({ usuarioId: 77, pastoralId: 1, papel: 'SECRETARIO' });
+  });
+
+  it('senha curta não chega ao servidor', async () => {
+    let chamou = false;
+    servidor.use(
+      ...handlersBase('COORDENADOR'),
+      http.get('/api/pastorais/:id/membros', () => HttpResponse.json(membros)),
+      http.post('/api/usuarios', () => {
+        chamou = true;
+        return HttpResponse.json({ id: 1 }, { status: 201 });
+      }),
+    );
+    const dialogo = await abrirCriarConta();
+
+    await userEvent.type(within(dialogo).getByLabelText('Nome completo'), 'João');
+    await userEvent.type(within(dialogo).getByLabelText('E-mail'), 'joao@exemplo.com');
+    await userEvent.type(within(dialogo).getByLabelText('Senha inicial'), '1234');
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Criar conta e adicionar' }));
+
+    expect(
+      await within(dialogo).findByText('A senha precisa de pelo menos 8 caracteres'),
+    ).toBeInTheDocument();
+    expect(chamou).toBe(false);
+  });
+
+  it('e-mail já usado (409): mostra a mensagem do backend no campo de e-mail', async () => {
+    servidor.use(
+      ...handlersBase('COORDENADOR'),
+      http.get('/api/pastorais/:id/membros', () => HttpResponse.json(membros)),
+      http.post('/api/usuarios', () =>
+        HttpResponse.json(
+          { status: 409, detail: 'Já existe um usuário ativo com este e-mail' },
+          { status: 409 },
+        ),
+      ),
+    );
+    const dialogo = await abrirCriarConta();
+
+    await userEvent.type(within(dialogo).getByLabelText('Nome completo'), 'Ana');
+    await userEvent.type(within(dialogo).getByLabelText('E-mail'), 'ana@exemplo.com');
+    await userEvent.type(within(dialogo).getByLabelText('Senha inicial'), 'senha-forte-1');
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Criar conta e adicionar' }));
+
+    expect(
+      await within(dialogo).findByText('Já existe um usuário ativo com este e-mail'),
+    ).toBeInTheDocument();
+  });
 });
 
 describe('Acesso às telas de gestão', () => {
@@ -283,6 +399,11 @@ describe('Configurações', () => {
             descricao: 'Intervalo mínimo entre escalas',
             padroes: { dias: 7 },
           },
+          {
+            codigo: 'PRAZO_RESPOSTA',
+            descricao: 'Prazo para o convidado responder à escalação',
+            padroes: { horas: 24 },
+          },
         ]),
       ),
       http.get('/api/pastorais/:id/config', () => HttpResponse.json([])),
@@ -295,6 +416,11 @@ describe('Configurações', () => {
     );
     renderizarRotas('/pastoral/1/configuracoes');
     expect(await screen.findByText('Intervalo mínimo entre escalas')).toBeInTheDocument();
+    // PRAZO_RESPOSTA vem no catálogo mas já tem campo em "Prazos": aparece uma vez só.
+    expect(screen.getByText('Prazo para responder ao convite')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Prazo para o convidado responder à escalação'),
+    ).not.toBeInTheDocument();
     const dias = screen.getByLabelText<HTMLInputElement>('Dias');
     await userEvent.clear(dias);
     await userEvent.type(dias, '14');
@@ -305,5 +431,94 @@ describe('Configurações', () => {
       expect(chave).toBe('INTERVALO_MINIMO');
       expect(corpo).toMatchObject({ ativa: true, parametros: { dias: 14 } });
     });
+  });
+});
+
+describe('Pastoral ativa', () => {
+  const coordenaPascomEMembroDoEcc = {
+    ...eu('COORDENADOR'),
+    pastorais: [
+      { id: 2, nome: 'ECC', papel: 'MEMBRO' },
+      { id: 1, nome: 'Pascom', papel: 'COORDENADOR' },
+    ],
+  };
+
+  it('quem abre o link de outra pastoral passa a ver a moldura dela', async () => {
+    window.localStorage.setItem('servio.pastoralAtiva', '2');
+    servidor.use(
+      http.get('/api/me', () => HttpResponse.json(coordenaPascomEMembroDoEcc)),
+      ...handlersBase('COORDENADOR'),
+    );
+    renderizarRotas('/pastoral/1/painel');
+
+    expect(await screen.findByText('Vagas no mês')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByLabelText('Pastoral')).toHaveValue('1');
+    });
+    expect(screen.getAllByRole('link', { name: 'Membros' }).length).toBeGreaterThan(0);
+    expect(window.localStorage.getItem('servio.pastoralAtiva')).toBe('1');
+  });
+
+  it('sem escolha salva, entra pela pastoral que coordena, não pela primeira da lista', async () => {
+    window.localStorage.removeItem('servio.pastoralAtiva');
+    servidor.use(
+      http.get('/api/me', () => HttpResponse.json(coordenaPascomEMembroDoEcc)),
+      ...handlersBase('COORDENADOR'),
+    );
+    const { roteador } = renderizarRotas('/');
+
+    await waitFor(() => {
+      expect(roteador.state.location.pathname).toBe('/pastoral/1/painel');
+    });
+  });
+
+  it('trocar no seletor, dentro da gestão, leva à tela inicial da pastoral escolhida', async () => {
+    window.localStorage.setItem('servio.pastoralAtiva', '1');
+    servidor.use(
+      http.get('/api/me', () => HttpResponse.json(coordenaPascomEMembroDoEcc)),
+      ...handlersBase('COORDENADOR'),
+      http.get('/api/me/escalas', () => HttpResponse.json([])),
+    );
+    const { roteador } = renderizarRotas('/pastoral/1/painel');
+    expect(await screen.findByText('Vagas no mês')).toBeInTheDocument();
+
+    await userEvent.selectOptions(screen.getByLabelText('Pastoral'), '2');
+
+    await waitFor(() => {
+      expect(roteador.state.location.pathname).toBe('/minhas-escalas');
+    });
+    expect(screen.getByLabelText('Pastoral')).toHaveValue('2');
+  });
+});
+
+describe('Barra inferior do celular', () => {
+  it('com mais de 5 itens, mostra os 4 principais e o resto fica em "Mais"', async () => {
+    servidor.use(...handlersBase('COORDENADOR'));
+    renderizarRotas('/pastoral/1/painel');
+    const barra = await screen.findByRole('navigation', { name: 'Navegação' });
+
+    expect(
+      within(barra)
+        .getAllByRole('link')
+        .map((l) => l.textContent),
+    ).toEqual(['Painel', 'Minhas escalas', 'Membros', 'Reuniões']);
+    await userEvent.click(within(barra).getByRole('button', { name: 'Mais' }));
+    const mais = await screen.findByRole('dialog', { name: 'Mais opções' });
+    expect(
+      within(mais)
+        .getAllByRole('link')
+        .map((l) => l.textContent),
+    ).toEqual(['Indisponibilidades', 'Financeiro', 'Configurações']);
+  });
+
+  it('membro, com poucos itens, vê todos na barra e nenhum "Mais"', async () => {
+    servidor.use(
+      ...handlersBase('MEMBRO'),
+      http.get('/api/me/escalas', () => HttpResponse.json([])),
+    );
+    renderizarRotas('/minhas-escalas');
+    const barra = await screen.findByRole('navigation', { name: 'Navegação' });
+    expect(within(barra).getAllByRole('link')).toHaveLength(3);
+    expect(within(barra).queryByRole('button', { name: 'Mais' })).not.toBeInTheDocument();
   });
 });

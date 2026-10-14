@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Navigate, useLocation, useNavigate } from 'react-router';
+import { Navigate, useLocation } from 'react-router';
 import { z } from 'zod';
 import { Botao } from '../../componentes/Botao';
 import { Campo } from '../../componentes/Campo';
@@ -24,10 +24,10 @@ interface EstadoDaRota {
 
 export function Entrar() {
   const { usuario, pastorais, pastoralAtiva } = useSessao();
-  const navegar = useNavigate();
   const local = useLocation();
   const cliente = useQueryClient();
   const [erroGeral, definirErroGeral] = useState<string | null>(null);
+  const [acabouDeEntrar, definirAcabouDeEntrar] = useState(false);
   const estado = (local.state ?? {}) as EstadoDaRota;
 
   const formulario = useForm<Dados>({
@@ -37,6 +37,10 @@ export function Entrar() {
 
   // com aviso (ex.: senha trocada), a tela fica para a pessoa ler; não volta sozinha ao início
   if (usuario && !estado.aviso) {
+    // Quem participa de mais de uma pastoral escolhe em qual vai trabalhar a cada login.
+    if (acabouDeEntrar && pastorais.length > 1) {
+      return <Navigate to="/escolher-pastoral" replace state={{ de: estado.de }} />;
+    }
     return (
       <Navigate
         to={estado.de ?? destinoInicial(usuario, pastorais, pastoralAtiva?.id ?? null)}
@@ -49,8 +53,9 @@ export function Entrar() {
     definirErroGeral(null);
     try {
       await entrar(dados.email, dados.senha);
+      definirAcabouDeEntrar(true);
+      // Com a sessão carregada, o redirecionamento acima leva ao destino (ou à escolha da pastoral).
       await cliente.invalidateQueries({ queryKey: usuarioQuery.queryKey });
-      void navegar(estado.de ?? '/', { replace: true });
     } catch (erro) {
       definirErroGeral(mensagemDeErroDeLogin(erro));
     }
