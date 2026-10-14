@@ -38,9 +38,9 @@ export async function esperarEmailPara(
   throw new Error(`Nenhum e-mail chegou para ${destinatario} a tempo`);
 }
 
-/** Tira o token do link "/convite#token" do corpo do e-mail de convite. */
-export function tokenDoConvite(corpoDoEmail: string): string {
-  const encontrado = /\/convite#(\S+)/.exec(corpoDoEmail);
-  if (!encontrado?.[1]) throw new Error('Link do convite não encontrado no e-mail');
-  return encontrado[1];
+/** Tira do corpo do e-mail o link completo do convite, como a pessoa vai clicar. */
+export function linkDoConvite(corpoDoEmail: string): string {
+  const encontrado = /https?:\/\/\S+\/convite#\S+/.exec(corpoDoEmail);
+  if (!encontrado) throw new Error('Link do convite não encontrado no e-mail');
+  return encontrado[0];
 }

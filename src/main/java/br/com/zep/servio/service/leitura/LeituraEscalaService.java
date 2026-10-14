@@ -44,7 +44,7 @@ public class LeituraEscalaService {
 
     private static final int DIAS_PADRAO_ESCALAS = 60;
     private static final long MAXIMO_DIAS_PERIODO = 366;
-    private static final List<String> PAPEIS_DA_ESCALA = List.of("COORDENADOR", "VICE", "SECRETARIO", "TESOUREIRO");
+    private static final List<String> PAPEIS_DA_ESCALA = List.of("COORDENADOR", "VICE", "SECRETARIO", "TESOUREIRO", "TECNICO");
 
     private final AlocacaoRepository alocacaoRepository;
     private final VagaRepository vagaRepository;

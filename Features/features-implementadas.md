@@ -1,6 +1,6 @@
 # Features implementadas / em desenvolvimento
 
-Estado do projeto em 2026-10-06.
+Estado do projeto em 2026-10-07.
 
 ## Implementado
 
@@ -63,7 +63,7 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
 - **Anti mass assignment**: `spring.jackson.deserialization.fail-on-unknown-properties=true` — campo a mais no JSON vira 400 em vez de ser silenciosamente ignorado.
 - **Erros sem vazamento**: `server.error.include-stacktrace=never` e `include-message=never`; `GlobalHandleException` já cobria isso para as próprias respostas.
 - **CI/CD** (`.github/workflows/ci.yml`): gitleaks (segredos commitados), `./mvnw -B verify` (build + testes unitários e de integração), build da imagem Docker, scan com Trivy (`CRITICAL,HIGH`, falha o build se achar). `.github/dependabot.yml` (maven, docker, github-actions, semanal).
-- **GitHub → Code security**: secret scanning, push protection e Dependabot alerts ativados no repositório (gratuito, é público).
+- **GitHub → Code security**: Dependabot alerts ativo. Secret scanning e push protection nativos estiveram ativos enquanto o repositório era público (gratuito); desde 14/10/2026 o repositório é privado e essas duas telas saem do ar (exigem GitHub Advanced Security). O `gitleaks` do `ci.yml` continua cobrindo segredos commitados independente da visibilidade.
 - **Testes de segurança** (`src/test/.../seguranca`, sufixo `*IT`, rodando via `maven-failsafe-plugin` com Postgres real em Testcontainers):
   - `AutorizacaoIT` — matriz de permissões por perfil (403 vs 401 vs rota bloqueada).
   - `LoginIT` — login válido, e-mail/senha errados respondem igual, rate limit, id de sessão muda no login, logout invalida o cookie.
@@ -80,6 +80,7 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
 - **Relógio único** (`ClockConfig`, `servio.fuso`, padrão `America/Fortaleza`): todo "agora" de escalação, convite e jobs passa pelo `Clock`; testes usam relógio fixo.
 - **Motor de escalação** (`service/escalacao/`):
   - `ElegibilidadeService.avaliar(vaga)` lista os membros da pastoral dona da função, com motivos de impedimento e data da última vez que serviram.
+  - Só quem tem papel MEMBRO é sorteado (desde a etapa 7): coordenação, secretaria, tesouraria, técnico de TI e redes sociais ficam fora do sorteio, mas podem ser escalados à mão.
   - `SorteioService` embaralha os elegíveis e ordena por quem está há mais tempo sem servir (quem nunca serviu primeiro); o embaralhamento decide os empates. Usa `RandomGenerator` trocável por semente nos testes.
   - `EscalacaoService` (cada operação numa transação): sortear uma celebração de missa dominical ou uma vaga; listar candidatos; escalar (com `forcar` só para COORDENADOR, PADRE ou ADMIN); substituir; reenviar convite (no máximo 1 por hora).
   - Vaga sem gente suficiente fica aberta e o coordenador é avisado; a regra nunca é relaxada sozinha.
@@ -104,10 +105,32 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
   - Quem vê: COORDENADOR, VICE, SECRETARIO, TESOUREIRO, PADRE e ADMIN. MEMBRO recebe 403; pastoral de outra paróquia ou fora do alcance recebe 404.
   - `GET /api/me` passa a trazer `pastorais: [{id, nome, papel}]`.
 - **Testes** (`*IT` com Testcontainers): `SorteioServiceTest`, `TokenConviteTest`, `SorteioIT`, `EscalacaoManualIT`, `ConvitePublicoIT`, `NotificacaoIT`, `JobsIT`, `PainelIT`, além de linhas novas em `EntrePastoraisIT`, `EntreParoquiasIT` e `PermissaoPorPapelIT`. Na última rodada completa: 58 unitários e 144 de integração, sem falhas.
+- **Corrigido na etapa 7**: os e-mails nunca chegavam a ser enviados (o motor Thymeleaf exigia OGNL, o prefixo dos templates estava errado e a mensagem não era multipart). Os ITs mockam o `Notificador`, por isso não pegaram; `EmailTemplatesTest` e `EmailNotificadorTest` agora renderizam e montam a mensagem de verdade.
+
+### Front-end React/PWA (etapa 7)
+- **Rotas de leitura no backend** (Parte 1), com nomes já resolvidos e poucas consultas (`LeituraIT` conta os statements do Hibernate com 20 alocações):
+  - `GET /api/me/escalas?de=&ate=` (padrão hoje até +60 dias), só do usuário logado.
+  - `GET /api/pastorais/{id}/celebracoes/{celebracaoId}/escala`, com a mesma permissão do painel.
+  - `GET /api/pastorais/{id}/membros` (e-mail só para COORDENADOR, PADRE e ADMIN) e `GET /api/usuarios/busca?nome=`.
+  - Filtros `GET /api/celebracoes?de=&ate=` e `GET /api/funcoes?pastoralId=`; `GET /api/indisponibilidades` devolve só as próprias para quem não é PADRE nem ADMIN.
+  - OpenAPI (springdoc) em `/v3/api-docs` e Swagger UI, ligados só com `OPENAPI_ENABLED=true`.
+- **Front em `frontend/`**: Vite + React 19 + TypeScript strict, Node 22 (`.nvmrc`), React Router, TanStack Query, react-hook-form + zod. Cliente da API gerado pelo Orval (`npm run gen:api`, código gerado commitado) sobre um cliente HTTP único: CSRF, `ProblemDetail` virando `ErroApi` e 401 levando ao login (exceto o de `/api/me`, que só quer dizer "ninguém logado").
+- **Tema**: tokens em CSS, contraste mínimo de 4,5:1, cor por pastoral só no front (`pascom` azul, `ecc` vermelho, demais por id numa paleta fixa) com `textoSobre(cor)` testado.
+- **Telas**:
+  - Público: entrar, página do convite (`/convite#token`, apaga o fragmento da URL, todos os estados: confirmado, recusado, 410, 404, 429, sem conexão), 404 e erro geral.
+  - Servidor: minhas escalas (responder convite, aba de passadas) e indisponibilidades.
+  - Gestão da pastoral: painel (Sortear em missa, Escalar em evento, Definir vagas sem quantidade, aprovar/desfazer alteração do vice), escala da celebração (sortear celebração ou vaga, escalar com motivos, escalar mesmo assim, substituir, reenviar), membros (buscar, criar conta de SERVIDOR, mudar papel, remover), configurações geradas do catálogo de regras, reuniões e financeiro.
+  - Padre: celebrações (calendário e lista), responsabilizar pastoral, pastorais e financeiro consolidado.
+  - Conta: trocar senha; quem participa de mais de uma pastoral escolhe em qual vai trabalhar a cada login (`/escolher-pastoral`); a escolha fica no `localStorage` e a pastoral de um link aberto vira a ativa.
+  - Celular: barra inferior com até 5 itens; acima disso, os 4 principais e um "Mais".
+- **Cargos novos na pastoral** (migration `V13__cargos_tecnico_redes_sociais.sql`): `TECNICO` (técnico de TI, mesmo acesso do VICE) e `REDES_SOCIAIS` (quem posta nas redes da paróquia, acesso de MEMBRO). No máximo um de cada por pastoral, garantido no service e por índice único parcial.
+- **PWA**: manifest e ícones gerados de um SVG, aviso de nova versão, convite para instalar depois do primeiro login, service worker com `NetworkFirst` só para `GET /api/me/escalas` e aviso de sem conexão.
+- **Publicação**: `frontend/Dockerfile` (Node → nginx sem root) e `nginx.conf` (fallback da SPA, `/api` para `app:8080` com `X-Forwarded-*`, gzip, cache longo só para arquivos com hash, CSP sem `unsafe-inline`/`unsafe-eval`). No `docker-compose.yml`, o serviço `web` fica na porta 80 e o `app` deixa de publicar porta.
+- **CI**: job `frontend` (lint, formatação, tipos, testes, build), Dependabot para `npm` e `docker` em `frontend/` e workflow `e2e.yml` manual (`workflow_dispatch`).
+- **Testes**: Vitest + Testing Library + MSW nas telas, axe nas páginas principais e Playwright de ponta a ponta contra o `docker compose` com Mailpit (a coordenadora sorteia, o teste abre o link do e-mail, a servidora confirma e o painel mostra "Completo").
 
 ## Em desenvolvimento
 - Ligar `AuditLogService` às regras de negócio (login já audita; as demais ações ainda não). `Notificador` já é usado pela escalação e pelas reuniões.
 - Fluxo de `PedidoTroca` (transições de status, só solicitante cancela, só destinatário aceita/recusa).
-- Impedir que um COORDENADOR crie/promova alguém a `ADMIN` (ver `erros-conhecidos.md`, item 13).
 
 Ver também: `features-futuras.md` e `erros-conhecidos.md`.

@@ -182,7 +182,11 @@ export function Celebracoes() {
       {celebracoes.data ? (
         <>
           <Card titulo="Calendário">
-            <div className="calendario" role="table" aria-label={`Celebrações de ${nomeDoMes(mes)}`}>
+            <div
+              className="calendario"
+              role="table"
+              aria-label={`Celebrações de ${nomeDoMes(mes)}`}
+            >
               <div className="calendario__semana" role="row">
                 {DIAS_DA_SEMANA.map((d) => (
                   <span key={d} className="calendario__cabecalho-dia" role="columnheader">

@@ -39,6 +39,69 @@ describe('Entrar', () => {
     });
   });
 
+  it('quem tem mais de uma pastoral escolhe em qual vai trabalhar, e a escolha vale', async () => {
+    let logado = false;
+    const duasPastorais = {
+      ...membro,
+      pastorais: [
+        { id: 1, nome: 'Pascom', papel: 'COORDENADOR' },
+        { id: 2, nome: 'ECC', papel: 'MEMBRO' },
+      ],
+    };
+    servidor.use(
+      http.post('/api/auth/login', () => {
+        logado = true;
+        return new HttpResponse(null, { status: 204 });
+      }),
+      http.get('/api/me', () =>
+        logado
+          ? HttpResponse.json(duasPastorais)
+          : HttpResponse.json({ detail: 'x' }, { status: 401 }),
+      ),
+      http.get('/api/me/escalas', () => HttpResponse.json([])),
+    );
+
+    const { roteador } = renderizarRotas('/entrar');
+    await userEvent.type(await screen.findByLabelText('E-mail'), 'maria@exemplo.com');
+    await userEvent.type(screen.getByLabelText('Senha'), 'senha-123');
+    await userEvent.click(screen.getByRole('button', { name: 'Entrar' }));
+
+    expect(
+      await screen.findByRole('heading', { name: 'Em qual pastoral você vai trabalhar agora?' }),
+    ).toBeInTheDocument();
+    expect(roteador.state.location.pathname).toBe('/escolher-pastoral');
+    await userEvent.click(screen.getByRole('button', { name: /ECC/ }));
+
+    await waitFor(() => {
+      expect(roteador.state.location.pathname).toBe('/minhas-escalas');
+    });
+    expect(window.localStorage.getItem('servio.pastoralAtiva')).toBe('2');
+  });
+
+  it('com uma pastoral só, não pergunta nada', async () => {
+    let logado = false;
+    servidor.use(
+      http.post('/api/auth/login', () => {
+        logado = true;
+        return new HttpResponse(null, { status: 204 });
+      }),
+      http.get('/api/me', () =>
+        logado ? HttpResponse.json(membro) : HttpResponse.json({ detail: 'x' }, { status: 401 }),
+      ),
+    );
+    const { roteador } = renderizarRotas('/entrar');
+    await userEvent.type(await screen.findByLabelText('E-mail'), 'maria@exemplo.com');
+    await userEvent.type(screen.getByLabelText('Senha'), 'senha-123');
+    await userEvent.click(screen.getByRole('button', { name: 'Entrar' }));
+
+    await waitFor(() => {
+      expect(roteador.state.location.pathname).toBe('/minhas-escalas');
+    });
+    expect(
+      screen.queryByText('Em qual pastoral você vai trabalhar agora?'),
+    ).not.toBeInTheDocument();
+  });
+
   it('mostra "E-mail ou senha inválidos" para 401', async () => {
     servidor.use(
       http.get('/api/me', () => HttpResponse.json({ detail: 'x' }, { status: 401 })),

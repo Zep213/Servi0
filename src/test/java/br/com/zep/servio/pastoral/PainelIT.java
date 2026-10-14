@@ -21,6 +21,8 @@ import br.com.zep.servio.repository.VagaRepository;
 import br.com.zep.servio.seguranca.TestcontainersConfig;
 import br.com.zep.servio.service.escalacao.TokenConvite;
 import br.com.zep.servio.service.notification.Notificador;
+import br.com.zep.servio.model.enumerated.PapelPastoral;
+import br.com.zep.servio.model.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,6 +185,14 @@ class PainelIT {
     @Test
     void padreVeOPainelDeQualquerPastoralDaSuaParoquia() throws Exception {
         painel(cenario.padreA, cenario.pascom.getId()).andExpect(status().isOk());
+    }
+
+    @Test
+    void tecnicoVeOPainelComoOViceERedesSociaisNaoComoOMembro() throws Exception {
+        Usuario tecnico = cenario.naPascom("tecnico.pascom", PapelPastoral.TECNICO);
+        Usuario redes = cenario.naPascom("redes.pascom", PapelPastoral.REDES_SOCIAIS);
+        painel(tecnico, cenario.pascom.getId()).andExpect(status().isOk());
+        painel(redes, cenario.pascom.getId()).andExpect(status().isForbidden());
     }
 
     @Test

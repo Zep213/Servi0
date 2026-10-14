@@ -1,6 +1,7 @@
 import type { MeResponseDTO } from '../api/generated/modelos';
 
-export type PapelPastoral = 'COORDENADOR' | 'VICE' | 'SECRETARIO' | 'TESOUREIRO' | 'MEMBRO';
+export type PapelPastoral =
+  'COORDENADOR' | 'VICE' | 'SECRETARIO' | 'TESOUREIRO' | 'TECNICO' | 'REDES_SOCIAIS' | 'MEMBRO';
 
 /** Papéis que enxergam a gestão da pastoral (o painel e o que vem dele). */
 export const PAPEIS_DE_GESTAO: readonly PapelPastoral[] = [
@@ -8,12 +9,39 @@ export const PAPEIS_DE_GESTAO: readonly PapelPastoral[] = [
   'VICE',
   'SECRETARIO',
   'TESOUREIRO',
+  'TECNICO',
 ];
+
+export const NOME_DO_PAPEL: Record<PapelPastoral, string> = {
+  COORDENADOR: 'Coordenador',
+  VICE: 'Vice',
+  SECRETARIO: 'Secretário',
+  TESOUREIRO: 'Tesoureiro',
+  TECNICO: 'Técnico de TI',
+  REDES_SOCIAIS: 'Redes sociais',
+  MEMBRO: 'Membro',
+};
 
 export interface PastoralDoUsuario {
   id: number;
   nome: string;
   papel: PapelPastoral;
+}
+
+/**
+ * A pastoral escolhida, se a pessoa ainda participa dela; senão a primeira em que tem papel de
+ * gestão (quem coordena uma e é membro de outra cai na que coordena); senão a primeira.
+ */
+export function pastoralPadrao(
+  pastorais: readonly PastoralDoUsuario[],
+  escolhida: number | null,
+): PastoralDoUsuario | null {
+  return (
+    pastorais.find((p) => p.id === escolhida) ??
+    pastorais.find((p) => PAPEIS_DE_GESTAO.includes(p.papel)) ??
+    pastorais[0] ??
+    null
+  );
 }
 
 /**
@@ -25,7 +53,7 @@ export function destinoInicial(
   pastorais: readonly PastoralDoUsuario[],
   pastoralAtiva: number | null,
 ): string {
-  const ativa = pastorais.find((p) => p.id === pastoralAtiva) ?? pastorais[0];
+  const ativa = pastoralPadrao(pastorais, pastoralAtiva);
   if (ativa && PAPEIS_DE_GESTAO.includes(ativa.papel)) {
     return `/pastoral/${String(ativa.id)}/painel`;
   }
