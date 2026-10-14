@@ -13,5 +13,7 @@ export const PastoralPapelDTOPapel = {
   VICE: 'VICE',
   SECRETARIO: 'SECRETARIO',
   TESOUREIRO: 'TESOUREIRO',
+  TECNICO: 'TECNICO',
+  REDES_SOCIAIS: 'REDES_SOCIAIS',
   MEMBRO: 'MEMBRO',
 } as const;

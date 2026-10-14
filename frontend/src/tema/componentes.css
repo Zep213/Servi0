@@ -338,7 +338,10 @@
 .escala__data {
   margin: 0;
   color: var(--texto-secundario);
-  text-transform: capitalize;
+}
+/* Só a primeira letra: "capitalize" deixaria "Domingo, 11 De Outubro De 2026". */
+.escala__data::first-letter {
+  text-transform: uppercase;
 }
 .escala__titulo {
   font-size: 1.25rem;
@@ -405,7 +408,8 @@
 }
 .calendario__semana {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  /* minmax(0, …): um título longo não pode alargar a coluna do dia. */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 1px;
 }
 .calendario__cabecalho-dia {
@@ -455,4 +459,136 @@
   .calendario__celebracao {
     font-size: 0.7rem;
   }
+}
+
+/* Arranjos usados pelas telas: cabeçalho da página, linhas de ações, grade de cartões. */
+.cabecalho-pagina {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-3);
+  margin-bottom: var(--espaco-4);
+}
+.cabecalho-pagina .titulo-pagina {
+  margin: 0;
+}
+.acoes-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-2);
+}
+.mes-navegacao {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+}
+.mes-navegacao__nome {
+  min-width: 10ch;
+  text-align: center;
+  font-weight: 600;
+}
+.grade-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--espaco-3);
+  margin-bottom: var(--espaco-4);
+}
+.texto-secundario {
+  margin: var(--espaco-1) 0;
+  color: var(--texto-secundario);
+}
+.pendencia {
+  margin: 0 0 var(--espaco-3);
+  line-height: 1.5;
+}
+.pendencia p {
+  margin: 0 0 var(--espaco-2);
+}
+.candidato {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-3);
+  padding: var(--espaco-3) 0;
+  border-bottom: 1px solid var(--neutro-100);
+}
+.candidato p {
+  margin: var(--espaco-1) 0 0;
+}
+.lista-escalados {
+  list-style: none;
+  margin: 0 0 var(--espaco-3);
+  padding: 0;
+}
+.lista-escalados__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-2) var(--espaco-3);
+  padding: var(--espaco-2) 0;
+  border-bottom: 1px solid var(--neutro-100);
+}
+.lista-escalados__nome {
+  font-weight: 600;
+}
+.lista-escalados__item .acoes-linha {
+  margin-left: auto;
+}
+.lista-simples {
+  margin: 0 0 var(--espaco-3);
+  padding-left: var(--espaco-6);
+  line-height: 1.6;
+}
+.config-item {
+  padding: var(--espaco-3) 0;
+  border-bottom: 1px solid var(--neutro-100);
+}
+.config-item:last-child {
+  border-bottom: 0;
+}
+.config-item__cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-2);
+}
+.config-item__ativa {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-3);
+  min-height: var(--alvo-minimo);
+  font-weight: 600;
+  cursor: pointer;
+}
+.convite__recusa {
+  margin-top: var(--espaco-3);
+}
+
+/* Listas de seleção e caixas de marcar com o mesmo alvo de toque dos campos de texto. */
+select {
+  min-height: var(--alvo-minimo);
+  max-width: 100%;
+  padding: 0 var(--espaco-3);
+  font: inherit;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 2px solid var(--borda);
+  border-radius: var(--raio);
+}
+select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 1px;
+}
+input[type='checkbox'] {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+.acoes-linha--pagina {
+  margin-bottom: var(--espaco-4);
 }
