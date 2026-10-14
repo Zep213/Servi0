@@ -34,7 +34,7 @@
 		<!-- CVE-2026-89407/89425/68497/91776/91777; remover quando o Boot trouxer essas versões -->
 		<jackson-2-bom.version>2.21.7</jackson-2-bom.version>
 		<jackson-bom.version>3.1.7</jackson-bom.version>
-		<jacoco.version>0.8.13</jacoco.version>
+		<jacoco.version>0.8.15</jacoco.version>
 	</properties>
 	<dependencies>
 		<dependency>
