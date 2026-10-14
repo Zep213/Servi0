@@ -228,4 +228,12 @@ class EntreParoquiasIT {
                         .with(user(cenario.principal(cenario.padreB))))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void padreDeOutraParoquiaNaoVeEscalaDaCelebracaoDaA() throws Exception {
+        mvc.perform(get("/api/pastorais/{id}/celebracoes/{c}/escala",
+                        cenario.pascom.getId(), celebracaoA.getId())
+                        .with(user(cenario.principal(cenario.padreB))))
+                .andExpect(status().isNotFound());
+    }
 }

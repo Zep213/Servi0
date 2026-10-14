@@ -4,7 +4,8 @@ import type { PastoralDoUsuario, PapelPastoral } from './destino';
  * O que a pessoa pode ver e fazer em uma pastoral. O backend decide de verdade; aqui só se esconde
  * o que ela não pode usar. Espelha as regras do PastoraisPermissao e dos services:
  * - PADRE e ADMIN passam como coordenação em qualquer pastoral da paróquia;
- * - VICE escala e substitui, mas nunca força;
+ * - VICE escala e substitui, mas nunca força; TECNICO tem o mesmo acesso do VICE;
+ * - REDES_SOCIAIS tem o acesso de MEMBRO;
  * - só o tesoureiro (e o ADMIN) lança no financeiro; coordenação e PADRE só leem.
  */
 export interface AcessoNaPastoral {
@@ -50,8 +51,9 @@ export function acessoNaPastoral(
   if (!admin && !padre && papel === null) return SEM_ACESSO;
   return {
     papel,
-    veGestao: admin || padre || ePapel('COORDENADOR', 'VICE', 'SECRETARIO', 'TESOUREIRO'),
-    escala: admin || padre || ePapel('COORDENADOR', 'VICE'),
+    veGestao:
+      admin || padre || ePapel('COORDENADOR', 'VICE', 'TECNICO', 'SECRETARIO', 'TESOUREIRO'),
+    escala: admin || padre || ePapel('COORDENADOR', 'VICE', 'TECNICO'),
     forca: coordenacao,
     veEmail: coordenacao,
     coordena: coordenacao,

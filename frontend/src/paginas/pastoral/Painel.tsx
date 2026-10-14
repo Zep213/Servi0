@@ -109,27 +109,42 @@ export function Painel() {
     {
       chave: 'acoes',
       titulo: '',
-      celula: (c) => (
-        <div className="acoes-linha">
-          <Link
-            className="botao botao--secundario"
-            to={`/pastoral/${String(pastoralId)}/celebracoes/${String(c.id)}`}
-          >
-            {acesso.escala ? 'Escala' : 'Ver escala'}
-          </Link>
-          {acesso.escala && c.tipo === 'MISSA_DOMINICAL' && c.id !== undefined ? (
-            <Botao
-              variante="secundario"
-              disabled={sortearCelebracao.isPending}
-              onClick={() => {
-                sortearCelebracao.mutate(c.id as number);
-              }}
-            >
-              Sortear
-            </Botao>
-          ) : null}
-        </div>
-      ),
+      celula: (c) => {
+        const paginaDaEscala = `/pastoral/${String(pastoralId)}/celebracoes/${String(c.id)}`;
+        // Sem quantidade não há o que sortear nem escalar: o próximo passo é definir as vagas.
+        const acaoNaEscala = !acesso.escala
+          ? null
+          : c.aguardandoQuantidade
+            ? 'Definir vagas'
+            : c.tipo === 'EVENTO'
+              ? 'Escalar'
+              : null;
+        const podeSortear =
+          acesso.escala && !c.aguardandoQuantidade && c.tipo === 'MISSA_DOMINICAL';
+        return (
+          <div className="acoes-linha">
+            {acaoNaEscala ? (
+              <Link className="botao botao--primario" to={paginaDaEscala}>
+                {acaoNaEscala}
+              </Link>
+            ) : (
+              <Link className="botao botao--secundario" to={paginaDaEscala}>
+                {acesso.escala ? 'Escala' : 'Ver escala'}
+              </Link>
+            )}
+            {podeSortear && c.id !== undefined ? (
+              <Botao
+                disabled={sortearCelebracao.isPending}
+                onClick={() => {
+                  sortearCelebracao.mutate(c.id as number);
+                }}
+              >
+                Sortear
+              </Botao>
+            ) : null}
+          </div>
+        );
+      },
     },
   ];
 

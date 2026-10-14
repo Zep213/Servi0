@@ -58,8 +58,9 @@ export function CelebracaoDetalhe() {
     queryFn: async () => (await getComunidades({ size: 100 })).data,
   });
   const listaDeComunidades = comunidades.data?.content ?? [];
-  const nomeDaComunidade = listaDeComunidades.find((c) => c.id === celebracao.data?.comunidadeId)
-    ?.nome;
+  const nomeDaComunidade = listaDeComunidades.find(
+    (c) => c.id === celebracao.data?.comunidadeId,
+  )?.nome;
 
   const editar = useMutation({
     mutationFn: (dados: DadosCelebracao) =>
@@ -111,7 +112,9 @@ export function CelebracaoDetalhe() {
   return (
     <>
       <div className="cabecalho-pagina">
-        <h1 className="titulo-pagina">{dados.titulo || NOME_DO_TIPO[dados.tipo ?? ''] || 'Celebração'}</h1>
+        <h1 className="titulo-pagina">
+          {dados.titulo || NOME_DO_TIPO[dados.tipo ?? ''] || 'Celebração'}
+        </h1>
         <div className="acoes-linha">
           <Botao
             variante="secundario"
