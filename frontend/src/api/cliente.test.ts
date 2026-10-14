@@ -81,8 +81,16 @@ describe('cliente HTTP', () => {
     const aviso = vi.fn();
     definirAoSessaoExpirada(aviso);
     fetchMock.mockResolvedValueOnce(resposta({ detail: 'x' }, 401));
-    await expect(clienteHttp('/api/me')).rejects.toBeInstanceOf(ErroApi);
+    await expect(clienteHttp('/api/me/escalas')).rejects.toBeInstanceOf(ErroApi);
     expect(aviso).toHaveBeenCalledOnce();
+  });
+
+  it('401 em /api/me não avisa sessão expirada (é só "não está logado")', async () => {
+    const aviso = vi.fn();
+    definirAoSessaoExpirada(aviso);
+    fetchMock.mockResolvedValueOnce(resposta({ detail: 'x' }, 401));
+    await expect(clienteHttp('/api/me')).rejects.toBeInstanceOf(ErroApi);
+    expect(aviso).not.toHaveBeenCalled();
   });
 
   it('401 no login não dispara o aviso de sessão expirada', async () => {
