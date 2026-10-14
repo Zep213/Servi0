@@ -4,7 +4,12 @@
  * - em escrita (POST/PUT/PATCH/DELETE), manda o cabeçalho X-XSRF-TOKEN lido do cookie XSRF-TOKEN;
  * - o CSRF é buscado uma vez, em GET /api/auth/csrf, antes da primeira chamada;
  * - erro vira ErroApi com status, detalhe e erros por campo (do ProblemDetail do backend);
- * - 401 numa chamada autenticada avisa a aplicação, que limpa o cache e leva ao login.
+ * - 401 numa chamada autenticada avisa a aplicação, que limpa o cache e leva ao login — exceto em
+ *   `/api/me`, cujo 401 é o jeito normal de descobrir que ninguém está logado (a própria consulta
+ *   já vira `usuario = null` pra quem usa `useSessao()`); avisar ali também disparava
+ *   `queryClient.clear()` ainda dentro da consulta em andamento, destruindo-a antes dela registrar
+ *   o próprio erro — a consulta montada no `SessaoProvider` ficava presa em "carregando" para
+ *   sempre, mesmo depois de um login certo (só um recarregamento completo da página resolvia).
  */
 
 export class ErroApi extends Error {
@@ -21,6 +26,8 @@ export class ErroApi extends Error {
 
 const METODOS_DE_ESCRITA = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 const ROTAS_SEM_SESSAO = new Set(['/api/auth/login', '/api/auth/csrf']);
+// 401 aqui não é sessão caindo, é a pergunta "estou logado?" sendo respondida "não".
+const ROTAS_SEM_AVISO_DE_SESSAO_CAIDA = new Set(['/api/me']);
 
 let aoSessaoExpirada: (() => void) | null = null;
 let csrfCarregado: Promise<void> | null = null;
@@ -98,7 +105,12 @@ async function executar<T>(url: string, opcoes: RequestInit = {}): Promise<Respo
     credentials: 'same-origin',
   });
 
-  if (resposta.status === 401 && !ROTAS_SEM_SESSAO.has(new URL(url, 'http://local').pathname)) {
+  const caminho = new URL(url, 'http://local').pathname;
+  if (
+    resposta.status === 401 &&
+    !ROTAS_SEM_SESSAO.has(caminho) &&
+    !ROTAS_SEM_AVISO_DE_SESSAO_CAIDA.has(caminho)
+  ) {
     aoSessaoExpirada?.();
   }
   if (!resposta.ok) {

@@ -57,39 +57,42 @@ export function TrocarSenha() {
   });
 
   return (
-    <Card titulo="Trocar a senha">
-      <form onSubmit={(e) => void enviar(e)} noValidate>
-        <Campo
-          rotulo="Senha atual"
-          type="password"
-          autoComplete="current-password"
-          erro={formulario.formState.errors.senhaAtual?.message}
-          {...formulario.register('senhaAtual')}
-        />
-        <Campo
-          rotulo="Senha nova"
-          type="password"
-          autoComplete="new-password"
-          ajuda="Use pelo menos 8 caracteres."
-          erro={formulario.formState.errors.senhaNova?.message}
-          {...formulario.register('senhaNova')}
-        />
-        <Campo
-          rotulo="Repita a senha nova"
-          type="password"
-          autoComplete="new-password"
-          erro={formulario.formState.errors.confirmacao?.message}
-          {...formulario.register('confirmacao')}
-        />
-        {erroGeral ? (
-          <p className="campo__erro" role="alert">
-            {erroGeral}
-          </p>
-        ) : null}
-        <Botao type="submit" disabled={formulario.formState.isSubmitting}>
-          Trocar senha
-        </Botao>
-      </form>
-    </Card>
+    <>
+      <h1 className="titulo-pagina">Trocar a senha</h1>
+      <Card>
+        <form onSubmit={(e) => void enviar(e)} noValidate>
+          <Campo
+            rotulo="Senha atual"
+            type="password"
+            autoComplete="current-password"
+            erro={formulario.formState.errors.senhaAtual?.message}
+            {...formulario.register('senhaAtual')}
+          />
+          <Campo
+            rotulo="Senha nova"
+            type="password"
+            autoComplete="new-password"
+            ajuda="Use pelo menos 8 caracteres."
+            erro={formulario.formState.errors.senhaNova?.message}
+            {...formulario.register('senhaNova')}
+          />
+          <Campo
+            rotulo="Repita a senha nova"
+            type="password"
+            autoComplete="new-password"
+            erro={formulario.formState.errors.confirmacao?.message}
+            {...formulario.register('confirmacao')}
+          />
+          {erroGeral ? (
+            <p className="campo__erro" role="alert">
+              {erroGeral}
+            </p>
+          ) : null}
+          <Botao type="submit" disabled={formulario.formState.isSubmitting}>
+            Trocar senha
+          </Botao>
+        </form>
+      </Card>
+    </>
   );
 }
