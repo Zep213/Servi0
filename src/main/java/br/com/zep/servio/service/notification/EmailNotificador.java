@@ -64,7 +64,7 @@ public class EmailNotificador implements Notificador {
         String html = htmlEngine.process(template, contexto);
         try {
             MimeMessage mensagem = sender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mensagem, "UTF-8");
+            MimeMessageHelper helper = new MimeMessageHelper(mensagem, true, "UTF-8");
             helper.setFrom(remetente);
             helper.setTo(destinatario);
             helper.setSubject(assunto);

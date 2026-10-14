@@ -5,6 +5,7 @@ import { Entrar } from './paginas/publico/Entrar';
 import { Convite } from './paginas/publico/Convite';
 import { NaoEncontrada } from './paginas/publico/NaoEncontrada';
 import { TrocarSenha } from './paginas/conta/TrocarSenha';
+import { EscolherPastoral } from './paginas/conta/EscolherPastoral';
 import {
   ExigeParticipa,
   ExigePerfil,
@@ -34,6 +35,7 @@ export const rotas = [
     element: <ExigeSessao />,
     errorElement: <ErroGeral />,
     children: [
+      { path: '/escolher-pastoral', element: <EscolherPastoral /> },
       {
         element: <Casca />,
         children: [

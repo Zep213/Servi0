@@ -2,6 +2,7 @@ services:
   db:
     image: postgres:17
     container_name: servio-db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-servio}
       POSTGRES_USER: ${POSTGRES_USER:-servio}
@@ -19,6 +20,7 @@ services:
   mailpit:
     image: axllent/mailpit:v1.21
     container_name: servio-mailpit
+    restart: unless-stopped
     ports:
       - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
       - "127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025"
@@ -26,6 +28,7 @@ services:
   app:
     build: .
     container_name: servio-app
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -35,6 +38,7 @@ services:
       DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-servio}
       DB_USER: ${POSTGRES_USER:-servio}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-servio}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
       SERVIO_ADMIN_EMAIL: ${SERVIO_ADMIN_EMAIL:-}
       SERVIO_ADMIN_SENHA: ${SERVIO_ADMIN_SENHA:-}
       SERVIO_ADMIN_NOME: ${SERVIO_ADMIN_NOME:-Administrador}
@@ -53,6 +57,7 @@ services:
   web:
     build: ./frontend
     container_name: servio-web
+    restart: unless-stopped
     depends_on:
       - app
     ports:
