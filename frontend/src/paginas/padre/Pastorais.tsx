@@ -1,11 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link } from 'react-router';
-import {
-  getGetPastoraisQueryKey,
-  getPastorais,
-  postPastorais,
-} from '../../api/generated/servio';
+import { getGetPastoraisQueryKey, getPastorais, postPastorais } from '../../api/generated/servio';
 import type { PastoralResponseDTO } from '../../api/generated/modelos';
 import { ErroApi } from '../../api/cliente';
 import { Botao } from '../../componentes/Botao';

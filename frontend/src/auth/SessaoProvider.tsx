@@ -5,6 +5,7 @@ import { ContextoSessao, type ValorSessao } from './sessaoContexto';
 import {
   lerPastoralSalva,
   papelNaPastoral,
+  pastoralPadrao,
   salvarPastoral,
   type PastoralDoUsuario,
 } from './destino';
@@ -31,7 +32,7 @@ export function SessaoProvider({ children }: { children: ReactNode }) {
   );
 
   const [escolhida, definirEscolhida] = useState<number | null>(() => lerPastoralSalva());
-  const pastoralAtiva = pastorais.find((p) => p.id === escolhida) ?? pastorais[0] ?? null;
+  const pastoralAtiva = pastoralPadrao(pastorais, escolhida);
 
   useEffect(() => {
     if (pastoralAtiva) {

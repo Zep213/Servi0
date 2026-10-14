@@ -51,6 +51,12 @@
   background: var(--fundo);
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: var(--fundo);
