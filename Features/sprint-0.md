@@ -12,7 +12,7 @@
 
 - [x] Dar acesso de escrita ao colaborador em `Zep213/Servi0` (Settings → Collaborators)
 - [ ] Proteger a branch `main`: merge só por PR, com 1 aprovação e o CI verde
-- [ ] Decidir se o repositório fica privado já (decisão do cronograma: privado antes do piloto, em 15/02)
+- [x] Decidir se o repositório fica privado já — adiantado para 14/10 (era previsto 15/02); repositório mudado para privado. Dependabot continua ativo; secret scanning/push protection nativos do GitHub saem do ar (exigiam ser público), mas o gitleaks do `ci.yml` continua rodando.
 - [ ] Combinar o fluxo de trabalho:
   - um branch por cartão (`feat/fila-email`, `fix/lembrete-token`)
   - PR pequeno; o outro revisa em até 48 horas

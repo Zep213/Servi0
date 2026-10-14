@@ -63,7 +63,7 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
 - **Anti mass assignment**: `spring.jackson.deserialization.fail-on-unknown-properties=true` — campo a mais no JSON vira 400 em vez de ser silenciosamente ignorado.
 - **Erros sem vazamento**: `server.error.include-stacktrace=never` e `include-message=never`; `GlobalHandleException` já cobria isso para as próprias respostas.
 - **CI/CD** (`.github/workflows/ci.yml`): gitleaks (segredos commitados), `./mvnw -B verify` (build + testes unitários e de integração), build da imagem Docker, scan com Trivy (`CRITICAL,HIGH`, falha o build se achar). `.github/dependabot.yml` (maven, docker, github-actions, semanal).
-- **GitHub → Code security**: secret scanning, push protection e Dependabot alerts ativados no repositório (gratuito, é público).
+- **GitHub → Code security**: Dependabot alerts ativo. Secret scanning e push protection nativos estiveram ativos enquanto o repositório era público (gratuito); desde 14/10/2026 o repositório é privado e essas duas telas saem do ar (exigem GitHub Advanced Security). O `gitleaks` do `ci.yml` continua cobrindo segredos commitados independente da visibilidade.
 - **Testes de segurança** (`src/test/.../seguranca`, sufixo `*IT`, rodando via `maven-failsafe-plugin` com Postgres real em Testcontainers):
   - `AutorizacaoIT` — matriz de permissões por perfil (403 vs 401 vs rota bloqueada).
   - `LoginIT` — login válido, e-mail/senha errados respondem igual, rate limit, id de sessão muda no login, logout invalida o cookie.
