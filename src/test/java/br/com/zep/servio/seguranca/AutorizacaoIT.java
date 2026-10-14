@@ -35,14 +35,15 @@ class AutorizacaoIT {
         return new UsuarioPrincipal(1L, 1L, "Teste", "teste@servio.dev", null, perfil);
     }
 
+    // /api/alocacoes, /api/usuarios-pastorais, POST /api/usuarios, /api/celebracoes e /api/vagas
+    // não entram aqui: a escrita neles só exige login no SecurityConfig e quem decide é a regra
+    // fina no service (papel na pastoral, ou perfil-alvo pedido em /api/usuarios) — checada
+    // depois da validação do DTO, não antes, então corpo vazio dá 400 e não 403. Ver
+    // UsuarioContaIT e PermissaoPorPapelIT para essas regras finas.
     static Stream<Arguments> escritasProibidas() {
         return Stream.of(
-                Arguments.of(Perfil.SERVIDOR, "/api/usuarios"),
-                Arguments.of(Perfil.SERVIDOR, "/api/celebracoes"),
-                Arguments.of(Perfil.SERVIDOR, "/api/alocacoes"),
                 Arguments.of(Perfil.SERVIDOR, "/api/paroquias/minha"),
-                Arguments.of(Perfil.PADRE, "/api/usuarios"),
-                Arguments.of(Perfil.COORDENADOR, "/api/compromissos-agenda"));
+                Arguments.of(Perfil.SERVIDOR, "/api/compromissos-agenda"));
     }
 
     @ParameterizedTest(name = "{0} não pode escrever em {1}")

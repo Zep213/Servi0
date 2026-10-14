@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/celebracoes")
@@ -23,8 +24,10 @@ public class CelebracaoController {
     private final CelebracaoService service;
 
     @GetMapping
-    public Page<CelebracaoResponseDTO> listar(@PageableDefault(size = 20, sort = "data") Pageable pageable) {
-        return service.listar(pageable);
+    public Page<CelebracaoResponseDTO> listar(@RequestParam(required = false) LocalDate de,
+                                              @RequestParam(required = false) LocalDate ate,
+                                              @PageableDefault(size = 20, sort = "data") Pageable pageable) {
+        return service.listar(de, ate, pageable);
     }
 
     @GetMapping("/{id}")

@@ -27,4 +27,8 @@ public class AuditLog extends BaseEntity {
 
     @Column(name = "paroquia_id")
     private Long paroquiaId;
+
+    @Size(max = 255)
+    @Column(length = 255)
+    private String detalhe;
 }

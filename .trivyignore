@@ -1,0 +1,10 @@
+# pebble (Canonical, gerenciador de serviço) vem empacotado pela imagem base
+# eclipse-temurin:25-jre, mas o container nunca o executa — o ENTRYPOINT do
+# Dockerfile roda "java -jar app.jar" direto, sem passar por pebble.
+# CVEs de DoS (net/http, crypto/tls) na stdlib do Go embutida nesse binário,
+# sem nova imagem base publicada ainda com o Go corrigido. Reavaliar quando
+# a eclipse-temurin:25-jre atualizar (conferir com "docker run --rm servio:ci
+# trivy ..." ou refazer o build do CI).
+CVE-2026-78667
+CVE-2026-78669
+CVE-2026-97031

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,8 +25,14 @@ public class Vaga extends TenantEntity {
     @JoinColumn(name = "funcao_id", nullable = false)
     private Funcao funcao;
 
-    @NotNull
+    /** Nulo até a pastoral responsável definir quantas pessoas a vaga precisa (Parte 3.2). */
     @Positive
-    @Column(nullable = false)
     private Integer quantidade;
+
+    @Column(name = "horario_chegada")
+    private LocalTime horarioChegada;
+
+    @Size(max = 500)
+    @Column(length = 500)
+    private String observacao;
 }
