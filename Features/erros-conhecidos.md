@@ -10,7 +10,6 @@ Levantados em 2026-09-21 a partir do código e dos testes locais. Atualizado em 
 | 5 | Média | **`PedidoTroca` sem regras**: qualquer status é aceito, sem validar que só o destinatário aceita/recusa e só o solicitante cancela. | `PedidoTrocaService` | Implementar o fluxo de troca (etapa futura). |
 | 10 | Baixa | **E-mail não é enviado sem `spring.mail.host`**; só há `log.warn`, sem feedback ao usuário. | `EmailNotificador` | Configurar SMTP por ambiente; fila/retry. |
 | 12 | Baixa | Senhas padrão `servio`/`servio` no compose e no `application.properties`. | compose, properties | Exigir variáveis em produção. |
-| 13 | Alta | **Escalada de privilégio de perfil, parte 2**: a rota `POST/PUT /api/usuarios` já exige ADMIN/COORDENADOR (ver Resolvidos), mas nada impede um COORDENADOR de criar/promover alguém a `ADMIN` — o valor de `perfil` no request não é validado contra o perfil de quem está chamando. | `UsuarioService`, `SecurityConfig` | `validar()`/regra de negócio: só ADMIN pode atribuir perfil ADMIN. |
 
 ## Resolvidos
 
@@ -38,6 +37,7 @@ Levantados em 2026-09-21 a partir do código e dos testes locais. Atualizado em 
 | **`LoginRateLimitFilter` era um no-op completo**: o rate limit de força bruta nunca disparava, nem na aplicação real. | `request.getServletPath()` retorna vazio porque o `DispatcherServlet` está mapeado em `/` (mapeamento padrão) — o path inteiro vai para `getRequestURI()`. Corrigido trocando a comparação para `getRequestURI()`. Achado rodando `LoginIT` de verdade contra Testcontainers, não só compilando. |
 | **Testes `@SpringBootTest`+MockMvc+CSRF davam resultado diferente rodando juntos vs. isolados** (`CsrfIT` ora recebia o cookie `XSRF-TOKEN` esperado, ora um `SESSION` com header `X-CSRF-TOKEN` do fallback clássico). | Contaminação de estado entre classes de teste no mesmo fork do Surefire. Corrigido com `reuseForks=false` no `maven-surefire-plugin` (cada classe `@SpringBootTest` roda em uma JVM nova). |
 | **`./mvnw verify` pulava silenciosamente todos os testes `*IT.java`** (Surefire só roda `*Test`/`*Tests` por padrão; `*IT` é convenção do Failsafe). | Adicionado `maven-failsafe-plugin` (goals `integration-test`+`verify`, também com `reuseForks=false`) ao `pom.xml`. Confirmado: `./mvnw verify` agora roda os 23 testes de integração de verdade. |
+| **Escalada de privilégio de perfil, parte 2**: a rota `POST/PUT /api/usuarios` já exigia ADMIN/COORDENADOR, mas nada impedia um COORDENADOR de criar/promover alguém a `ADMIN` — o valor de `perfil` no request não era validado contra o perfil de quem está chamando. | `UsuarioService.exigirPodeDefinirPerfil`: só ADMIN pode atribuir perfil ADMIN; COORDENADOR tentando isso recebe 403. |
 
 ## Notas
 - DataGrip "cannot parse url": costuma ser URL colada no campo Host ou com espaço/placeholder; usar host `localhost`, porta `5432`, database `servio`.

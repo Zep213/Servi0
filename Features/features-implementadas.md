@@ -132,6 +132,5 @@ Paroquia, Comunidade, Pastoral, Funcao, Usuario, UsuarioFuncao, Celebracao, Vaga
 ## Em desenvolvimento
 - Ligar `AuditLogService` às regras de negócio (login já audita; as demais ações ainda não). `Notificador` já é usado pela escalação e pelas reuniões.
 - Fluxo de `PedidoTroca` (transições de status, só solicitante cancela, só destinatário aceita/recusa).
-- Impedir que um COORDENADOR crie/promova alguém a `ADMIN` (ver `erros-conhecidos.md`, item 13).
 
 Ver também: `features-futuras.md` e `erros-conhecidos.md`.

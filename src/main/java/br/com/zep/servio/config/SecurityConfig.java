@@ -4,6 +4,7 @@ import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.AuditoriaAdminAssumidoFilter;
 import br.com.zep.servio.security.LoginHandlers;
 import br.com.zep.servio.security.LoginRateLimitFilter;
+import br.com.zep.servio.security.SomenteLeituraFilter;
 import br.com.zep.servio.security.TentativasLogin;
 import br.com.zep.servio.security.UsuarioLogado;
 import br.com.zep.servio.service.AuditLogService;
@@ -59,6 +60,13 @@ public class SecurityConfig {
     @Value("${springdoc.api-docs.enabled:false}")
     private boolean openApiHabilitado;
 
+    /** E-mail das contas de demonstração (somente leitura) — vazio desliga a trava. */
+    @Value("${servio.demo.email:}")
+    private String demoEmail;
+
+    @Value("${servio.demo-membro.email:}")
+    private String demoMembroEmail;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
@@ -107,7 +115,6 @@ public class SecurityConfig {
                         // públicas
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf").permitAll()
                         .requestMatchers("/api/confirmacoes/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
 
                         // qualquer usuário logado
@@ -158,8 +165,9 @@ public class SecurityConfig {
                         .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny))
                 .addFilterBefore(new LoginRateLimitFilter(tentativasLogin), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new SomenteLeituraFilter(demoEmail + "," + demoMembroEmail), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new AuditoriaAdminAssumidoFilter(usuarioLogado, auditLogService, usuarioRepository),
-                        UsernamePasswordAuthenticationFilter.class)
+                        SomenteLeituraFilter.class)
                 .build();
     }
 }
