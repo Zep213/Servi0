@@ -11,6 +11,10 @@ import br.com.zep.servio.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
+import br.com.zep.servio.security.UsuarioPrincipal;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +23,20 @@ public class IndisponibilidadeService extends CrudService<Indisponibilidade, Ind
     private final IndisponibilidadeRepository repository;
     private final IndisponibilidadeMapper mapper;
     private final UsuarioRepository usuarioRepository;
+
+    /**
+     * PADRE e ADMIN veem todas da paróquia; os demais (servidores e coordenadores) só as próprias.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<IndisponibilidadeResponseDTO> listar(Pageable pageable) {
+        UsuarioPrincipal quem = usuario();
+        if (quem.getPerfil() == Perfil.ADMIN || quem.getPerfil() == Perfil.PADRE) {
+            return super.listar(pageable);
+        }
+        return repository.findByParoquiaIdAndUsuarioIdAndActiveTrue(paroquiaId(), usuarioId(), pageable)
+                .map(this::paraResposta);
+    }
 
     @Override
     protected TenantRepository<Indisponibilidade> repository() {

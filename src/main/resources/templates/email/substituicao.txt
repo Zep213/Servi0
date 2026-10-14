@@ -1,0 +1,7 @@
+Olá, [[${nome}]].
+
+Você foi retirado(a) da escala de [[${titulo}]] ([[${data}]], [[${hora}]], função [[${funcao}]]). A escala foi ajustada pelo coordenador.
+
+Se tiver alguma dúvida, procure o coordenador da sua pastoral.
+
+Servio · mensagem automática, não responda.

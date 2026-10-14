@@ -1,0 +1,14 @@
+Olá, [[${nome}]]!
+
+Você foi convidado(a) para servir em [[${titulo}]]:
+
+Data: [[${data}]]
+Horário da celebração: [[${hora}]]
+[# th:if="${chegada != null}"]Chegar até: [[${chegada}]][/]
+Função: [[${funcao}]]
+[# th:if="${observacao != null}"]Observação: [[${observacao}]][/]
+
+Confirme ou recuse até [[${prazo}]], no endereço:
+[[${link}]]
+
+Servio · mensagem automática, não responda.

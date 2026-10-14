@@ -9,6 +9,9 @@ import br.com.zep.servio.repository.PastoralRepository;
 import br.com.zep.servio.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +20,13 @@ public class FuncaoService extends CrudService<Funcao, FuncaoRequestDTO, FuncaoR
     private final FuncaoRepository repository;
     private final FuncaoMapper mapper;
     private final PastoralRepository pastoralRepository;
+
+    /** Funções de uma pastoral (GET /api/funcoes?pastoralId=). Pastoral de outra paróquia vem vazia. */
+    @Transactional(readOnly = true)
+    public Page<FuncaoResponseDTO> listarDaPastoral(Long pastoralId, Pageable pageable) {
+        return repository.findByParoquiaIdAndPastoralIdAndActiveTrue(paroquiaId(), pastoralId, pageable)
+                .map(this::paraResposta);
+    }
 
     @Override
     protected TenantRepository<Funcao> repository() {

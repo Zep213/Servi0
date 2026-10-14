@@ -119,6 +119,13 @@ public class CenarioParoquia {
         return this;
     }
 
+    /** Mais uma pessoa da paróquia A na Pascom, com o papel dado. */
+    public Usuario naPascom(String apelido, PapelPastoral papel) {
+        Usuario usuario = usuario(paroquiaA, apelido, Perfil.SERVIDOR);
+        participacao(usuario, pascom, papel);
+        return usuario;
+    }
+
     /** Principal pronto pra usar com SecurityMockMvcRequestPostProcessors.user(...). */
     public UsuarioPrincipal principal(Usuario usuario) {
         return new UsuarioPrincipal(usuario.getId(), usuario.getParoquiaId(), usuario.getNome(),
