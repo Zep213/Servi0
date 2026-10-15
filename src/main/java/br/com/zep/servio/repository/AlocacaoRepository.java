@@ -29,6 +29,9 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
     /** Só quem tem o token (guardado como SHA-256) acha a alocação; alocação inativa não conta. */
     Optional<Alocacao> findByTokenHashAndActiveTrue(String tokenHash);
 
+    /** Há alguém ocupando (convite pendente ou aceito) alguma vaga da celebração? */
+    boolean existsByVagaCelebracaoIdAndActiveTrueAndStatusIn(Long celebracaoId, Collection<StatusConvite> status);
+
     /** Acha pelo token atual ou pelo anterior (o do e-mail que o lembrete substituiu). */
     @Query("""
             select a from Alocacao a
