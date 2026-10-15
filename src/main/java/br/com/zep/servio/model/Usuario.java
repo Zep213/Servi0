@@ -1,5 +1,6 @@
 package br.com.zep.servio.model;
 
+import br.com.zep.servio.model.enumerated.Aparencia;
 import br.com.zep.servio.model.enumerated.Perfil;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -34,4 +35,18 @@ public class Usuario extends TenantEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private Perfil perfil;
+
+    /** Normalizado (+55DDNNNNNNNNN); só o próprio usuário define, pelo PUT /api/me. */
+    @Size(max = 20)
+    @Column(length = 20)
+    private String telefone;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 12)
+    private Aparencia aparencia = Aparencia.AUTOMATICO;
+
+    /** Quantas vezes a pessoa pulou o pedido de telefone. */
+    @Column(name = "telefone_pulos", nullable = false)
+    private short telefonePulos;
 }
