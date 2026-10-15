@@ -8,7 +8,7 @@ export async function entrar(email: string, senha: string): Promise<void> {
   await clienteHttp<undefined>('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ email, senha }).toString(),
+    body: new URLSearchParams({ login: email, senha }).toString(),
   });
 }
 
