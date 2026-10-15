@@ -63,7 +63,7 @@ public class LembretesJob {
                 }
                 String token = tokenConvite.gerar();
                 boolean enviou = envio.registrarPrimeiroEnvio(alocacao, TipoNotificacao.LEMBRETE_RESPOSTA,
-                        gerenciada -> gerenciada.setTokenHash(tokenConvite.hash(token)));
+                        gerenciada -> gerenciada.girarToken(tokenConvite.hash(token)));
                 if (!enviou) {
                     continue;
                 }

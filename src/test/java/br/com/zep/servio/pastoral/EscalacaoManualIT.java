@@ -227,6 +227,7 @@ class EscalacaoManualIT {
         assertThat(antiga.getStatus()).isEqualTo(StatusConvite.SUBSTITUIDA);
         assertThat(antiga.getSubstituidaEm()).isNotNull();
         assertThat(antiga.getTokenHash()).isNull();
+        assertThat(antiga.getTokenHashAnterior()).isNull();
 
         Alocacao nova = alocacao(novaId);
         assertThat(nova.getStatus()).isEqualTo(StatusConvite.PENDENTE);
@@ -271,6 +272,10 @@ class EscalacaoManualIT {
 
         Alocacao depois = alocacao(id);
         assertThat(depois.getTokenHash()).isNotEqualTo(tokenAntes);
+        // reenvio manual mata o link antigo de propósito: só o novo vale
+        assertThat(depois.getTokenHashAnterior()).isNull();
+        assertThat(alocacaoRepository.findByTokenValido(tokenAntes)).isEmpty();
+        assertThat(alocacaoRepository.findByTokenValido(depois.getTokenHash())).isPresent();
         assertThat(depois.getDataLimiteResposta()).isEqualTo(antes.getDataLimiteResposta());
 
         como(cenario.coordenadorPascom, post("/api/alocacoes/{id}/reenviar-convite", id))

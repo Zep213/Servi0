@@ -29,6 +29,13 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
     /** Só quem tem o token (guardado como SHA-256) acha a alocação; alocação inativa não conta. */
     Optional<Alocacao> findByTokenHashAndActiveTrue(String tokenHash);
 
+    /** Acha pelo token atual ou pelo anterior (o do e-mail que o lembrete substituiu). */
+    @Query("""
+            select a from Alocacao a
+            where a.active = true and (a.tokenHash = :hash or a.tokenHashAnterior = :hash)
+            """)
+    Optional<Alocacao> findByTokenValido(@Param("hash") String hash);
+
     /** Alocações visíveis a quem não é PADRE/ADMIN (Parte 4): só de funções de pastorais do usuário. */
     Page<Alocacao> findByParoquiaIdAndVagaFuncaoPastoralIdInAndActiveTrue(
             Long paroquiaId, List<Long> pastoraisIds, Pageable pageable);
@@ -79,7 +86,7 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
      */
     @Modifying
     @Query("""
-            update Alocacao a set a.status = :expirada, a.tokenHash = null
+            update Alocacao a set a.status = :expirada, a.tokenHash = null, a.tokenHashAnterior = null
             where a.id = :id and a.status = :pendente and a.dataLimiteResposta < :agora
             """)
     int expirarSePendente(@Param("id") Long id, @Param("pendente") StatusConvite pendente,

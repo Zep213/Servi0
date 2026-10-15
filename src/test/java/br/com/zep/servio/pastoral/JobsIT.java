@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +38,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -54,17 +57,22 @@ import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Jobs da escalação (Etapa 6, Parte 5). Relógio fixo (Clock trocado por um de teste), jobs ligados
  * só nesta classe. Sem {@code @Transactional}: a expiração e o envio precisam comitar de verdade.
  */
 @SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Import(TestcontainersConfig.class)
 @TestPropertySource(properties = "servio.jobs.enabled=true")
 class JobsIT {
 
+    private static final java.util.concurrent.atomic.AtomicInteger IPS = new java.util.concurrent.atomic.AtomicInteger();
     private static final ZoneId FUSO = ZoneId.of("America/Fortaleza");
 
     /** Relógio que a classe controla: começa agora e o teste avança quando precisa. */
@@ -134,6 +142,8 @@ class JobsIT {
     ExpiracaoConvitesJob expiracaoJob;
     @Autowired
     LembretesJob lembretesJob;
+    @Autowired
+    MockMvc mvc;
     @MockitoBean
     Notificador notificador;
 
@@ -185,11 +195,26 @@ class JobsIT {
                 eq("aviso-coordenador"), any());
     }
 
+    /** Abre o convite pelo link público; cada chamada com IP próprio para não bater no limite por IP. */
+    private ResultActions detalhes(String token) throws Exception {
+        String ip = "10.9." + (IPS.getAndIncrement() % 250) + "." + (UUID.randomUUID().hashCode() & 0x7f);
+        return mvc.perform(post("/api/confirmacoes/detalhes").contentType("application/json")
+                .content("{\"token\":\"" + token + "\"}")
+                .with(csrf())
+                .with(r -> {
+                    r.setRemoteAddr(ip);
+                    return r;
+                }));
+    }
+
     @Test
-    void lembreteDeRespostaSegueAConfigDaPastoralETrocaOToken() {
+    void lembreteDeRespostaSegueAConfigDaPastoralEGiraOTokenSemMatarOAntigo() throws Exception {
         LocalDateTime agora = RELOGIO.agora();
         // Pascom usa o padrão (6h antes do prazo): convite a 5h do prazo recebe lembrete
         Alocacao perto = convite(vaga, cenario.membro1Pascom, StatusConvite.PENDENTE, agora.plusHours(5));
+        String tokenAntigo = "token-do-primeiro-email-" + UUID.randomUUID();
+        perto.setTokenHash(tokenConvite.hash(tokenAntigo));
+        alocacaoRepository.save(perto);
         String hashAntes = perto.getTokenHash();
 
         // ECC configura 2h: o mesmo prazo de 5h ainda não entra na janela
@@ -218,6 +243,30 @@ class JobsIT {
         Alocacao relida = alocacaoRepository.findById(perto.getId()).orElseThrow();
         assertThat(relida.getTokenHash()).isEqualTo(tokenConvite.hash(tokenDoLink));
         assertThat(relida.getTokenHash()).isNotEqualTo(hashAntes);
+        // ...e o do primeiro e-mail vira o anterior: os dois abrem o convite
+        assertThat(relida.getTokenHashAnterior()).isEqualTo(hashAntes);
+        detalhes(tokenAntigo).andExpect(status().isOk());
+        detalhes(tokenDoLink).andExpect(status().isOk());
+    }
+
+    @Test
+    void depoisDeExpirarOsDoisTokensDeixamDeValer() throws Exception {
+        LocalDateTime agora = RELOGIO.agora();
+        Alocacao vencida = convite(vaga, cenario.membro1Pascom, StatusConvite.PENDENTE, agora.minusHours(1));
+        String tokenAntigo = "token-antigo-" + UUID.randomUUID();
+        String tokenAtual = "token-atual-" + UUID.randomUUID();
+        vencida.setTokenHash(tokenConvite.hash(tokenAntigo));
+        vencida.girarToken(tokenConvite.hash(tokenAtual));
+        alocacaoRepository.save(vencida);
+
+        expiracaoJob.executar();
+
+        Alocacao relida = alocacaoRepository.findById(vencida.getId()).orElseThrow();
+        assertThat(relida.getStatus()).isEqualTo(StatusConvite.EXPIRADA);
+        assertThat(relida.getTokenHash()).isNull();
+        assertThat(relida.getTokenHashAnterior()).isNull();
+        detalhes(tokenAntigo).andExpect(status().isNotFound());
+        detalhes(tokenAtual).andExpect(status().isNotFound());
     }
 
     @Test

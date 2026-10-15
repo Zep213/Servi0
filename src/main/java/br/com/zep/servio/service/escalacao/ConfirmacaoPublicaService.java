@@ -72,7 +72,7 @@ public class ConfirmacaoPublicaService {
     }
 
     private Alocacao porToken(String token) {
-        return alocacaoRepository.findByTokenHashAndActiveTrue(tokenConvite.hash(token))
+        return alocacaoRepository.findByTokenValido(tokenConvite.hash(token))
                 .orElseThrow(this::naoEncontrado);
     }
 
