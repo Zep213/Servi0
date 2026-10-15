@@ -49,7 +49,7 @@ class UsuarioTelefoneIT {
     }
 
     @Test
-    void telefoneAtivoEhUnicoEBuscavelELiberaQuandoDesativa() {
+    void telefoneAtivoEhUnicoEBuscavel() {
         Paroquia p = ApoioTeste.criarParoquia(paroquiaRepository, "Paróquia Telefone Unico");
         Usuario a = novo(p, "a.tel@servio.dev");
         Usuario b = novo(p, "b.tel@servio.dev");
@@ -62,6 +62,23 @@ class UsuarioTelefoneIT {
 
         b.setTelefone("+5583988124407");
         assertThrows(DataIntegrityViolationException.class, () -> usuarioRepository.saveAndFlush(b));
+    }
+
+    @Test
+    void telefoneDeContaDesativadaFicaLivreParaOutra() {
+        Paroquia p = ApoioTeste.criarParoquia(paroquiaRepository, "Paróquia Telefone Libera");
+        Usuario a = novo(p, "a.libera@servio.dev");
+        Usuario b = novo(p, "b.libera@servio.dev");
+        a.setTelefone("+5583988124407");
+        usuarioRepository.saveAndFlush(a);
+
+        a.setActive(false);
+        usuarioRepository.saveAndFlush(a);
+
+        // o índice só vale entre ativos (WHERE is_active): a conta B pode ficar com o número
+        b.setTelefone("+5583988124407");
+        usuarioRepository.saveAndFlush(b);
+        assertEquals(b.getId(), usuarioRepository.findByTelefoneAndActiveTrue("+5583988124407").orElseThrow().getId());
     }
 
     @Test
