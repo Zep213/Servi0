@@ -1,5 +1,14 @@
 name: CI
-on: [push, pull_request]
+# push só na main: nas branches de feature o run do pull_request já cobre o mesmo SHA.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Na main o grupo leva o run_id: cada push roda até o fim, sem um run pendente substituir o outro.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}-${{ github.ref == 'refs/heads/main' && github.run_id || '' }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
