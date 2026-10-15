@@ -3,6 +3,7 @@ package br.com.zep.servio.security;
 import br.com.zep.servio.model.AuditLog;
 import br.com.zep.servio.repository.AuditLogRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
+import br.com.zep.servio.util.Telefone;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -19,6 +20,7 @@ public class AuditoriaLoginListener {
 
     private final AuditLogRepository auditLogRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioDetailsService usuarioDetailsService;
 
     @EventListener
     @Transactional
@@ -37,16 +39,26 @@ public class AuditoriaLoginListener {
     @EventListener
     @Transactional
     public void aoFalhar(AbstractAuthenticationFailureEvent evento) {
-        String email = String.valueOf(evento.getAuthentication().getName());
-        log.warn("Falha de login para '{}': {}", email, evento.getException().getClass().getSimpleName());
+        String login = String.valueOf(evento.getAuthentication().getName());
+        log.warn("Falha de login para '{}': {}", paraLog(login), evento.getException().getClass().getSimpleName());
 
         AuditLog log = new AuditLog();
         log.setTipoEvento("LOGIN_FALHA");
-        usuarioRepository.findByEmailIgnoreCaseAndActiveTrue(email).ifPresent(usuario -> {
+        usuarioDetailsService.buscar(login).ifPresent(usuario -> {
             log.setUsuario(usuario);
             log.setReferenciaId(usuario.getId());
             log.setParoquiaId(usuario.getParoquiaId());
         });
         auditLogRepository.save(log);
+    }
+
+    /** E-mail aparece como digitado; telefone é mascarado (ex.: +55839****4407). */
+    private static String paraLog(String login) {
+        if (login.contains("@")) {
+            return login;
+        }
+        return Telefone.normalizar(login)
+                .map(t -> t.substring(0, 6) + "****" + t.substring(t.length() - 4))
+                .orElse(login);
     }
 }
