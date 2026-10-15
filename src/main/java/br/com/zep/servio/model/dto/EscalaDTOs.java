@@ -2,6 +2,7 @@ package br.com.zep.servio.model.dto;
 
 import br.com.zep.servio.model.enumerated.OrigemAlocacao;
 import br.com.zep.servio.model.enumerated.PapelPastoral;
+import br.com.zep.servio.model.enumerated.StatusAtivacao;
 import br.com.zep.servio.model.enumerated.StatusConvite;
 import br.com.zep.servio.model.enumerated.TipoCelebracao;
 
@@ -41,5 +42,13 @@ public final class EscalaDTOs {
 
     /** Membro de uma pastoral. O e-mail e {@code ativada} só vêm para COORDENADOR, PADRE e ADMIN (null para os demais). */
     public record MembroPastoralDTO(Long usuarioPastoralId, Ref usuario, PapelPastoral papel, String email,
-                                    Boolean ativada, String fotoUrl) {}
+                                    Boolean ativada, StatusAtivacao statusAtivacao, String fotoUrl) {}
+
+    /**
+     * Detalhe de um membro da pastoral. {@code email}, {@code statusAtivacao} e {@code ativadoEm} só vêm para a
+     * coordenação (COORDENADOR, PADRE e ADMIN). Nunca telefone, senha, hash nem token.
+     */
+    public record MembroDetalheDTO(Ref usuario, PapelPastoral papel, List<Ref> habilidades, LocalDate ultimoServico,
+                                   long convitesPendentes, String email, StatusAtivacao statusAtivacao,
+                                   LocalDateTime ativadoEm, String fotoUrl) {}
 }

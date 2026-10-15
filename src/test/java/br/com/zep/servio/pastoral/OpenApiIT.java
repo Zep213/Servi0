@@ -44,7 +44,8 @@ class OpenApiIT {
                     .andExpect(jsonPath("$.paths./api/me/escalas").exists())
                     .andExpect(jsonPath("$.paths./api/me/foto").exists())
                     .andExpect(jsonPath("$.paths./api/fotos/{usuarioId}").exists())
-                    .andExpect(jsonPath("$.paths./api/pastorais/{pastoralId}/membros").exists());
+                    .andExpect(jsonPath("$.paths./api/pastorais/{pastoralId}/membros").exists())
+                    .andExpect(jsonPath("$.paths./api/pastorais/{pastoralId}/membros/{usuarioId}").exists());
         }
     }
 }
