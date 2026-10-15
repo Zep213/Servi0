@@ -8,6 +8,7 @@ import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.SessaoService;
 import br.com.zep.servio.security.UsuarioLogado;
+import br.com.zep.servio.service.conta.ContaAvisoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,11 @@ public class MeService {
     private final UsuarioLogado usuarioLogado;
     private final SessaoService sessaoService;
     private final UsuarioPastoralRepository usuarioPastoralRepository;
+    private final ContaAvisoService contaAvisoService;
 
+    /** {@code userAgent} só serve para o aviso "sua senha foi alterada" dizer o tipo de aparelho; não é guardado. */
     @Transactional
-    public void trocarSenha(TrocaSenhaRequestDTO request) {
+    public void trocarSenha(TrocaSenhaRequestDTO request, String userAgent) {
         Usuario usuario = repository.findById(usuarioLogado.id()).orElseThrow();
 
         if (!passwordEncoder.matches(request.senhaAtual(), usuario.getSenha())) {
@@ -34,6 +37,7 @@ public class MeService {
         }
         usuario.setSenha(passwordEncoder.encode(request.senhaNova()));
         repository.save(usuario);
+        contaAvisoService.avisarSenhaAlterada(usuario, userAgent);
 
         // derruba todas as sessões, inclusive a atual: o usuário faz login de novo
         sessaoService.encerrarTodas(usuario.getEmail());

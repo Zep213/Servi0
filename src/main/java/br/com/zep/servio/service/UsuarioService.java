@@ -12,6 +12,7 @@ import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
 import br.com.zep.servio.security.SessaoService;
+import br.com.zep.servio.service.conta.ContaAvisoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ public class UsuarioService extends CrudService<Usuario, UsuarioRequestDTO, Usua
     private final PasswordEncoder passwordEncoder;
     private final SessaoService sessaoService;
     private final PastoraisPermissao pastoraisPermissao;
+    private final ContaAvisoService contaAvisoService;
 
     @Override
     protected TenantRepository<Usuario> repository() {
@@ -128,6 +130,9 @@ public class UsuarioService extends CrudService<Usuario, UsuarioRequestDTO, Usua
         }
         validar(usuario);
         Usuario salvo = repository.save(usuario);
+        if (senhaTrocada) {
+            contaAvisoService.avisarSenhaAlteradaPelaCoordenacao(salvo);
+        }
 
         if (senhaTrocada || perfilAntigo != salvo.getPerfil() || !emailAntigo.equalsIgnoreCase(salvo.getEmail())) {
             sessaoService.encerrarTodas(emailAntigo);
