@@ -42,7 +42,7 @@ public final class EscalaDTOs {
 
     /** Membro de uma pastoral. O e-mail e {@code ativada} só vêm para COORDENADOR, PADRE e ADMIN (null para os demais). */
     public record MembroPastoralDTO(Long usuarioPastoralId, Ref usuario, PapelPastoral papel, String email,
-                                    Boolean ativada, StatusAtivacao statusAtivacao) {}
+                                    Boolean ativada, StatusAtivacao statusAtivacao, String fotoUrl) {}
 
     /**
      * Detalhe de um membro da pastoral. {@code email}, {@code statusAtivacao} e {@code ativadoEm} só vêm para a
@@ -50,5 +50,5 @@ public final class EscalaDTOs {
      */
     public record MembroDetalheDTO(Ref usuario, PapelPastoral papel, List<Ref> habilidades, LocalDate ultimoServico,
                                    long convitesPendentes, String email, StatusAtivacao statusAtivacao,
-                                   LocalDateTime ativadoEm) {}
+                                   LocalDateTime ativadoEm, String fotoUrl) {}
 }

@@ -25,6 +25,7 @@ import br.com.zep.servio.repository.UsuarioFuncaoRepository;
 import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.VagaRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
+import br.com.zep.servio.service.FotoPerfilService;
 import br.com.zep.servio.security.UsuarioLogado;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -62,6 +63,7 @@ public class LeituraEscalaService {
     private final UsuarioPastoralRepository usuarioPastoralRepository;
     private final UsuarioFuncaoRepository usuarioFuncaoRepository;
     private final PastoraisPermissao pastoraisPermissao;
+    private final FotoPerfilService fotoPerfilService;
     private final UsuarioLogado usuarioLogado;
     private final Clock clock;
 
@@ -143,7 +145,10 @@ public class LeituraEscalaService {
         String busca = filtro.nome() == null || filtro.nome().isBlank() ? null : semAcento(filtro.nome());
 
         List<MembroPastoralDTO> lista = new ArrayList<>();
-        for (UsuarioPastoral up : usuarioPastoralRepository.membrosDaPastoral(paroquiaId, pastoralId)) {
+        List<UsuarioPastoral> participacoes = usuarioPastoralRepository.membrosDaPastoral(paroquiaId, pastoralId);
+        Map<Long, String> fotos = fotoPerfilService.fotoUrls(
+                participacoes.stream().map(up -> up.getUsuario().getId()).toList());
+        for (UsuarioPastoral up : participacoes) {
             Usuario usuario = up.getUsuario();
             if ((busca != null && !semAcento(usuario.getNome()).contains(busca))
                     || (filtro.papel() != null && up.getPapel() != filtro.papel())
@@ -156,7 +161,8 @@ public class LeituraEscalaService {
                     up.getPapel(),
                     veEmail ? usuario.getEmail() : null,
                     veEmail ? usuario.estaAtivada() : null,
-                    veEmail ? usuario.statusAtivacao() : null));
+                    veEmail ? usuario.statusAtivacao() : null,
+                    fotos.get(usuario.getId())));
         }
         return lista;
     }
@@ -187,7 +193,8 @@ public class LeituraEscalaService {
                 ultimoServico, convitesPendentes,
                 veEmail ? usuario.getEmail() : null,
                 veEmail ? usuario.statusAtivacao() : null,
-                veEmail ? usuario.getAtivadoEm() : null);
+                veEmail ? usuario.getAtivadoEm() : null,
+                fotoPerfilService.fotoUrl(usuarioId));
     }
 
     private Set<Long> usuariosComHabilidade(Long pastoralId, Long funcaoId) {

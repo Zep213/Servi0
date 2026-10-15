@@ -37,7 +37,7 @@ class EmailTemplatesTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao"})
+    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao", "recuperacao"})
     void renderizaHtmlETextoComTodasAsVariaveis(String template) {
         Context contexto = new Context();
         contexto.setVariables(variaveis(true));
@@ -47,7 +47,7 @@ class EmailTemplatesTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao"})
+    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao", "recuperacao"})
     void renderizaSemOsCamposOpcionais(String template) {
         Context contexto = new Context();
         contexto.setVariables(variaveis(false));

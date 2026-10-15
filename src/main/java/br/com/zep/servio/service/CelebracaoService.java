@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import br.com.zep.servio.service.escalacao.ConviteService;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import br.com.zep.servio.exception.RegraNegocioException;
 
 @Service
@@ -32,6 +34,7 @@ public class CelebracaoService extends CrudService<Celebracao, CelebracaoRequest
     private final VagaRepository vagaRepository;
     private final PastoraisPermissao pastoraisPermissao;
     private final CoberturaAutomaticaService coberturaAutomaticaService;
+    private final ConviteService conviteService;
 
     @Override
     protected TenantRepository<Celebracao> repository() {
@@ -73,6 +76,21 @@ public class CelebracaoService extends CrudService<Celebracao, CelebracaoRequest
         CelebracaoResponseDTO criada = super.criar(request);
         coberturaAutomaticaService.aplicarNaCriacao(obterAtivo(criada.id()), paroquiaId());
         return criada;
+    }
+
+    /** Mudou a data ou a hora: os convites pendentes não podem mais vencer depois da celebração. */
+    @Override
+    @Transactional
+    public CelebracaoResponseDTO atualizar(Long id, CelebracaoRequestDTO request) {
+        Celebracao antes = obterAtivo(id);
+        LocalDate dataAntes = antes.getData();
+        LocalTime horaAntes = antes.getHora();
+        CelebracaoResponseDTO resposta = super.atualizar(id, request);
+        Celebracao depois = obterAtivo(id);
+        if (!depois.getData().equals(dataAntes) || !depois.getHora().equals(horaAntes)) {
+            conviteService.ajustarPrazosPendentes(depois);
+        }
+        return resposta;
     }
 
     @Override

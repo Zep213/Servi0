@@ -125,6 +125,8 @@ public class SecurityConfig {
 
                         // qualquer usuário logado
                         .requestMatchers("/api/me", "/api/me/**").authenticated()
+                        // foto de perfil: quem está logado vê; o service restringe à mesma paróquia (senão 404)
+                        .requestMatchers(HttpMethod.GET, "/api/fotos/*").authenticated()
                         .requestMatchers("/api/indisponibilidades/**", "/api/pedidos-troca/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/regras/**").authenticated()
                         // alterações pendentes do vice: quem pode confirmar/desfazer é checado no service
