@@ -222,7 +222,12 @@ class HabilidadeRegraIT {
                 .andExpect(status().isOk());
 
         sortear(vaga).andExpect(status().isOk()).andExpect(jsonPath("$.convidados.length()").value(2));
-        assertThat(convidados(vaga)).containsExactlyInAnyOrder(cenario.membro1Pascom.getId(), cenario.membro2Pascom.getId());
+        // desde o cartão 3 o sorteio considera todos os papéis da pastoral: sem a regra, qualquer um dos 7 da Pascom
+        // (ninguém aqui tem a habilidade) pode ser escolhido; o que se prova é que a falta da habilidade não barra mais.
+        assertThat(convidados(vaga)).hasSize(2).isSubsetOf(
+                cenario.coordenadorPascom.getId(), cenario.vicePascom.getId(), cenario.secretario1Pascom.getId(),
+                cenario.secretario2Pascom.getId(), cenario.tesoureiroPascom.getId(), cenario.membro1Pascom.getId(),
+                cenario.membro2Pascom.getId());
     }
 
     @Test
