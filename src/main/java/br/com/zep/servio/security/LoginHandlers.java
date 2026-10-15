@@ -21,12 +21,15 @@ public class LoginHandlers {
     private final TentativasLogin tentativas;
     private final ChaveLogin chaveLogin;
     private final UsuarioRepository usuarioRepository;
+    private final SessaoDuracao sessaoDuracao;
 
     public void sucesso(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
         UsuarioPrincipal usuario = (UsuarioPrincipal) auth.getPrincipal();
         tentativas.limpar(TentativasLogin.chaveIp(request));
         usuarioRepository.findById(usuario.getId())
                 .ifPresent(u -> chaveLogin.chavesDaConta(u).forEach(tentativas::limpar));
+        // o id da sessão já foi trocado (session fixation) antes deste handler
+        request.getSession().setMaxInactiveInterval((int) sessaoDuracao.para(usuario.getId(), usuario.getPerfil()).toSeconds());
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 

@@ -30,6 +30,14 @@ public final class Telefone {
         return Optional.of("+55" + digitos);
     }
 
+    /** Telefone já normalizado com o miolo escondido, para log e auditoria (ex.: +55839****4407). */
+    public static String mascarar(String normalizado) {
+        if (normalizado == null || normalizado.length() < 10) {
+            return "****";
+        }
+        return normalizado.substring(0, 6) + "****" + normalizado.substring(normalizado.length() - 4);
+    }
+
     /** Login digitado é telefone (e não e-mail): sem {@code @} e com pelo menos 10 dígitos. */
     public static boolean ehTelefone(String login) {
         if (login == null || login.contains("@")) {

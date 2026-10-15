@@ -44,7 +44,7 @@ public class PastoralConfigService {
                     .findByPastoralIdAndChaveAndActiveTrue(pastoralId, regra.codigo());
             resultado.add(new PastoralConfigResponseDTO(
                     regra.codigo(),
-                    configurada.map(PastoralConfig::isAtiva).orElse(true),
+                    configurada.map(PastoralConfig::isAtiva).orElseGet(regra::ligadaPorPadrao),
                     configurada.map(PastoralConfig::getParametros).orElseGet(regra::padroes),
                     configurada.isPresent()));
         }

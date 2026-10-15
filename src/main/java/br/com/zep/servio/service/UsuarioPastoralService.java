@@ -14,6 +14,7 @@ import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
+import br.com.zep.servio.security.SessaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -39,6 +40,7 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
     private final UsuarioRepository usuarioRepository;
     private final PastoralRepository pastoralRepository;
     private final PastoraisPermissao pastoraisPermissao;
+    private final SessaoService sessaoService;
 
     @Override
     protected TenantRepository<UsuarioPastoral> repository() {
@@ -91,6 +93,19 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         }
     }
 
+    /**
+     * Quem ganha papel passa a ter outra duração de sessão (60 dias só de membro, 7 com papel de gestão, decidido no
+     * login): criar, trocar ou tirar um papel derruba as sessões da pessoa afetada, para ela entrar de novo com a
+     * duração certa. Só depois do commit: se a alteração for recusada, ninguém é deslogado.
+     */
+    @Override
+    @Transactional
+    public UsuarioPastoralResponseDTO criar(UsuarioPastoralRequestDTO request) {
+        UsuarioPastoralResponseDTO resposta = super.criar(request);
+        encerrarSessoesDe(usuarioRepository.findById(request.usuarioId()).map(Usuario::getEmail).orElse(null));
+        return resposta;
+    }
+
     /** A pastoral de uma participação é imutável: só o papel muda; mover para outra pastoral é 422. */
     @Override
     @Transactional
@@ -99,9 +114,18 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         if (!entidade.getPastoral().getId().equals(request.pastoralId())) {
             throw new RegraNegocioException("A pastoral desta participação não pode ser alterada");
         }
+        Long usuarioAntigo = entidade.getUsuario().getId();
+        String emailAntigo = entidade.getUsuario().getEmail();
+        PapelPastoral papelAntigo = entidade.getPapel();
         atualizarEntidade(request, entidade);
         validar(entidade);
-        return paraResposta(repository.save(entidade));
+        UsuarioPastoralResponseDTO resposta = paraResposta(repository.save(entidade));
+        // salvar o mesmo papel para a mesma pessoa não muda nada: não derruba sessão
+        if (papelAntigo != entidade.getPapel() || !usuarioAntigo.equals(entidade.getUsuario().getId())) {
+            encerrarSessoesDe(emailAntigo);
+            encerrarSessoesDe(entidade.getUsuario().getEmail());
+        }
+        return resposta;
     }
 
     /** Atribuir/remover papel é decisão de gestão da pastoral: só o coordenador dela, o padre ou o ADMIN. */
@@ -112,6 +136,13 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         exigirGestor(entidade.getPastoral().getId(), entidade.getPapel());
         entidade.setActive(false);
         repository.save(entidade);
+        encerrarSessoesDe(entidade.getUsuario().getEmail());
+    }
+
+    private void encerrarSessoesDe(String email) {
+        if (email != null) {
+            sessaoService.encerrarTodasAposCommit(email);
+        }
     }
 
     /**

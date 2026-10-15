@@ -267,3 +267,18 @@ dados montados pelo `CenarioParoquia`/`CenarioEscalacao`; campo desconhecido →
       detalhamento (trabalho do colaborador); ver `sprint-0.md`, seção 4
 
 Ver também: `sprint-0.md`.
+
+## Pendente/decisões
+
+- [ ] (3) Duração da sessão decidida só no login: quem ganha cargo de gestão depois continua com 60 dias até
+      perder a sessão (logout, expiração ou rebaixamento de perfil)
+- [ ] (6) Oráculo de correlação aceito: 3 falhas por e-mail + 2 por telefone só geram 429 se o telefone for da
+      conta daquele e-mail; quem testa pares e-mail/telefone consegue descobrir se pertencem à mesma conta
+- [ ] (7) `Max-Age` do cookie é absoluto, não desliza (60 dias após o login); quem manda na sessão é o banco
+      (`max_inactive_interval`, que desliza com o uso)
+- [ ] (8) `PUT /api/me`: 409 x 200 revela se um telefone existe no sistema. Mitigado com limite de 5 tentativas
+      por 15 min por usuário (429), mas quem tem conta ainda consegue testar números devagar
+- [ ] (9) Sem verificação por SMS, dá para reservar o telefone de outra pessoa (quem cadastra primeiro fica com
+      ele; o dono real só descobre ao receber 409). Verificação fica para quando houver envio de SMS
+- [ ] (10) Os tipos gerados do front (`frontend/src/api/generated`) não foram regenerados: rodar com
+      `OPENAPI_ENABLED=true`, conferir GET e PUT em `/v3/api-docs` e `npm run gen:api` quando houver Postgres
