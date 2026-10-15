@@ -12,6 +12,7 @@ import org.mapstruct.ReportingPolicy;
 public interface CelebracaoMapper {
 
     @Mapping(source = "comunidade.id", target = "comunidadeId")
+    @Mapping(source = "horarioMissa.id", target = "horarioMissaId")
     CelebracaoResponseDTO toResponse(Celebracao entity);
 
     @Mapping(target = "id", ignore = true)
