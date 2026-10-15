@@ -36,6 +36,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static br.com.zep.servio.pastoral.CenarioEscalacao.domingo;
@@ -173,6 +174,31 @@ class ConvitePublicoIT {
         assertThat(depois.getDataLimiteResposta()).isEqualTo(antes.getDataLimiteResposta());
     }
 
+    /** Simula o lembrete: o token do convite vira o anterior e um novo passa a ser o atual. */
+    private String girarComoOLembrete(Long alocacaoId) {
+        String novo = "token-do-lembrete-" + UUID.randomUUID();
+        Alocacao alocacao = alocacaoRepository.findById(alocacaoId).orElseThrow();
+        alocacao.girarToken(tokenConvite.hash(novo));
+        alocacaoRepository.save(alocacao);
+        return novo;
+    }
+
+    @Test
+    void depoisDeRespondeNenhumDosDoisTokensValeMais() throws Exception {
+        Convite convite = convidar();
+        String tokenNovo = girarComoOLembrete(convite.id());
+        String ip = ipUnico();
+
+        // o link do primeiro e-mail ainda responde, mesmo depois do lembrete
+        responder(convite.token(), true, null, ip).andExpect(status().isOk());
+
+        Alocacao relida = alocacaoRepository.findById(convite.id()).orElseThrow();
+        assertThat(relida.getTokenHash()).isNull();
+        assertThat(relida.getTokenHashAnterior()).isNull();
+        detalhes(convite.token(), ip).andExpect(status().isNotFound());
+        detalhes(tokenNovo, ip).andExpect(status().isNotFound());
+    }
+
     @Test
     void confirmarPresencaGravaAceitaEInvalidaOLink() throws Exception {
         Convite convite = convidar();
@@ -186,6 +212,7 @@ class ConvitePublicoIT {
         assertThat(relida.getStatus()).isEqualTo(StatusConvite.ACEITA);
         assertThat(relida.getRespondidoEm()).isNotNull();
         assertThat(relida.getTokenHash()).isNull();
+        assertThat(relida.getTokenHashAnterior()).isNull();
         assertThat(relida.getJustificativa()).isNull();
     }
 
