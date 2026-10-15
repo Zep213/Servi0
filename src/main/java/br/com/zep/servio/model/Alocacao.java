@@ -60,4 +60,21 @@ public class Alocacao extends TenantEntity {
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "token_hash", columnDefinition = "CHAR(64)")
     private String tokenHash;
+
+    /** Token anterior, que ainda vale depois que o lembrete gira o token (o link do 1º e-mail não morre). */
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(name = "token_hash_anterior", columnDefinition = "CHAR(64)")
+    private String tokenHashAnterior;
+
+    /** Resposta, expiração ou substituição: nenhum dos dois links vale mais. */
+    public void invalidarTokens() {
+        this.tokenHash = null;
+        this.tokenHashAnterior = null;
+    }
+
+    /** Lembrete: o token atual vira o anterior e o novo passa a ser o atual. */
+    public void girarToken(String novoHash) {
+        this.tokenHashAnterior = this.tokenHash;
+        this.tokenHash = novoHash;
+    }
 }
