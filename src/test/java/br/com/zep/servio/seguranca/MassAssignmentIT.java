@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /** fail-on-unknown-properties=true: campo que o DTO não declara (ex.: paroquiaId) vira 400, não é ignorado. */
@@ -48,6 +49,27 @@ class MassAssignmentIT {
         mvc.perform(post("/api/pastorais").cookie(sessao).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nome\":\"Pastoral X\",\"paroquiaId\":999}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    /** Telefone e aparência só mudam pelo próprio usuário (PUT /api/me): cadastro e edição de usuário não os aceitam. */
+    @Test
+    void cadastroEEdicaoDeUsuarioNaoAceitamTelefoneNemAparencia() throws Exception {
+        Paroquia paroquia = ApoioTeste.criarParoquia(paroquiaRepository, "Paróquia Mass Assignment Telefone");
+        var admin = ApoioTeste.criarUsuario(usuarioRepository, passwordEncoder, paroquia.getId(),
+                "admin.tel@servio.dev", "senha12345", Perfil.ADMIN);
+        Cookie sessao = ApoioTeste.login(mvc, "admin.tel@servio.dev", "senha12345");
+
+        mvc.perform(post("/api/usuarios").cookie(sessao).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nome\":\"Novo\",\"email\":\"novo.tel@servio.dev\",\"senha\":\"senha12345\","
+                                + "\"perfil\":\"SERVIDOR\",\"telefone\":\"+5583988124407\"}"))
+                .andExpect(status().isBadRequest());
+
+        mvc.perform(put("/api/usuarios/{id}", admin.getId()).cookie(sessao).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nome\":\"Admin\",\"email\":\"admin.tel@servio.dev\",\"perfil\":\"ADMIN\","
+                                + "\"aparencia\":\"ESCURO\"}"))
                 .andExpect(status().isBadRequest());
     }
 }
