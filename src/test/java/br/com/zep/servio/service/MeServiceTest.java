@@ -45,7 +45,7 @@ class MeServiceTest {
     @BeforeEach
     void setUp() {
         service = new MeService(repository, mock(PasswordEncoder.class), usuarioLogado, mock(SessaoService.class),
-                usuarioPastoralRepository, mock(PainelService.class), auditLogService, new TentativasLogin());
+                usuarioPastoralRepository, mock(PainelService.class), auditLogService, new TentativasLogin(), mock(br.com.zep.servio.service.FotoPerfilService.class));
         usuario = new Usuario();
         usuario.setId(7L);
         usuario.setParoquiaId(1L);

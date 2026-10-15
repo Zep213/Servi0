@@ -36,6 +36,7 @@ public class MeService {
     private final PainelService painelService;
     private final AuditLogService auditLogService;
     private final TentativasLogin tentativas;
+    private final FotoPerfilService fotoPerfilService;
 
     /** Depois de 3 pulos o front para de pedir o telefone. */
     static final int MAX_PULOS_TELEFONE = 3;
@@ -91,6 +92,7 @@ public class MeService {
         boolean pedirTelefone = usuario.getTelefone() == null && usuario.getTelefonePulos() < MAX_PULOS_TELEFONE;
         return new MeResponseDTO(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getPerfil(),
                 usuario.getParoquiaId(), usuario.getTelefone(), usuario.getAparencia(), pedirTelefone,
+                fotoPerfilService.fotoUrl(usuario.getId()),
                 pastorais(usuario));
     }
 

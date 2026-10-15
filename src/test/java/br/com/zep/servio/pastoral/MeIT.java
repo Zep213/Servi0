@@ -93,6 +93,7 @@ class MeIT {
         getMe(cenario.membro1Pascom)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.telefone").doesNotExist())
+                .andExpect(jsonPath("$.fotoUrl").doesNotExist())
                 .andExpect(jsonPath("$.aparencia").value("AUTOMATICO"))
                 .andExpect(jsonPath("$.pedirTelefone").value(true));
     }
