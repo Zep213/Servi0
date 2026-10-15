@@ -49,7 +49,7 @@ public class SecurityConfig {
             "/api/pastorais/*/config/**", "/api/pastorais/*/financeiro/**", "/api/pastorais/*/reunioes/**",
             "/api/pastorais/*/modelos-vaga/**", "/api/alocacoes/**", "/api/usuarios-pastorais/**",
             "/api/celebracoes/**", "/api/vagas/**", "/api/pastorais/*/celebracoes/**", "/api/pastorais/*/painel",
-            "/api/pastorais/*/membros"
+            "/api/pastorais/*/membros", "/api/pastorais/*/cobertura-missa"
     };
 
     private final TentativasLogin tentativasLogin;
