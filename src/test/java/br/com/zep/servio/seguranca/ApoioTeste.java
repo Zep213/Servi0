@@ -49,7 +49,7 @@ public final class ApoioTeste {
     public static Cookie login(MockMvc mvc, String email, String senha) throws Exception {
         MvcResult resultado = mvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", email)
+                        .param("login", email)
                         .param("senha", senha))
                 .andExpect(status().isNoContent())
                 .andReturn();

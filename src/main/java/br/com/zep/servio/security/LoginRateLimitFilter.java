@@ -16,8 +16,11 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
 
     private final TentativasLogin tentativas;
 
-    public LoginRateLimitFilter(TentativasLogin tentativas) {
+    private final ChaveLogin chaveLogin;
+
+    public LoginRateLimitFilter(TentativasLogin tentativas, ChaveLogin chaveLogin) {
         this.tentativas = tentativas;
+        this.chaveLogin = chaveLogin;
     }
 
     @Override
@@ -29,9 +32,8 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
         boolean bloqueado = tentativas.bloqueado(TentativasLogin.chaveIp(request))
-                || (email != null && tentativas.bloqueado(TentativasLogin.chaveEmail(email)));
+                || chaveLogin.chaves(request.getParameter("login")).stream().anyMatch(tentativas::bloqueado);
 
         if (bloqueado) {
             response.setHeader("Retry-After", String.valueOf(TentativasLogin.JANELA.toSeconds()));

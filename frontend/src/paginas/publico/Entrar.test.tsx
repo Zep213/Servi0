@@ -20,7 +20,7 @@ describe('Entrar', () => {
     servidor.use(
       http.post('/api/auth/login', async ({ request }) => {
         const corpo = new URLSearchParams(await request.text());
-        expect(corpo.get('email')).toBe('maria@exemplo.com');
+        expect(corpo.get('login')).toBe('maria@exemplo.com');
         logado = true;
         return new HttpResponse(null, { status: 204 });
       }),
