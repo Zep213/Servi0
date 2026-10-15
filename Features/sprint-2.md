@@ -447,6 +447,9 @@ faz **se ninguém decidir diferente**, para não travar o cartão.
 | O token puro fica em `email_saida.variaveis` (JSONB) até o e-mail sair ou falhar 5 vezes (a `FilaEmail` apaga depois). Quem lê o banco nessa janela vê links válidos | Aceito: é a mesma situação do convite; janela curta, `variaveis` apagada no envio | 2, 3, 4 |
 | Cadastro de membro com telefone | Não (regra do cartão 3 da sprint 1: só a própria pessoa define pelo `PUT /api/me`) | 2 |
 | Nomes das rotas e dos campos (sem o "Mapa de endpoints") | Proposta no "Contrato combinado"; confirmar com o colaborador antes de começar o cartão 2 | 2 a 6 |
+| Conta pendente (cadastrada e nunca ativada) não expira: reserva o e-mail no sistema todo (e-mail é único entre paróquias) e quem recebe o cadastro de outra paróquia leva 409. Um coordenador pode "estacionar" e-mails de outras pessoas | Aceito nesta sprint, mitigado pelo limite de 20 cadastros por hora por coordenador. Proposta: job que desativa conta pendente depois de X dias (sugestão: 30) e libera o e-mail | 2 |
+| `POST /api/pastorais/{id}/membros` com papel `COORDENADOR` por quem não é padre/ADMIN dá 403 sem checar se a pastoral está no alcance; para as demais, pastoral fora do alcance dá 404. Quem não é gestor distingue pastoral existente (403) de inexistente (404) dentro da própria paróquia | Aceito: mesmo comportamento do `UsuarioPastoralService.exigirGestor` de hoje; os ids são da própria paróquia | 2 |
+| 404 x 410 nas rotas públicas de conta: o 410 (vencido) revela que o token existiu | Aceito: o token tem 256 bits (não se adivinha) e a mensagem precisa distinguir "vencido" para a tela pedir novo link | 1, 2 |
 
 ## Fora desta sprint
 
