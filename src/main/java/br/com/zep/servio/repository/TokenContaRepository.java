@@ -30,6 +30,13 @@ public interface TokenContaRepository extends JpaRepository<TokenConta, Long> {
     /** O índice parcial garante no máximo um pendente por tipo e pessoa. */
     Optional<TokenConta> findFirstByUsuarioIdAndTipoAndUsadoEmIsNull(Long usuarioId, TipoTokenConta tipo);
 
+    /**
+     * Trava a linha da pessoa até o fim da transação: dois pedidos simultâneos da mesma conta (duplo clique, e-mail e
+     * telefone juntos) emitem um depois do outro, e não batem no índice único do token pendente.
+     */
+    @Query(value = "select id from usuario where id = :usuarioId for update", nativeQuery = true)
+    Long travarUsuario(@Param("usuarioId") Long usuarioId);
+
     @Modifying
     @Query("delete from TokenConta t where t.usuario.id = :usuarioId and t.tipo = :tipo and t.usadoEm is null")
     void apagarPendentes(@Param("usuarioId") Long usuarioId, @Param("tipo") TipoTokenConta tipo);
