@@ -60,8 +60,11 @@ class SessaoIT {
     private static final long DIAS = 24L * 60 * 60;
 
     private int intervaloDaSessao(Cookie sessao) {
+        // o Spring Session grava o id da sessão em Base64 no cookie; no banco ele fica como UUID puro
+        String sessionId = new String(java.util.Base64.getDecoder().decode(sessao.getValue()),
+                java.nio.charset.StandardCharsets.UTF_8);
         return jdbc.queryForObject("select max_inactive_interval from spring_session where session_id = ?",
-                Integer.class, sessao.getValue());
+                Integer.class, sessionId);
     }
 
     private MvcResult entrar(String email, String senha) throws Exception {
