@@ -8,5 +8,6 @@ public interface UsuarioFuncaoRepository extends TenantRepository<UsuarioFuncao>
 
     List<UsuarioFuncao> findByFuncaoIdAndActiveTrue(Long funcaoId);
 
-    boolean existsByUsuarioIdAndFuncaoId(Long usuarioId, Long funcaoId);
+    /** Unicidade só entre habilidades ativas (índice uq_usuario_funcao_ativo); o id ignorado é o do próprio registro. */
+    boolean existsByUsuarioIdAndFuncaoIdAndActiveTrueAndIdNot(Long usuarioId, Long funcaoId, Long id);
 }

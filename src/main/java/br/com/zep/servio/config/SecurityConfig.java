@@ -35,8 +35,7 @@ public class SecurityConfig {
 
     /** Cadastros com a mesma regra: leitura para qualquer logado, escrita para ADMIN/PADRE. */
     private static final String[] CADASTROS = {
-            "/api/pastorais", "/api/pastorais/*", "/api/comunidades/**", "/api/funcoes/**",
-            "/api/usuarios-funcoes/**"
+            "/api/pastorais", "/api/pastorais/*", "/api/comunidades/**", "/api/funcoes/**"
     };
 
     /**
@@ -145,6 +144,11 @@ public class SecurityConfig {
                         // no service/@PreAuthorize), não o Perfil global — inclui o convidado respondendo
                         // à própria escalação, cuja checagem de dono também é no service
                         .requestMatchers(GESTAO_POR_PASTORAL).authenticated()
+
+                        // habilidades das pessoas: o gate fino é por papel na pastoral da função (coordenador, padre ou
+                        // ADMIN), checado no service, como os papéis em /api/usuarios-pastorais
+                        .requestMatchers("/api/usuarios-funcoes/**").authenticated()
+                        .requestMatchers("/api/pastorais/*/membros/*/habilidades").authenticated()
 
                         // cadastros da escala
                         .requestMatchers(HttpMethod.GET, CADASTROS).authenticated()
