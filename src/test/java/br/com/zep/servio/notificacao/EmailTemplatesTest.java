@@ -30,13 +30,14 @@ class EmailTemplatesTest {
         v.put("prazo", "09/10/2026 08:00");
         v.put("mensagem", "Mensagem de teste");
         v.put("link", "http://localhost/convite#token-de-teste");
+        v.put("convidadoPor", "João");
         v.put("chegada", comOpcionais ? "07:30" : null);
         v.put("observacao", comOpcionais ? "Levar a câmera" : null);
         return v;
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador"})
+    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao", "recuperacao"})
     void renderizaHtmlETextoComTodasAsVariaveis(String template) {
         Context contexto = new Context();
         contexto.setVariables(variaveis(true));
@@ -46,7 +47,7 @@ class EmailTemplatesTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador"})
+    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao", "recuperacao"})
     void renderizaSemOsCamposOpcionais(String template) {
         Context contexto = new Context();
         contexto.setVariables(variaveis(false));

@@ -4,6 +4,7 @@ import br.com.zep.servio.exception.ConflitoException;
 import br.com.zep.servio.exception.RegraNegocioException;
 import br.com.zep.servio.exception.ServioException;
 import br.com.zep.servio.mapper.UsuarioPastoralMapper;
+import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.model.UsuarioPastoral;
 import br.com.zep.servio.model.dto.UsuarioPastoralRequestDTO;
 import br.com.zep.servio.model.dto.UsuarioPastoralResponseDTO;
@@ -13,6 +14,7 @@ import br.com.zep.servio.repository.TenantRepository;
 import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
+import br.com.zep.servio.security.SessaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,6 +40,7 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
     private final UsuarioRepository usuarioRepository;
     private final PastoralRepository pastoralRepository;
     private final PastoraisPermissao pastoraisPermissao;
+    private final SessaoService sessaoService;
 
     @Override
     protected TenantRepository<UsuarioPastoral> repository() {
@@ -90,6 +93,19 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         }
     }
 
+    /**
+     * Quem ganha papel passa a ter outra duração de sessão (60 dias só de membro, 7 com papel de gestão, decidido no
+     * login): criar, trocar ou tirar um papel derruba as sessões da pessoa afetada, para ela entrar de novo com a
+     * duração certa. Só depois do commit: se a alteração for recusada, ninguém é deslogado.
+     */
+    @Override
+    @Transactional
+    public UsuarioPastoralResponseDTO criar(UsuarioPastoralRequestDTO request) {
+        UsuarioPastoralResponseDTO resposta = super.criar(request);
+        encerrarSessoesDe(usuarioRepository.findById(request.usuarioId()).map(Usuario::getEmail).orElse(null));
+        return resposta;
+    }
+
     /** A pastoral de uma participação é imutável: só o papel muda; mover para outra pastoral é 422. */
     @Override
     @Transactional
@@ -98,9 +114,18 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         if (!entidade.getPastoral().getId().equals(request.pastoralId())) {
             throw new RegraNegocioException("A pastoral desta participação não pode ser alterada");
         }
+        Long usuarioAntigo = entidade.getUsuario().getId();
+        String emailAntigo = entidade.getUsuario().getEmail();
+        PapelPastoral papelAntigo = entidade.getPapel();
         atualizarEntidade(request, entidade);
         validar(entidade);
-        return paraResposta(repository.save(entidade));
+        UsuarioPastoralResponseDTO resposta = paraResposta(repository.save(entidade));
+        // salvar o mesmo papel para a mesma pessoa não muda nada: não derruba sessão
+        if (papelAntigo != entidade.getPapel() || !usuarioAntigo.equals(entidade.getUsuario().getId())) {
+            encerrarSessoesDe(emailAntigo);
+            encerrarSessoesDe(entidade.getUsuario().getEmail());
+        }
+        return resposta;
     }
 
     /** Atribuir/remover papel é decisão de gestão da pastoral: só o coordenador dela, o padre ou o ADMIN. */
@@ -111,6 +136,13 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         exigirGestor(entidade.getPastoral().getId(), entidade.getPapel());
         entidade.setActive(false);
         repository.save(entidade);
+        encerrarSessoesDe(entidade.getUsuario().getEmail());
+    }
+
+    private void encerrarSessoesDe(String email) {
+        if (email != null) {
+            sessaoService.encerrarTodasAposCommit(email);
+        }
     }
 
     /**
@@ -121,7 +153,7 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
      * mensagem explícita em vez do "não encontrado" genérico — só quem já não é padre/ADMIN
      * cai aqui (eles sempre passam em {@code visivel()}).
      */
-    private void exigirGestor(Long pastoralId, PapelPastoral papelAlvo) {
+    public void exigirGestor(Long pastoralId, PapelPastoral papelAlvo) {
         if (papelAlvo == PapelPastoral.COORDENADOR) {
             if (!pastoraisPermissao.ehAdmin() && !pastoraisPermissao.ehPadre()) {
                 throw new AccessDeniedException("Só o padre ou o ADMIN atribuem o papel de coordenador");
@@ -134,6 +166,21 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         if (!pastoraisPermissao.temPapel(pastoralId, PapelPastoral.COORDENADOR.name())) {
             throw new AccessDeniedException("Só o coordenador desta pastoral (ou padre/ADMIN) atribui papéis nela");
         }
+    }
+
+    /**
+     * Papel de uma conta recém-criada (cadastro de membro numa operação só): as mesmas regras do POST
+     * /api/usuarios-pastorais (quem pode atribuir, secretários e cargos únicos), na transação de quem chama.
+     */
+    @Transactional
+    public UsuarioPastoral criarParaConta(Usuario usuario, Long pastoralId, PapelPastoral papel) {
+        UsuarioPastoral entidade = new UsuarioPastoral();
+        entidade.setUsuario(usuario);
+        entidade.setPastoral(referencia(pastoralRepository, pastoralId, "Pastoral"));
+        entidade.setPapel(papel);
+        entidade.setParoquiaId(paroquiaId());
+        validar(entidade);
+        return repository.save(entidade);
     }
 
     private void resolverRelacoes(UsuarioPastoralRequestDTO request, UsuarioPastoral entity) {

@@ -151,7 +151,7 @@ public class AlocacaoService extends CrudService<Alocacao, AlocacaoRequestDTO, A
             // o convidado anterior tinha não responde mais por esta alocação.
             Long pastoralNovaId = entidade.getVaga().getFuncao().getPastoral().getId();
             entidade.setStatus(StatusConvite.PENDENTE);
-            entidade.setDataLimiteResposta(conviteService.novoPrazo(pastoralNovaId));
+            entidade.setDataLimiteResposta(conviteService.novoPrazo(pastoralNovaId, entidade.getVaga().getCelebracao()));
         }
         Alocacao salva = repository.save(entidade);
         if (mudouEscalacao) {

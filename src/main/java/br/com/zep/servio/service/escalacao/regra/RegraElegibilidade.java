@@ -22,6 +22,14 @@ public interface RegraElegibilidade {
     /** Valores default aplicados quando a pastoral não configurou nada para esta regra. */
     Map<String, Object> padroes();
 
+    /**
+     * Se a regra vale para uma pastoral que nunca a configurou. Todas nascem ligadas; só uma regra que depende de
+     * cadastro prévio pode oferecer um interruptor de implantação (ver {@code HabilidadeRegra}).
+     */
+    default boolean ligadaPorPadrao() {
+        return true;
+    }
+
     /** Vazio se o candidato pode ser escalado; presente com o motivo do impedimento, senão. */
     Optional<String> impedimento(Usuario candidato, ContextoElegibilidade contexto, Map<String, Object> parametros);
 }

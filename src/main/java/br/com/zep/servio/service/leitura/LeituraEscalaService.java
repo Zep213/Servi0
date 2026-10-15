@@ -122,6 +122,7 @@ public class LeituraEscalaService {
                     new Ref(up.getUsuario().getId(), up.getUsuario().getNome()),
                     up.getPapel(),
                     veEmail ? up.getUsuario().getEmail() : null,
+                    veEmail ? up.getUsuario().estaAtivada() : null,
                     fotos.get(up.getUsuario().getId())));
         }
         return lista;
