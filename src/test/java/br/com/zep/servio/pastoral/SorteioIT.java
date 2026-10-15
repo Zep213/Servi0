@@ -364,6 +364,37 @@ class SorteioIT {
         assertThat(usuariosAtivos(comunicacao)).doesNotContain(cenario.membro1Pascom.getId());
     }
 
+    /**
+     * O exemplo do doc: a vaga de Leitura (id menor) tem 7 candidatos e a de Som (id maior) só um, que também sabe ler.
+     * Em ordem de id, a pessoa rara iria para a Leitura em 1 de cada 7 sorteios e deixaria o Som vazio. Várias
+     * celebrações, bem espaçadas para as regras de intervalo não interferirem: o Som nunca fica vazio.
+     */
+    @Test
+    void funcaoMaisApertadaEPreenchidaPrimeiroEAPessoaRaraNaoEGastaNaFolgada() throws Exception {
+        Funcao funcaoSom = new Funcao();
+        funcaoSom.setNome("Som");
+        funcaoSom.setPastoral(cenario.pascom);
+        funcaoSom.setParoquiaId(cenario.paroquiaA.getId());
+        funcaoSom = funcaoRepository.save(funcaoSom);
+        cenario.habilitar(usuarioFuncaoRepository, cenario.membro1Pascom, funcaoSom);
+
+        for (int semanas = 10; semanas <= 50; semanas += 10) {
+            Celebracao celebracao = escala.celebracao(cenario.paroquiaA, comunidade, domingo(semanas),
+                    TipoCelebracao.MISSA_DOMINICAL);
+            Vaga leitura = escala.vaga(cenario.paroquiaA, celebracao, funcaoLeitura, 1);
+            Vaga som = escala.vaga(cenario.paroquiaA, celebracao, funcaoSom, 1);
+
+            sortearCelebracao(cenario.coordenadorPascom, celebracao)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.convidados.length()").value(2))
+                    .andExpect(jsonPath("$.vagasIncompletas.length()").value(0));
+
+            assertThat(usuariosAtivos(som)).as("Som, %d semanas", semanas).containsExactly(cenario.membro1Pascom.getId());
+            assertThat(usuariosAtivos(leitura)).as("Leitura, %d semanas", semanas)
+                    .hasSize(1).doesNotContain(cenario.membro1Pascom.getId());
+        }
+    }
+
     @Test
     void tecnicoSorteiaComoOVice() throws Exception {
         Usuario tecnico = cenario.naPascom("tecnico.pascom", PapelPastoral.TECNICO);
