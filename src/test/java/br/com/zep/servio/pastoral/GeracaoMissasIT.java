@@ -295,7 +295,8 @@ class GeracaoMissasIT {
         for (Celebracao celebracao : celebracoesDe(dez)) {
             assertThat(vagaRepository.findByCelebracaoIdAndActiveTrue(celebracao.getId()))
                     .singleElement()
-                    .satisfies(v -> assertThat(v.getFuncao().getPastoral().getId()).isEqualTo(cenario.pascom.getId()));
+                    // só o id: getFuncao() é proxy lazy e o teste roda fora de sessão
+                    .satisfies(v -> assertThat(v.getFuncao().getId()).isEqualTo(funcaoPascom.getId()));
         }
     }
 
