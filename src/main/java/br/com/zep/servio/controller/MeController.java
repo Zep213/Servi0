@@ -35,7 +35,7 @@ public class MeController {
     }
 
     @PutMapping
-    public MeResponseDTO atualizar(@RequestBody MeUpdateDTO request) {
+    public MeResponseDTO atualizar(@Valid @RequestBody MeUpdateDTO request) {
         return meService.atualizar(request);
     }
 
