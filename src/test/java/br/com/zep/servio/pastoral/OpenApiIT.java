@@ -42,7 +42,8 @@ class OpenApiIT {
             mvcLigado.perform(get("/v3/api-docs"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.paths./api/me/escalas").exists())
-                    .andExpect(jsonPath("$.paths./api/pastorais/{pastoralId}/membros").exists());
+                    .andExpect(jsonPath("$.paths./api/pastorais/{pastoralId}/membros").exists())
+                    .andExpect(jsonPath("$.paths./api/pastorais/{pastoralId}/membros/{usuarioId}").exists());
         }
     }
 }
