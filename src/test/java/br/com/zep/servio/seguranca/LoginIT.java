@@ -176,7 +176,16 @@ class LoginIT {
     }
 
     private org.springframework.test.web.servlet.ResultActions entrar(String login, String senha) throws Exception {
+        return entrar(login, senha, "127.0.0.1");
+    }
+
+    private org.springframework.test.web.servlet.ResultActions entrar(String login, String senha, String ip)
+            throws Exception {
         return mvc.perform(post("/api/auth/login").with(csrf())
+                .with(req -> {
+                    req.setRemoteAddr(ip);
+                    return req;
+                })
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("login", login)
                 .param("senha", senha));
@@ -210,14 +219,15 @@ class LoginIT {
     void falhasPeloEmailEPeloTelefoneDaMesmaPessoaSomam() throws Exception {
         usuarioComTelefone("soma@servio.dev", "+5583988124407");
 
+        // um IP diferente por tentativa: o bloqueio final só pode vir da chave da conta, não do IP
         for (int i = 0; i < 3; i++) {
-            entrar("soma@servio.dev", "senhaErrada1").andExpect(status().isUnauthorized());
+            entrar("soma@servio.dev", "senhaErrada1", "10.0.0." + i).andExpect(status().isUnauthorized());
         }
         for (int i = 0; i < 2; i++) {
-            entrar("83988124407", "senhaErrada1").andExpect(status().isUnauthorized());
+            entrar("83988124407", "senhaErrada1", "10.0.1." + i).andExpect(status().isUnauthorized());
         }
 
-        entrar("soma@servio.dev", "senha12345").andExpect(status().isTooManyRequests());
-        entrar("(83) 98812-4407", "senha12345").andExpect(status().isTooManyRequests());
+        entrar("soma@servio.dev", "senha12345", "10.0.2.1").andExpect(status().isTooManyRequests());
+        entrar("(83) 98812-4407", "senha12345", "10.0.2.2").andExpect(status().isTooManyRequests());
     }
 }
