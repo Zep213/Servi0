@@ -18,6 +18,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ChaveLogin {
 
+    private static final int LIMITE_TEXTO = 255;
+
     private final UsuarioDetailsService usuarios;
 
     /** Chave do texto digitado (e-mail minúsculo, telefone normalizado ou o próprio texto) e, se a conta existe, a da conta. */
@@ -48,6 +50,9 @@ public class ChaveLogin {
 
     private static String chaveDoTexto(String digitado) {
         String texto = digitado.trim();
+        if (texto.length() > LIMITE_TEXTO) {      // não deixa texto enorme virar chave do cache
+            texto = texto.substring(0, LIMITE_TEXTO);
+        }
         if (!texto.contains("@")) {
             Optional<String> telefone = Telefone.normalizar(texto);
             if (telefone.isPresent()) {
