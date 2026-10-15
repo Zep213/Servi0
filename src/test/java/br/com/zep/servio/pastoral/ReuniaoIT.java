@@ -1,5 +1,6 @@
 package br.com.zep.servio.pastoral;
 
+import br.com.zep.servio.model.EmailSaida;
 import br.com.zep.servio.model.Pastoral;
 import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.model.UsuarioPastoral;
@@ -7,13 +8,14 @@ import br.com.zep.servio.model.dto.ReuniaoRequestDTO;
 import br.com.zep.servio.model.dto.SolicitacaoReuniaoRequestDTO;
 import br.com.zep.servio.model.enumerated.PapelPastoral;
 import br.com.zep.servio.model.enumerated.Perfil;
+import br.com.zep.servio.model.enumerated.StatusEmail;
+import br.com.zep.servio.repository.EmailSaidaRepository;
 import br.com.zep.servio.repository.FuncaoRepository;
 import br.com.zep.servio.repository.ParoquiaRepository;
 import br.com.zep.servio.repository.PastoralRepository;
 import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.seguranca.TestcontainersConfig;
-import br.com.zep.servio.service.notification.Notificador;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,18 +26,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -66,8 +63,8 @@ class ReuniaoIT {
     UsuarioPastoralRepository usuarioPastoralRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
-    @MockitoBean
-    Notificador notificador;
+    @Autowired
+    EmailSaidaRepository emailSaidaRepository;
 
     CenarioParoquia cenario;
 
@@ -127,12 +124,19 @@ class ReuniaoIT {
                         .content(json(new SolicitacaoReuniaoRequestDTO("Discutir a próxima campanha"))))
                 .andExpect(status().isNoContent());
 
-        verify(notificador, times(2)).notificar(org.mockito.ArgumentMatchers.anyString(),
-                contains("Pedido de reunião"), contains("Discutir a próxima campanha"));
-        verify(notificador).notificar(eq(cenario.coordenadorPascom.getEmail()),
-                org.mockito.ArgumentMatchers.anyString(), contains(cenario.vicePascom.getNome()));
-        verify(notificador).notificar(eq(segundoCoordenador.getEmail()),
-                org.mockito.ArgumentMatchers.anyString(), contains(cenario.vicePascom.getNome()));
+        String emailSegundoCoordenador = segundoCoordenador.getEmail();
+        List<EmailSaida> pendentes = emailSaidaRepository.findAll().stream()
+                .filter(e -> e.getStatus() == StatusEmail.PENDENTE)
+                .filter(e -> e.getAssunto().contains("Pedido de reunião"))
+                .filter(e -> e.getDestinatario().equals(cenario.coordenadorPascom.getEmail())
+                        || e.getDestinatario().equals(emailSegundoCoordenador))
+                .toList();
+        assertThat(pendentes).hasSize(2);
+        pendentes.forEach(e -> {
+            assertThat(e.getAssunto()).contains("Pedido de reunião");
+            assertThat((String) e.getVariaveis().get("texto"))
+                    .contains(cenario.vicePascom.getNome(), "Discutir a próxima campanha");
+        });
     }
 
     @Test
@@ -162,7 +166,9 @@ class ReuniaoIT {
                         .content(json(new SolicitacaoReuniaoRequestDTO("Preciso falar com alguém"))))
                 .andExpect(status().isNotFound());
 
-        verify(notificador, never()).notificar(org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyString());
+        String nomePastoralSemCoordenador = semCoordenador.getNome();
+        assertThat(emailSaidaRepository.findAll().stream()
+                .anyMatch(e -> e.getAssunto().contains(nomePastoralSemCoordenador)))
+                .isFalse();
     }
 }

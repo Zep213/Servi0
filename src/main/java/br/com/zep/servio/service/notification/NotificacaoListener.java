@@ -60,7 +60,7 @@ public class NotificacaoListener {
             String assunto = (evento.tipo() == TipoNotificacao.CONVITE_REENVIO ? "Reenvio do convite: " : "Convite: ")
                     + variaveis.get("titulo") + " (" + variaveis.get("data") + ")";
             variaveis.put("assunto", assunto);
-            envio.enviarSeguro(alocacao.getUsuario().getEmail(), assunto, "convite", variaveis, alocacao.getId());
+            envio.enfileirar(alocacao.getParoquiaId(), alocacao.getUsuario().getEmail(), assunto, "convite", variaveis);
         } catch (RuntimeException e) {
             log.error("Falha ao preparar o convite da alocação {}", evento.alocacaoId(), e);
         }
@@ -80,7 +80,7 @@ public class NotificacaoListener {
                     + (alocacao.getJustificativa() == null ? "" : " Justificativa: " + alocacao.getJustificativa())
                     + " A vaga voltou para a escala: sorteie de novo ou escolha alguém à mão.";
             envio.avisarCoordenadores(alocacao.getParoquiaId(), alocacao.getVaga().getFuncao().getPastoral(),
-                    "Convite recusado: " + dados.get("titulo"), mensagem, alocacao.getId());
+                    "Convite recusado: " + dados.get("titulo"), mensagem);
         } catch (RuntimeException e) {
             log.error("Falha ao avisar recusa da alocação {}", evento.alocacaoId(), e);
         }
@@ -99,7 +99,7 @@ public class NotificacaoListener {
                     + " (" + dados.get("data") + ", " + dados.get("hora") + ", função " + dados.get("funcao")
                     + ") venceu sem resposta. A vaga voltou para a escala: sorteie de novo ou escolha alguém à mão.";
             envio.avisarCoordenadores(alocacao.getParoquiaId(), alocacao.getVaga().getFuncao().getPastoral(),
-                    "Convite expirado: " + dados.get("titulo"), mensagem, alocacao.getId());
+                    "Convite expirado: " + dados.get("titulo"), mensagem);
         } catch (RuntimeException e) {
             log.error("Falha ao avisar expiração da alocação {}", evento.alocacaoId(), e);
         }
@@ -116,7 +116,7 @@ public class NotificacaoListener {
             Map<String, Object> variaveis = envio.variaveisDaEscala(anterior);
             String assunto = "Você saiu da escala: " + variaveis.get("titulo") + " (" + variaveis.get("data") + ")";
             variaveis.put("assunto", assunto);
-            envio.enviarSeguro(anterior.getUsuario().getEmail(), assunto, "substituicao", variaveis, anterior.getId());
+            envio.enfileirar(anterior.getParoquiaId(), anterior.getUsuario().getEmail(), assunto, "substituicao", variaveis);
         } catch (RuntimeException e) {
             log.error("Falha ao avisar substituição da alocação {}", evento.alocacaoSubstituidaId(), e);
         }
@@ -140,7 +140,7 @@ public class NotificacaoListener {
                     + " em " + titulo + " (" + dados.get("data") + ", " + dados.get("hora")
                     + "). Não havia gente elegível suficiente: escale alguém à mão ou ajuste a escala.";
             envio.avisarCoordenadores(vaga.getParoquiaId(), vaga.getFuncao().getPastoral(),
-                    "Vaga sem pessoas elegíveis: " + titulo, mensagem, null);
+                    "Vaga sem pessoas elegíveis: " + titulo, mensagem);
         } catch (RuntimeException e) {
             log.error("Falha ao avisar vaga {} sem elegíveis", evento.vagaId(), e);
         }

@@ -30,9 +30,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Peças comuns a todo e-mail da escalação: deduplicação em notificacao_enviada, envio que nunca
- * derruba o chamador, textos e variáveis. Usado pelo NotificacaoListener (eventos depois do commit)
- * e pelos jobs (expiração e lembretes). Nada aqui usa usuário logado: a paróquia vem da entidade.
+ * Peças comuns a todo e-mail da escalação: deduplicação em notificacao_enviada, enfileiramento na
+ * FilaEmail, textos e variáveis. Usado pelo NotificacaoListener (eventos depois do commit) e pelos
+ * jobs (expiração e lembretes). Nada aqui usa usuário logado: a paróquia vem da entidade.
  */
 @Slf4j
 @Component
@@ -43,7 +43,7 @@ public class EnvioEscalacao {
     private static final DateTimeFormatter HORA = DateTimeFormatter.ofPattern("HH:mm");
     private static final DateTimeFormatter PRAZO = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    private final Notificador notificador;
+    private final FilaEmail filaEmail;
     private final AlocacaoRepository alocacaoRepository;
     private final NotificacaoEnviadaRepository notificacaoEnviadaRepository;
     private final UsuarioPastoralRepository usuarioPastoralRepository;
@@ -80,19 +80,13 @@ public class EnvioEscalacao {
         }
     }
 
-    public void enviarSeguro(String destinatario, String assunto, String template,
-                             Map<String, Object> variaveis, Long alocacaoId) {
-        try {
-            notificador.enviar(destinatario, assunto, template, variaveis);
-        } catch (RuntimeException e) {
-            // SMTP caiu não desfaz a escala: loga (sem token, sem corpo do e-mail) e segue
-            log.error("Falha ao enviar e-mail '{}' da alocação {}", template, alocacaoId, e);
-        }
+    public void enfileirar(Long paroquiaId, String destinatario, String assunto, String template,
+                           Map<String, Object> variaveis) {
+        filaEmail.enfileirar(paroquiaId, destinatario, assunto, template, variaveis);
     }
 
     /** Aviso para as pessoas com papel COORDENADOR da pastoral, na mesma paróquia. */
-    public void avisarCoordenadores(Long paroquiaId, Pastoral pastoral, String assunto,
-                                    String mensagem, Long alocacaoId) {
+    public void avisarCoordenadores(Long paroquiaId, Pastoral pastoral, String assunto, String mensagem) {
         List<Usuario> coordenadores = usuarioPastoralRepository.findUsuariosPorPapel(
                 pastoral.getId(), paroquiaId, PapelPastoral.COORDENADOR);
         for (Usuario coordenador : coordenadores) {
@@ -101,7 +95,7 @@ public class EnvioEscalacao {
             variaveis.put("mensagem", mensagem);
             variaveis.put("pastoral", pastoral.getNome());
             variaveis.put("assunto", assunto);
-            enviarSeguro(coordenador.getEmail(), assunto, "aviso-coordenador", variaveis, alocacaoId);
+            enfileirar(paroquiaId, coordenador.getEmail(), assunto, "aviso-coordenador", variaveis);
         }
     }
 
