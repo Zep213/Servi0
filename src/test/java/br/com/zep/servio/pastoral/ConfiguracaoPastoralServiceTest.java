@@ -51,6 +51,18 @@ class ConfiguracaoPastoralServiceTest {
     }
 
     @Test
+    void regraComInterruptorDeImplantacaoDesligadoNasceDesligadaMasAPastoralPodeLigar() {
+        when(regra.codigo()).thenReturn("REGRA_X");
+        when(regra.ligadaPorPadrao()).thenReturn(false);
+        when(pastoralConfigRepository.findByPastoralIdAndChaveAndActiveTrue(1L, "REGRA_X")).thenReturn(Optional.empty());
+        assertThat(service().ativa(1L, "REGRA_X")).isFalse();
+
+        when(pastoralConfigRepository.findByPastoralIdAndChaveAndActiveTrue(2L, "REGRA_X"))
+                .thenReturn(Optional.of(configComAtiva(true)));
+        assertThat(service().ativa(2L, "REGRA_X")).isTrue();
+    }
+
+    @Test
     void ativaVerdadeiroQuandoPastoralConfigurouExplicitamenteLigada() {
         PastoralConfig config = configComAtiva(true);
         when(pastoralConfigRepository.findByPastoralIdAndChaveAndActiveTrue(1L, "REGRA_X")).thenReturn(Optional.of(config));
