@@ -111,6 +111,24 @@ public class PainelService {
     }
 
     /**
+     * Pendências da pastoral para o usuário logado (/api/me). Quem vê o painel (mesma regra do
+     * PainelController): convites vencendo + recusas sem substituto + alterações do vice aguardando.
+     * Membro: quantos convites PENDENTE dele naquela pastoral. Não lança 403/404: só conta.
+     */
+    @Transactional(readOnly = true)
+    public long contarPendencias(Long pastoralId) {
+        Long paroquiaId = usuarioLogado.paroquiaId();
+        if (!pastoraisPermissao.temQualquerPapel(pastoralId, PAPEIS_QUE_VEEM.toArray(String[]::new))) {
+            return alocacaoRepository.contarDoUsuarioNaPastoral(paroquiaId, usuarioLogado.id(), pastoralId,
+                    StatusConvite.PENDENTE);
+        }
+        LocalDateTime agora = LocalDateTime.now(clock);
+        return convitesVencendo(paroquiaId, pastoralId, agora).size()
+                + recusasSemSubstituto(paroquiaId, pastoralId, agora.toLocalDate()).size()
+                + alteracoesAguardando(paroquiaId, pastoralId).size();
+    }
+
+    /**
      * NAO_INICIADO: ninguém ocupa vaga ainda. COMPLETO: todas as vagas com quantidade estão
      * confirmadas e nenhuma vaga está sem quantidade. Convite sem resposta nunca conta como completo.
      */
