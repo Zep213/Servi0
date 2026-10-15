@@ -12,10 +12,15 @@ public interface UsuarioRepository extends TenantRepository<Usuario> {
     /** Login: e-mail é único entre ativos no sistema todo (índice uq_usuario_email_ativo). */
     Optional<Usuario> findByEmailIgnoreCaseAndActiveTrue(String email);
 
+    /** Login por telefone: recebe o número já normalizado (uq_usuario_telefone_ativo). */
+    Optional<Usuario> findByTelefoneAndActiveTrue(String telefone);
+
     Page<Usuario> findByParoquiaIdAndActiveTrueAndNomeContainingIgnoreCase(Long paroquiaId, String nome, Pageable pageable);
 
     /** Unicidade no criar e no atualizar (o id atual não conta como duplicata). */
     boolean existsByEmailIgnoreCaseAndActiveTrueAndIdNot(String email, Long id);
+
+    boolean existsByTelefoneAndActiveTrueAndIdNot(String telefone, Long id);
 
     long countByParoquiaIdAndActiveTrue(Long paroquiaId);
 }
