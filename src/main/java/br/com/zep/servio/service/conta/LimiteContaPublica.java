@@ -7,11 +7,13 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Limite por IP nas rotas públicas de conta (ativação, recuperação, proteção). Mesmo desenho do
  * {@code LimiteConfirmacoes}, com balde próprio: abrir a página do convite não gasta a cota de quem está
- * recuperando a senha. Janela fixa de um minuto; o Caffeine descarta os IPs parados.
+ * recuperando a senha. Janela deslizante de um minuto; o Caffeine descarta os IPs parados.
  */
 @Component
 public class LimiteContaPublica {
@@ -21,7 +23,7 @@ public class LimiteContaPublica {
     private final int maxPorMinuto;
 
     private final Cache<String, Janela> janelas = Caffeine.newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(5))
+            .expireAfterAccess(Duration.ofMinutes(5))
             .maximumSize(100_000)
             .build();
 
@@ -37,18 +39,20 @@ public class LimiteContaPublica {
         return janelas.get(ip, k -> new Janela()).registrar(agora, maxPorMinuto);
     }
 
+    /** Janela deslizante: guarda os instantes das chamadas aceitas no último minuto. Sem rajada de 2x na virada. */
     static final class Janela {
 
-        private Instant inicio = Instant.EPOCH;
-        private int contagem;
+        private final Deque<Instant> aceitas = new ArrayDeque<>();
 
         synchronized boolean registrar(Instant agora, int maximo) {
-            if (Duration.between(inicio, agora).compareTo(JANELA) >= 0) {
-                inicio = agora;
-                contagem = 0;
+            while (!aceitas.isEmpty() && Duration.between(aceitas.peekFirst(), agora).compareTo(JANELA) >= 0) {
+                aceitas.pollFirst();
             }
-            contagem++;
-            return contagem <= maximo;
+            if (aceitas.size() >= maximo) {
+                return false;       // recusada não conta: quem insiste não estende o próprio bloqueio
+            }
+            aceitas.addLast(agora);
+            return true;
         }
     }
 }
