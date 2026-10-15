@@ -124,7 +124,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
 
                         // qualquer usuário logado
-                        .requestMatchers("/api/me/**").authenticated()
+                        .requestMatchers("/api/me", "/api/me/**").authenticated()
                         .requestMatchers("/api/indisponibilidades/**", "/api/pedidos-troca/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/regras/**").authenticated()
                         // alterações pendentes do vice: quem pode confirmar/desfazer é checado no service

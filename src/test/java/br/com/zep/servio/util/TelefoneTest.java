@@ -42,6 +42,12 @@ class TelefoneTest {
     }
 
     @Test
+    void mascararEscondeOMioloDoNumero() {
+        assertEquals("+55839****4407", Telefone.mascarar("+5583988124407"));
+        assertEquals("****", Telefone.mascarar(null));
+    }
+
+    @Test
     void ehTelefoneDistingueDeEmail() {
         assertTrue(Telefone.ehTelefone("(83) 98812-4407"));
         assertTrue(Telefone.ehTelefone("83988124407"));
