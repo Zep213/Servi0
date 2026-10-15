@@ -16,7 +16,7 @@ import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
 import br.com.zep.servio.security.UsuarioLogado;
 import br.com.zep.servio.security.UsuarioPrincipal;
-import br.com.zep.servio.service.notification.Notificador;
+import br.com.zep.servio.service.notification.FilaEmail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +38,7 @@ public class ReuniaoService {
     private final UsuarioPastoralRepository usuarioPastoralRepository;
     private final PastoraisPermissao pastoraisPermissao;
     private final UsuarioLogado usuarioLogado;
-    private final Notificador notificador;
+    private final FilaEmail filaEmail;
 
     /** Parte 4: só quem tem papel na pastoral lê as reuniões dela; PADRE lê; ADMIN, todas. */
     @Transactional(readOnly = true)
@@ -99,7 +99,7 @@ public class ReuniaoService {
         String mensagem = autor.getNome() + " pediu uma reunião da pastoral " + pastoral.getNome()
                 + ":\n\n" + request.motivo();
         for (UsuarioPastoral coordenador : coordenadores) {
-            notificador.notificar(coordenador.getUsuario().getEmail(), assunto, mensagem);
+            filaEmail.enfileirarTexto(pastoral.getParoquiaId(), coordenador.getUsuario().getEmail(), assunto, mensagem);
         }
     }
 

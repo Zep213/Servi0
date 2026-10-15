@@ -71,7 +71,8 @@ public class LembretesJob {
                 variaveis.put("link", frontUrl + "/convite#" + token);
                 String assunto = "Responda ao convite: " + variaveis.get("titulo") + " (" + variaveis.get("data") + ")";
                 variaveis.put("assunto", assunto);
-                envio.enviarSeguro(alocacao.getUsuario().getEmail(), assunto, "lembrete-resposta", variaveis, alocacao.getId());
+                envio.enfileirar(alocacao.getParoquiaId(), alocacao.getUsuario().getEmail(), assunto,
+                        "lembrete-resposta", variaveis);
             } catch (RuntimeException e) {
                 log.error("Falha no lembrete de resposta da alocação {}", alocacao.getId(), e);
             }
@@ -98,7 +99,8 @@ public class LembretesJob {
                 Map<String, Object> variaveis = new HashMap<>(envio.variaveisDaEscala(alocacao));
                 String assunto = "Lembrete de serviço: " + variaveis.get("titulo") + " (" + variaveis.get("data") + ")";
                 variaveis.put("assunto", assunto);
-                envio.enviarSeguro(alocacao.getUsuario().getEmail(), assunto, "lembrete-servico", variaveis, alocacao.getId());
+                envio.enfileirar(alocacao.getParoquiaId(), alocacao.getUsuario().getEmail(), assunto,
+                        "lembrete-servico", variaveis);
             } catch (RuntimeException e) {
                 log.error("Falha no lembrete de serviço da alocação {}", alocacao.getId(), e);
             }
