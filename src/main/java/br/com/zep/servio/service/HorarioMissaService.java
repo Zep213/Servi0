@@ -14,6 +14,7 @@ import br.com.zep.servio.repository.HorarioMissaRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
 import br.com.zep.servio.security.UsuarioLogado;
+import br.com.zep.servio.service.agenda.GeracaoMissasService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class HorarioMissaService {
     private final PastoraisPermissao pastoraisPermissao;
     private final UsuarioLogado usuarioLogado;
     private final AuditLogService auditLogService;
+    private final GeracaoMissasService geracaoMissasService;
 
     @Transactional(readOnly = true)
     public List<HorarioMissaResponseDTO> listar(Long comunidadeId) {
@@ -56,6 +58,7 @@ public class HorarioMissaService {
         aplicar(horario, request);
         validarUnico(horario, 0L);
         HorarioMissa salvo = repository.save(horario);
+        geracaoMissasService.gerar(salvo);
         auditar("criado", salvo);
         return paraResposta(salvo);
     }
@@ -68,6 +71,8 @@ public class HorarioMissaService {
         aplicar(horario, request);
         validarUnico(horario, horario.getId());
         HorarioMissa salvo = repository.save(horario);
+        // vale só para as datas ainda não geradas: as que já existem ficam como estão
+        geracaoMissasService.gerar(salvo);
         auditar("alterado", salvo);
         return paraResposta(salvo);
     }
