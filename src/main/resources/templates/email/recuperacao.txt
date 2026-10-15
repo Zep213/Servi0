@@ -1,0 +1,10 @@
+Olá, [[${nome}]]!
+
+Recebemos um pedido para redefinir a sua senha no Servio.
+
+Escolha uma senha nova em até [[${prazo}]], no endereço:
+[[${link}]]
+
+Se não foi você, ignore este e-mail: a sua senha continua a mesma.
+
+Servio · mensagem automática, não responda.
