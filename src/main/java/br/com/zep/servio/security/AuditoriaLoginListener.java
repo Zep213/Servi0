@@ -52,13 +52,16 @@ public class AuditoriaLoginListener {
         auditLogRepository.save(log);
     }
 
-    /** E-mail aparece como digitado; telefone é mascarado (ex.: +55839****4407). */
+    /**
+     * E-mail aparece como digitado; telefone é mascarado (ex.: +55839****4407). Qualquer outra coisa
+     * (inclusive senha digitada no campo de login) nunca vai pro log.
+     */
     private static String paraLog(String login) {
-        if (login.contains("@")) {
+        if (login.length() <= 255 && login.matches("[^@\\s]+@[^@\\s]+")) {
             return login;
         }
         return Telefone.normalizar(login)
                 .map(t -> t.substring(0, 6) + "****" + t.substring(t.length() - 4))
-                .orElse(login);
+                .orElse("[login fora do formato]");
     }
 }
