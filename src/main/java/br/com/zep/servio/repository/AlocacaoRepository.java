@@ -141,7 +141,6 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
                                             @Param("ocupantes") Collection<StatusConvite> ocupantes,
                                             @Param("hoje") LocalDate hoje);
 
-    /** Painel: convites pendentes com prazo ainda por vir (o recorte de "vencendo" é feito no serviço, por pastoral). */
     /** /api/me: convites que a própria pessoa ainda não respondeu naquela pastoral. */
     @Query("""
             select count(a) from Alocacao a
@@ -151,6 +150,7 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
     long contarDoUsuarioNaPastoral(@Param("paroquiaId") Long paroquiaId, @Param("usuarioId") Long usuarioId,
                                    @Param("pastoralId") Long pastoralId, @Param("status") StatusConvite status);
 
+    /** Painel: convites pendentes com prazo ainda por vir (o recorte de "vencendo" é feito no serviço, por pastoral). */
     @Query("""
             select a from Alocacao a
             join fetch a.usuario
