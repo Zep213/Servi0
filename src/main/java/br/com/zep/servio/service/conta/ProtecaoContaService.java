@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+
 /**
  * "Proteger minha conta" (Sprint 2, Cartão 4): a pessoa não reconhece a troca de senha do e-mail. Sem login: o
  * token do e-mail é a credencial. Zera a senha (a conta fica "protegida": ativada, mas sem senha), derruba as
@@ -25,6 +28,7 @@ public class ProtecaoContaService {
     private final UsuarioRepository usuarioRepository;
     private final SessaoService sessaoService;
     private final AuditLogService auditLogService;
+    private final Clock clock;
 
     /** Não altera nada: a tela só confere se o link vale e cumprimenta pelo primeiro nome. */
     @Transactional(readOnly = true)
@@ -36,7 +40,11 @@ public class ProtecaoContaService {
     @Transactional
     public void proteger(String token) {
         Usuario usuario = tokenContaService.consumir(token, TipoTokenConta.PROTECAO);
-        usuario.setSenha(null);                       // mantém ativado_em: é conta protegida, não conta nova
+        if (usuario.getAtivadoEm() == null) {
+            // conta criada já com senha (sem passar pela ativação): sem isto, ao zerar a senha ela viraria "nunca ativada"
+            usuario.setAtivadoEm(LocalDateTime.now(clock));
+        }
+        usuario.setSenha(null);                       // ativado_em fica: é conta protegida, não conta nova
         usuarioRepository.save(usuario);
         tokenContaService.invalidar(usuario);          // nenhum outro link (inclusive o de recuperação antigo) vale
         sessaoService.encerrarTodas(usuario.getEmail());
