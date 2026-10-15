@@ -43,6 +43,7 @@ public class TokenContaService {
     /** Apaga o pendente do mesmo tipo (o link antigo morre), grava o novo e devolve o token puro. */
     @Transactional
     public String emitir(Usuario usuario, TipoTokenConta tipo) {
+        repository.travarUsuario(usuario.getId());
         repository.apagarPendentes(usuario.getId(), tipo);
         String token = tokenConvite.gerar();
         LocalDateTime agora = LocalDateTime.now(clock);
