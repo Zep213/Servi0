@@ -15,6 +15,7 @@ public record CelebracaoResponseDTO(
     TipoCelebracao tipo,
     String titulo,
     Long horarioMissaId,
+    Long pastoralOrigemId,
     boolean active,
     LocalDateTime createdAt,
     LocalDateTime updatedAt

@@ -50,4 +50,9 @@ public class Celebracao extends TenantEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "horario_missa_id")
     private HorarioMissa horarioMissa;
+
+    /** Pastoral cuja coordenação criou o evento; nula para o que o padre criou e para as missas. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pastoral_origem_id")
+    private Pastoral pastoralOrigem;
 }
