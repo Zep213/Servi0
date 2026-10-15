@@ -31,13 +31,16 @@ class EmailTemplatesTest {
         v.put("mensagem", "Mensagem de teste");
         v.put("link", "http://localhost/convite#token-de-teste");
         v.put("convidadoPor", "João");
+        v.put("quando", "09/11/2026 10:00");
+        v.put("aparelho", "Celular iPhone");
+        v.put("coordenacao", false);
         v.put("chegada", comOpcionais ? "07:30" : null);
         v.put("observacao", comOpcionais ? "Levar a câmera" : null);
         return v;
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao", "recuperacao"})
+    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao", "recuperacao", "senha-alterada"})
     void renderizaHtmlETextoComTodasAsVariaveis(String template) {
         Context contexto = new Context();
         contexto.setVariables(variaveis(true));
@@ -47,12 +50,29 @@ class EmailTemplatesTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao", "recuperacao"})
+    @ValueSource(strings = {"convite", "lembrete-resposta", "lembrete-servico", "substituicao", "aviso-coordenador", "ativacao", "recuperacao", "senha-alterada"})
     void renderizaSemOsCamposOpcionais(String template) {
         Context contexto = new Context();
         contexto.setVariables(variaveis(false));
 
         assertThat(html.process(template, contexto)).doesNotContain("Levar a câmera");
         assertThat(texto.process(template, contexto)).doesNotContain("Levar a câmera");
+    }
+
+    /** Decisão do projeto: o aviso de senha alterada diz só o tipo de aparelho, sem cidade, IP nem localização. */
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void senhaAlteradaNaoFalaDeCidadeIpNemLocalizacao(boolean pelaCoordenacao) {
+        Map<String, Object> v = variaveis(true);
+        v.put("coordenacao", pelaCoordenacao);
+        v.put("aparelho", pelaCoordenacao ? null : "Celular iPhone");
+        Context contexto = new Context();
+        contexto.setVariables(v);
+
+        for (String saida : new String[] {html.process("senha-alterada", contexto), texto.process("senha-alterada", contexto)}) {
+            assertThat(saida.toLowerCase()).doesNotContain("cidade", "localiza", "endereço ip");
+            assertThat(saida).doesNotContainPattern("\\bIP\\b");
+            assertThat(saida).contains(pelaCoordenacao ? "coordenação da paróquia" : "Celular iPhone");
+        }
     }
 }

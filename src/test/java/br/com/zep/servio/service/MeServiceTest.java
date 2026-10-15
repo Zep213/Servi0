@@ -12,6 +12,7 @@ import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.SessaoService;
 import br.com.zep.servio.security.TentativasLogin;
 import br.com.zep.servio.security.UsuarioLogado;
+import br.com.zep.servio.service.conta.ContaAvisoService;
 import br.com.zep.servio.service.escalacao.PainelService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,8 @@ class MeServiceTest {
     @BeforeEach
     void setUp() {
         service = new MeService(repository, mock(PasswordEncoder.class), usuarioLogado, mock(SessaoService.class),
-                usuarioPastoralRepository, mock(PainelService.class), auditLogService, new TentativasLogin(), mock(br.com.zep.servio.service.FotoPerfilService.class));
+                usuarioPastoralRepository, mock(ContaAvisoService.class), mock(PainelService.class), auditLogService,
+                new TentativasLogin(), mock(br.com.zep.servio.service.FotoPerfilService.class));
         usuario = new Usuario();
         usuario.setId(7L);
         usuario.setParoquiaId(1L);

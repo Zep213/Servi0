@@ -13,6 +13,7 @@ import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.SessaoService;
 import br.com.zep.servio.security.TentativasLogin;
 import br.com.zep.servio.security.UsuarioLogado;
+import br.com.zep.servio.service.conta.ContaAvisoService;
 import br.com.zep.servio.service.escalacao.PainelService;
 import br.com.zep.servio.util.Telefone;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class MeService {
     private final UsuarioLogado usuarioLogado;
     private final SessaoService sessaoService;
     private final UsuarioPastoralRepository usuarioPastoralRepository;
+    private final ContaAvisoService contaAvisoService;
     private final PainelService painelService;
     private final AuditLogService auditLogService;
     private final TentativasLogin tentativas;
@@ -96,8 +98,9 @@ public class MeService {
                 pastorais(usuario));
     }
 
+    /** {@code userAgent} só serve para o aviso "sua senha foi alterada" dizer o tipo de aparelho; não é guardado. */
     @Transactional
-    public void trocarSenha(TrocaSenhaRequestDTO request) {
+    public void trocarSenha(TrocaSenhaRequestDTO request, String userAgent) {
         Usuario usuario = repository.findById(usuarioLogado.id()).orElseThrow();
 
         if (!passwordEncoder.matches(request.senhaAtual(), usuario.getSenha())) {
@@ -105,6 +108,7 @@ public class MeService {
         }
         usuario.setSenha(passwordEncoder.encode(request.senhaNova()));
         repository.save(usuario);
+        contaAvisoService.avisarSenhaAlterada(usuario, userAgent);
 
         // derruba todas as sessões, inclusive a atual: o usuário faz login de novo
         sessaoService.encerrarTodas(usuario.getEmail());

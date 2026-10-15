@@ -1,0 +1,12 @@
+Olá, [[${nome}]]!
+
+A senha da sua conta no Servio foi alterada em [[${quando}]].
+[# th:if="${coordenacao}"]A alteração foi feita pela coordenação da paróquia.[/]
+[# th:if="${!coordenacao and aparelho != null}"]Aparelho: [[${aparelho}]][/]
+
+Se foi você, não precisa fazer nada.
+
+Se não foi você, proteja a sua conta agora: ela fica sem senha e você escolhe uma nova pelo seu e-mail.
+[[${link}]]
+
+Servio · mensagem automática, não responda.

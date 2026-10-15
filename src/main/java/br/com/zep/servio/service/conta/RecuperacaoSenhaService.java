@@ -41,6 +41,7 @@ public class RecuperacaoSenhaService {
     private final TentativasLogin tentativas;
     private final ChaveLogin chaveLogin;
     private final AuditLogService auditLogService;
+    private final ContaAvisoService contaAvisoService;
 
     @Value("${servio.front-url}")
     private String frontUrl;
@@ -69,17 +70,20 @@ public class RecuperacaoSenhaService {
      * login da conta (quem errou 5 vezes e por isso pediu o link não espera os 15 minutos).
      */
     @Transactional
-    public void redefinir(String token, String senha) {
+    public void redefinir(String token, String senha, String userAgent) {
         Usuario usuario = tokenContaService.consumir(token, TipoTokenConta.RECUPERACAO);
         usuario.setSenha(passwordEncoder.encode(senha));
         usuarioRepository.save(usuario);
         tokenContaService.invalidar(usuario);
+        // depois do invalidar: o aviso emite o token de "Proteger minha conta", que precisa sobreviver
+        contaAvisoService.avisarSenhaAlterada(usuario, userAgent);
         sessaoService.encerrarTodas(usuario.getEmail());
         chaveLogin.chavesDaConta(usuario).forEach(tentativas::limpar);
         auditLogService.registrar("SENHA_REDEFINIDA", usuario.getId(), usuario, usuario.getParoquiaId(), null);
     }
 
-    private void enviar(Usuario usuario) {
+    /** Emite o link de 1 hora e enfileira o e-mail; também usado quando a pessoa pede proteção da conta. */
+    public void enviar(Usuario usuario) {
         String token = tokenContaService.emitir(usuario, TipoTokenConta.RECUPERACAO);
         String assunto = "Redefina sua senha no Servio";
         Map<String, Object> variaveis = new HashMap<>();
