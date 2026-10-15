@@ -267,3 +267,12 @@ dados montados pelo `CenarioParoquia`/`CenarioEscalacao`; campo desconhecido →
       detalhamento (trabalho do colaborador); ver `sprint-0.md`, seção 4
 
 Ver também: `sprint-0.md`.
+
+## Pendente/decisões
+
+- [ ] (3) Duração da sessão decidida só no login: quem ganha cargo de gestão depois continua com 60 dias até
+      perder a sessão (logout, expiração ou rebaixamento de perfil)
+- [ ] (6) Oráculo de correlação aceito: 3 falhas por e-mail + 2 por telefone só geram 429 se o telefone for da
+      conta daquele e-mail; quem testa pares e-mail/telefone consegue descobrir se pertencem à mesma conta
+- [ ] (7) `Max-Age` do cookie é absoluto, não desliza (60 dias após o login); quem manda na sessão é o banco
+      (`max_inactive_interval`, que desliza com o uso)
