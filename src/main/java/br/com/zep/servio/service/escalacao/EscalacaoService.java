@@ -178,7 +178,7 @@ public class EscalacaoService {
         Usuario autor = usuarioLogadoReferencia();
         atual.setStatus(StatusConvite.SUBSTITUIDA);
         atual.setSubstituidaEm(LocalDateTime.now(clock));
-        atual.setTokenHash(null);
+        atual.invalidarTokens();
         alocacaoRepository.save(atual);
 
         Alocacao nova = novaAlocacao(vaga, novo, OrigemAlocacao.COORDENADOR);

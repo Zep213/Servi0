@@ -40,6 +40,7 @@ public class ConviteService {
      */
     public void emitir(Alocacao alocacao, TipoNotificacao tipo) {
         String token = tokenConvite.gerar();
+        alocacao.invalidarTokens();
         alocacao.setTokenHash(tokenConvite.hash(token));
         if (tipo == TipoNotificacao.CONVITE_REENVIO) {
             registrarEnvio(alocacao, tipo);

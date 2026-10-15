@@ -30,7 +30,7 @@ public class RespostaConviteService {
      */
     public StatusConvite aplicar(Alocacao alocacao, boolean aceitar, String justificativa) {
         LocalDateTime agora = LocalDateTime.now(clock);
-        alocacao.setTokenHash(null);
+        alocacao.invalidarTokens();
         if (alocacao.getDataLimiteResposta() != null && agora.isAfter(alocacao.getDataLimiteResposta())) {
             alocacao.setStatus(StatusConvite.EXPIRADA);
             eventos.publishEvent(new ConviteExpiradoEvent(alocacao.getId()));
