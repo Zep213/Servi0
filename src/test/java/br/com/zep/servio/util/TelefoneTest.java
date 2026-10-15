@@ -25,6 +25,14 @@ class TelefoneTest {
         assertEquals(Optional.of("+558333211234"), Telefone.normalizar("(83) 3321-1234"));
     }
 
+    @Test
+    void dddComecandoComZeroEhRecusadoPelaRegraDoDdd() {
+        // 11 dígitos: depois de tirar o zero de tronco sobram 10 ("0988124407"), tamanho válido;
+        // só a regra do DDD sem zero recusa
+        assertTrue(Telefone.normalizar("(00) 98812-4407").isEmpty());
+        assertTrue(Telefone.normalizar("0 0 83 3321-1234").isEmpty());
+    }
+
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"   ", "abc", "telefone", "3321-1234", "12345678", "(00) 98812-4407",

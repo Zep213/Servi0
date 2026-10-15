@@ -13,8 +13,8 @@ public final class Telefone {
             return Optional.empty();
         }
         String digitos = texto.replaceAll("[^0-9]", "");
-        // zero de tronco ("0 83 ...") fica de fora
-        digitos = digitos.replaceFirst("^0+", "");
+        // um zero de tronco ("0 83 ...") fica de fora; zero a mais é DDD inválido
+        digitos = digitos.replaceFirst("^0", "");
         if ((digitos.length() == 12 || digitos.length() == 13) && digitos.startsWith("55")) {
             digitos = digitos.substring(2);
         }
