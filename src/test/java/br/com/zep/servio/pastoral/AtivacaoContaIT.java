@@ -17,6 +17,9 @@ import br.com.zep.servio.service.notification.Notificador;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +46,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,6 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Import(TestcontainersConfig.class)
+@ExtendWith(OutputCaptureExtension.class)
 class AtivacaoContaIT {
 
     private static final AtomicInteger IPS = new AtomicInteger();
@@ -298,5 +303,87 @@ class AtivacaoContaIT {
     private ResultActions reenviar(Usuario quem, Long usuarioId) throws Exception {
         return mvc.perform(post("/api/pastorais/{p}/membros/{u}/reenviar-ativacao", cenario.pascom.getId(), usuarioId)
                 .with(user(cenario.principal(quem))).with(csrf()));
+    }
+
+    @Test
+    void vigesimaPrimeiraChamadaPorMinutoNasRotasDeContaDa429() throws Exception {
+        String ip = ipUnico();
+        for (int i = 0; i < 20; i++) {
+            mvc.perform(post("/api/contas/ativacao/detalhes").with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON).content("{\"token\":\"inexistente\"}")
+                            .with(r -> {
+                                r.setRemoteAddr(ip);
+                                return r;
+                            }))
+                    .andExpect(status().isNotFound());
+        }
+        mvc.perform(post("/api/contas/ativar").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"token\":\"inexistente\",\"senha\":\"senha-nova-123\"}")
+                        .with(r -> {
+                            r.setRemoteAddr(ip);
+                            return r;
+                        }))
+                .andExpect(status().isTooManyRequests());
+    }
+
+    @Test
+    void senhaComAcentosPassaDe72BytesDa400() throws Exception {
+        String email = emailNovo();
+        cadastrar(cenario.coordenadorPascom, cenario.pascom.getId(), email, null).andExpect(status().isCreated());
+        String token = tokenDoEmail(email);
+
+        publico("/api/contas/ativar", "{\"token\":\"" + token + "\",\"senha\":\"" + "é".repeat(40) + "\"}")
+                .andExpect(status().isBadRequest());
+        publico("/api/contas/ativar", "{\"token\":\"" + token + "\",\"senha\":\"" + "é".repeat(36) + "\"}")
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void cadastroDeMembroEhLimitadoPorCoordenador() throws Exception {
+        String repetido = emailNovo();
+        cadastrar(cenario.coordenadorPascom, cenario.pascom.getId(), repetido, null).andExpect(status().isCreated());
+        // o 409 de e-mail repetido também gasta o limite: não serve de oráculo de e-mails
+        for (int i = 0; i < 19; i++) {
+            cadastrar(cenario.coordenadorPascom, cenario.pascom.getId(), repetido, null).andExpect(status().isConflict());
+        }
+        cadastrar(cenario.coordenadorPascom, cenario.pascom.getId(), emailNovo(), null)
+                .andExpect(status().isTooManyRequests());
+        // outro coordenador não é afetado
+        cadastrar(cenario.coordenadorEcc, cenario.ecc.getId(), emailNovo(), null).andExpect(status().isCreated());
+    }
+
+    @Test
+    void ativadaSoApareceParaQuemVeOEmail() throws Exception {
+        String email = emailNovo();
+        cadastrar(cenario.coordenadorPascom, cenario.pascom.getId(), email, null).andExpect(status().isCreated());
+
+        mvc.perform(get("/api/pastorais/{id}/membros", cenario.pascom.getId())
+                        .with(user(cenario.principal(cenario.coordenadorPascom))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.email == '" + email + "')].ativada").value(false));
+        String paraMembro = mvc.perform(get("/api/pastorais/{id}/membros", cenario.pascom.getId())
+                        .with(user(cenario.principal(cenario.membro1Pascom))))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertThat(paraMembro).doesNotContain("\"ativada\":true").doesNotContain("\"ativada\":false");
+    }
+
+    @Test
+    void nenhumLogContemOTokenDeAtivacao(CapturedOutput saida) throws Exception {
+        String email = emailNovo();
+        cadastrar(cenario.coordenadorPascom, cenario.pascom.getId(), email, null).andExpect(status().isCreated());
+        String token = tokenDoEmail(email);
+
+        publico("/api/contas/ativacao/detalhes", "{\"token\":\"" + token + "\"}").andExpect(status().isOk());
+        publico("/api/contas/ativar", "{\"token\":\"" + token + "\",\"senha\":\"curta\"}")
+                .andExpect(status().isBadRequest());
+        publico("/api/contas/ativar", "{\"token\":\"" + token + "\",\"senha\":\"senha-nova-123\"}")
+                .andExpect(status().isNoContent());
+        publico("/api/contas/ativar", "{\"token\":\"" + token + "\",\"senha\":\"outra-senha-123\"}")
+                .andExpect(status().isNotFound());
+        reenviar(cenario.coordenadorPascom, conta(email).getId());
+
+        assertThat(saida.getAll()).doesNotContain(token).doesNotContain(tokenConvite.hash(token));
     }
 }
