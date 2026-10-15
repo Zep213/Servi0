@@ -97,7 +97,7 @@ public class AlteracaoPendenteService {
         alocacao.setVaga(pendente.getVagaAnterior());
         alocacao.setUsuario(pendente.getUsuarioAnterior());
         alocacao.setStatus(StatusConvite.PENDENTE);
-        alocacao.setDataLimiteResposta(conviteService.novoPrazo(pendente.getPastoral().getId()));
+        alocacao.setDataLimiteResposta(conviteService.novoPrazo(pendente.getPastoral().getId(), alocacao.getVaga().getCelebracao()));
         alocacaoRepository.save(alocacao);
         // Quem tinha o link antes da alteração perde o acesso; a pessoa restaurada recebe um convite novo.
         conviteService.emitir(alocacao, TipoNotificacao.CONVITE_REENVIO);
