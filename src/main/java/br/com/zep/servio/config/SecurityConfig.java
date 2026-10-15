@@ -3,6 +3,7 @@ package br.com.zep.servio.config;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.AuditoriaAdminAssumidoFilter;
 import br.com.zep.servio.security.LoginHandlers;
+import br.com.zep.servio.security.ChaveLogin;
 import br.com.zep.servio.security.LoginRateLimitFilter;
 import br.com.zep.servio.security.SomenteLeituraFilter;
 import br.com.zep.servio.security.TentativasLogin;
@@ -51,6 +52,7 @@ public class SecurityConfig {
     };
 
     private final TentativasLogin tentativasLogin;
+    private final ChaveLogin chaveLogin;
     private final LoginHandlers loginHandlers;
     private final UsuarioLogado usuarioLogado;
     private final AuditLogService auditLogService;
@@ -97,7 +99,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionFixation(f -> f.changeSessionId()))
                 .formLogin(f -> f
                         .loginProcessingUrl("/api/auth/login")
-                        .usernameParameter("email")
+                        .usernameParameter("login")
                         .passwordParameter("senha")
                         .successHandler(loginHandlers::sucesso)
                         .failureHandler(loginHandlers::falha)
@@ -164,7 +166,7 @@ public class SecurityConfig {
                         .contentSecurityPolicy(c -> c.policyDirectives("default-src 'none'; frame-ancestors 'none'"))
                         .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny))
-                .addFilterBefore(new LoginRateLimitFilter(tentativasLogin), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new LoginRateLimitFilter(tentativasLogin, chaveLogin), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new SomenteLeituraFilter(demoEmail + "," + demoMembroEmail), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new AuditoriaAdminAssumidoFilter(usuarioLogado, auditLogService, usuarioRepository),
                         SomenteLeituraFilter.class)

@@ -6,11 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Conta falhas de login por IP e por e-mail. O Caffeine expira as entradas sozinho,
+ * Conta falhas de login por IP e por login/conta (chaves em ChaveLogin). O Caffeine expira as entradas sozinho,
  * então não há limpeza manual nem vazamento de memória.
  */
 @Component
@@ -39,9 +38,5 @@ public class TentativasLogin {
 
     public static String chaveIp(HttpServletRequest request) {
         return "ip:" + request.getRemoteAddr();
-    }
-
-    public static String chaveEmail(String email) {
-        return "email:" + email.trim().toLowerCase(Locale.ROOT);
     }
 }
