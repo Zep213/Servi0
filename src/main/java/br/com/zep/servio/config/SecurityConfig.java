@@ -5,6 +5,7 @@ import br.com.zep.servio.security.AuditoriaAdminAssumidoFilter;
 import br.com.zep.servio.security.LoginHandlers;
 import br.com.zep.servio.security.ChaveLogin;
 import br.com.zep.servio.security.LoginRateLimitFilter;
+import br.com.zep.servio.security.SessaoDuracao;
 import br.com.zep.servio.security.SomenteLeituraFilter;
 import br.com.zep.servio.security.TentativasLogin;
 import br.com.zep.servio.security.UsuarioLogado;
@@ -83,12 +84,15 @@ public class SecurityConfig {
             @Value("${server.servlet.session.cookie.name}") String nome,
             @Value("${server.servlet.session.cookie.http-only}") boolean httpOnly,
             @Value("${server.servlet.session.cookie.secure}") boolean secure,
-            @Value("${server.servlet.session.cookie.same-site}") String sameSite) {
+            @Value("${server.servlet.session.cookie.same-site}") String sameSite,
+            SessaoDuracao sessaoDuracao) {
         return serializer -> {
             serializer.setCookieName(nome);
             serializer.setUseHttpOnlyCookie(httpOnly);
             serializer.setUseSecureCookie(secure);
             serializer.setSameSite(sameSite);
+            // cookie persistente: sem Max-Age ele some quando o navegador fecha
+            serializer.setCookieMaxAge((int) sessaoDuracao.maxima().toSeconds());
         };
     }
 
