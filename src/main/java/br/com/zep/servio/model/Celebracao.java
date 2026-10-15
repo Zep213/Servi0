@@ -45,4 +45,9 @@ public class Celebracao extends TenantEntity {
     @Size(max = 120)
     @Column(length = 120)
     private String titulo;
+
+    /** Horário fixo de que a celebração nasceu (geração automática); nulo para as criadas à mão. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "horario_missa_id")
+    private HorarioMissa horarioMissa;
 }
