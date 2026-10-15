@@ -208,47 +208,56 @@ public class EscalacaoService {
 
     // ---------------------------------------------------------------- sorteio
 
+    /**
+     * Sorteia as vagas de uma ou mais funções. Os candidatos são todos os membros ativos da pastoral, de qualquer
+     * papel (coordenação, secretaria, tesouraria, técnico, redes sociais e membros), menos quem recusou a vaga; o que
+     * decide quem pode ocupá-la são as regras de elegibilidade, em especial HABILIDADE (a pessoa precisa ter a função da
+     * vaga marcada). Antes só o papel MEMBRO era sorteado, por falta de habilidade para saber o que cada um faz.
+     * As vagas são sorteadas da mais apertada para a mais folgada, e não por id.
+     */
     private ResultadoSorteioDTO sortear(List<Vaga> vagas) {
-        List<AlocacaoResponseDTO> convidados = new ArrayList<>();
-        List<VagaIncompletaDTO> incompletas = new ArrayList<>();
-        Map<Long, Set<Long>> membrosPorPastoral = new HashMap<>();
-
+        List<SorteioService.PedidoVaga<Vaga>> pedidos = new ArrayList<>();
+        Map<Long, Set<Long>> recusaramPorVaga = new HashMap<>();
         for (Vaga vaga : vagas) {
             int faltam = vaga.getQuantidade() - (int) ocupantes(vaga.getId(), 0L);
             if (faltam <= 0) {
                 continue;
             }
-            Set<Long> recusaram = alocacaoRepository.findByVagaIdAndActiveTrue(vaga.getId()).stream()
+            recusaramPorVaga.put(vaga.getId(), alocacaoRepository.findByVagaIdAndActiveTrue(vaga.getId()).stream()
                     .filter(a -> RECUSARAM.contains(a.getStatus()))
                     .map(a -> a.getUsuario().getId())
-                    .collect(Collectors.toSet());
-            Set<Long> sorteaveis = membrosPorPastoral.computeIfAbsent(
-                    vaga.getFuncao().getPastoral().getId(), pastoralId -> membrosSorteaveis(pastoralId, vaga.getParoquiaId()));
-            List<CandidatoAvaliado> candidatos = elegibilidadeService.avaliar(vaga).stream()
-                    .filter(c -> sorteaveis.contains(c.usuario().getId()))
-                    .filter(c -> !recusaram.contains(c.usuario().getId()))
-                    .toList();
-            List<Usuario> escolhidos = sorteioService.escolher(candidatos, faltam);
-            for (Usuario escolhido : escolhidos) {
-                convidados.add(resposta(novaAlocacao(vaga, escolhido, OrigemAlocacao.SORTEIO)));
-            }
-            int restam = faltam - escolhidos.size();
-            if (restam > 0) {
-                incompletas.add(new VagaIncompletaDTO(vaga.getId(), referencia(vaga), restam));
-                eventos.publishEvent(new VagaSemElegiveisEvent(vaga.getId(), restam));
+                    .collect(Collectors.toSet()));
+            pedidos.add(new SorteioService.PedidoVaga<>(vaga, vaga.getId(), faltam));
+        }
+
+        // Começa pela função mais apertada (ver SorteioService.sortearPorAperto): cada escolha é gravada na hora,
+        // para a regra "uma vaga por celebração" já valer na avaliação da próxima vaga.
+        Map<Long, List<AlocacaoResponseDTO>> convidadosPorVaga = new HashMap<>();
+        List<SorteioService.ResultadoVaga<Vaga>> resultados = sorteioService.sortearPorAperto(pedidos,
+                // todo papel da pastoral é candidato; quem decide quem pode ocupar a vaga são as regras de
+                // elegibilidade (inclusive HABILIDADE), as mesmas da escalação manual e da lista de candidatos
+                vaga -> elegibilidadeService.avaliar(vaga).stream()
+                        .filter(c -> !recusaramPorVaga.get(vaga.getId()).contains(c.usuario().getId()))
+                        .toList(),
+                (vaga, escolhidos) -> {
+                    List<AlocacaoResponseDTO> convites = new ArrayList<>();
+                    for (Usuario escolhido : escolhidos) {
+                        convites.add(resposta(novaAlocacao(vaga, escolhido, OrigemAlocacao.SORTEIO)));
+                    }
+                    convidadosPorVaga.put(vaga.getId(), convites);
+                });
+
+        // A resposta sai na ordem das vagas (por id), como antes, e não na ordem do sorteio.
+        List<AlocacaoResponseDTO> convidados = new ArrayList<>();
+        List<VagaIncompletaDTO> incompletas = new ArrayList<>();
+        for (SorteioService.ResultadoVaga<Vaga> resultado : resultados) {
+            convidados.addAll(convidadosPorVaga.getOrDefault(resultado.id(), List.of()));
+            if (resultado.restam() > 0) {
+                incompletas.add(new VagaIncompletaDTO(resultado.id(), referencia(resultado.vaga()), resultado.restam()));
+                eventos.publishEvent(new VagaSemElegiveisEvent(resultado.id(), resultado.restam()));
             }
         }
         return new ResultadoSorteioDTO(convidados, incompletas);
-    }
-
-    /**
-     * Só MEMBRO é sorteado. Coordenação, secretaria, tesouraria, técnico e redes sociais servem
-     * de outra forma; continuam podendo ser escalados à mão.
-     */
-    private Set<Long> membrosSorteaveis(Long pastoralId, Long paroquiaId) {
-        return usuarioPastoralRepository.findUsuariosPorPapel(pastoralId, paroquiaId, PapelPastoral.MEMBRO).stream()
-                .map(Usuario::getId)
-                .collect(Collectors.toSet());
     }
 
     // ---------------------------------------------------------------- regras
@@ -262,7 +271,7 @@ public class EscalacaoService {
         alocacao.setOrigem(origem);
         alocacao.setEscaladoPor(usuarioLogadoReferencia());
         alocacao.setStatus(StatusConvite.PENDENTE);
-        alocacao.setDataLimiteResposta(conviteService.novoPrazo(vaga.getFuncao().getPastoral().getId()));
+        alocacao.setDataLimiteResposta(conviteService.novoPrazo(vaga.getFuncao().getPastoral().getId(), vaga.getCelebracao()));
         alocacaoRepository.save(alocacao);
         conviteService.emitir(alocacao, TipoNotificacao.CONVITE);
         return alocacao;

@@ -14,5 +14,6 @@ public record MeResponseDTO(
     String telefone,
     Aparencia aparencia,
     boolean pedirTelefone,
+    String fotoUrl,
     List<PastoralPapelDTO> pastorais
 ) {}

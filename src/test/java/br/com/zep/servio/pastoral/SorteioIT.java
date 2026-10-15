@@ -15,6 +15,7 @@ import br.com.zep.servio.repository.ComunidadeRepository;
 import br.com.zep.servio.repository.FuncaoRepository;
 import br.com.zep.servio.repository.ParoquiaRepository;
 import br.com.zep.servio.repository.PastoralRepository;
+import br.com.zep.servio.repository.UsuarioFuncaoRepository;
 import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.repository.VagaRepository;
@@ -28,6 +29,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -52,11 +54,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Sorteio da Etapa 6 de ponta a ponta. Sem {@code @Transactional} na classe: o teste de
  * concorrência precisa de commits de verdade, e as duas threads têm que enxergar o mesmo banco.
+ *
+ * <p>Roda com a regra HABILIDADE ligada (o padrão de produção): o sorteio considera todos os papéis da pastoral e é a
+ * habilidade que decide quem pode ocupar a vaga. Os 7 que antes eram "os sorteáveis" (os membros) recebem a habilidade
+ * das funções usadas; os demais papéis não, até o teste dizer o contrário.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Import(TestcontainersConfig.class)
+@TestPropertySource(properties = "servio.escalacao.habilidade-ligada-por-padrao=true")
 class SorteioIT {
 
     @Autowired
@@ -80,6 +87,8 @@ class SorteioIT {
     @Autowired
     AlocacaoRepository alocacaoRepository;
     @Autowired
+    UsuarioFuncaoRepository usuarioFuncaoRepository;
+    @Autowired
     PasswordEncoder passwordEncoder;
     @MockitoBean
     Notificador notificador;
@@ -96,7 +105,7 @@ class SorteioIT {
                 funcaoRepository, usuarioPastoralRepository, passwordEncoder).criar();
         escala = new CenarioEscalacao(comunidadeRepository, celebracaoRepository, vagaRepository, alocacaoRepository);
         comunidade = escala.comunidade(cenario.paroquiaA);
-        // Só MEMBRO é sorteado: com 5 a mais, a Pascom tem 7 sorteáveis (fora a coordenação).
+        // Com 5 a mais, a Pascom tem 7 membros com a habilidade (a coordenação e os cargos não têm, até o teste dar).
         membrosExtras = new java.util.ArrayList<>();
         for (int i = 1; i <= 5; i++) {
             membrosExtras.add(cenario.naPascom("membro.extra" + i + ".pascom", PapelPastoral.MEMBRO));
@@ -107,9 +116,14 @@ class SorteioIT {
         funcaoLeitura.setPastoral(cenario.pascom);
         funcaoLeitura.setParoquiaId(cenario.paroquiaA.getId());
         funcaoLeitura = funcaoRepository.save(funcaoLeitura);
+
+        for (Usuario membro : membrosPascom()) {
+            cenario.habilitar(usuarioFuncaoRepository, membro, cenario.funcaoComunicacaoPascom);
+            cenario.habilitar(usuarioFuncaoRepository, membro, funcaoLeitura);
+        }
     }
 
-    /** Pascom: 7 sorteáveis (papel MEMBRO). ECC: 3 membros, que não podem ser tocados pelo sorteio da Pascom. */
+    /** Pascom: 7 com a habilidade (papel MEMBRO). ECC: 3 membros, que não podem ser tocados pelo sorteio da Pascom. */
     private List<Usuario> membrosPascom() {
         List<Usuario> membros = new java.util.ArrayList<>(List.of(cenario.membro1Pascom, cenario.membro2Pascom));
         membros.addAll(membrosExtras);
@@ -293,7 +307,7 @@ class SorteioIT {
     }
 
     @Test
-    void soMembroESorteadoCoordenacaoECargosFicamDeFora() throws Exception {
+    void quemNaoTemAHabilidadeNaoEhSorteadoSejaQualForOPapel() throws Exception {
         Usuario tecnico = cenario.naPascom("tecnico.pascom", PapelPastoral.TECNICO);
         Usuario redes = cenario.naPascom("redes.pascom", PapelPastoral.REDES_SOCIAIS);
         Celebracao celebracao = missa();
@@ -307,6 +321,78 @@ class SorteioIT {
         assertThat(usuariosAtivos(vaga)).isEqualTo(ids(membrosPascom()))
                 .doesNotContainAnyElementsOf(ids(List.of(cenario.coordenadorPascom, cenario.vicePascom,
                         cenario.secretario1Pascom, cenario.secretario2Pascom, cenario.tesoureiroPascom, tecnico, redes)));
+    }
+
+    @Test
+    void coordenacaoECargosComAHabilidadeSaoSorteadosJuntoComOsMembros() throws Exception {
+        Usuario tecnico = cenario.naPascom("tecnico.pascom", PapelPastoral.TECNICO);
+        Usuario redes = cenario.naPascom("redes.pascom", PapelPastoral.REDES_SOCIAIS);
+        List<Usuario> comHabilidade = List.of(cenario.coordenadorPascom, cenario.vicePascom, cenario.secretario1Pascom,
+                cenario.secretario2Pascom, cenario.tesoureiroPascom, tecnico, redes);
+        for (Usuario pessoa : comHabilidade) {
+            cenario.habilitar(usuarioFuncaoRepository, pessoa, cenario.funcaoComunicacaoPascom);
+        }
+        Celebracao celebracao = missa();
+        Vaga vaga = vagaComunicacao(celebracao, 20);
+
+        sortearCelebracao(cenario.coordenadorPascom, celebracao)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.convidados.length()").value(14))
+                .andExpect(jsonPath("$.vagasIncompletas[0].faltam").value(6));
+
+        Set<Long> esperados = new java.util.HashSet<>(ids(membrosPascom()));
+        esperados.addAll(ids(comHabilidade));
+        assertThat(usuariosAtivos(vaga)).isEqualTo(esperados);
+    }
+
+    @Test
+    void membroSemAHabilidadeDaVagaNaoEhSorteadoMesmoSendoMembro() throws Exception {
+        // a habilidade de Leitura não vale para a vaga de Comunicação: desmarca só a de Comunicação do membro1
+        usuarioFuncaoRepository.findByUsuarioIdAndActiveTrue(cenario.membro1Pascom.getId()).stream()
+                .filter(h -> h.getFuncao().getId().equals(cenario.funcaoComunicacaoPascom.getId()))
+                .forEach(h -> {
+                    h.setActive(false);
+                    usuarioFuncaoRepository.save(h);
+                });
+        Celebracao celebracao = missa();
+        Vaga comunicacao = vagaComunicacao(celebracao, 20);
+
+        sortearCelebracao(cenario.coordenadorPascom, celebracao)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.convidados.length()").value(6));
+
+        assertThat(usuariosAtivos(comunicacao)).doesNotContain(cenario.membro1Pascom.getId());
+    }
+
+    /**
+     * O exemplo do doc: a vaga de Leitura (id menor) tem 7 candidatos e a de Som (id maior) só um, que também sabe ler.
+     * Em ordem de id, a pessoa rara iria para a Leitura em 1 de cada 7 sorteios e deixaria o Som vazio. Várias
+     * celebrações, bem espaçadas para as regras de intervalo não interferirem: o Som nunca fica vazio.
+     */
+    @Test
+    void funcaoMaisApertadaEPreenchidaPrimeiroEAPessoaRaraNaoEGastaNaFolgada() throws Exception {
+        Funcao funcaoSom = new Funcao();
+        funcaoSom.setNome("Som");
+        funcaoSom.setPastoral(cenario.pascom);
+        funcaoSom.setParoquiaId(cenario.paroquiaA.getId());
+        funcaoSom = funcaoRepository.save(funcaoSom);
+        cenario.habilitar(usuarioFuncaoRepository, cenario.membro1Pascom, funcaoSom);
+
+        for (int semanas = 10; semanas <= 50; semanas += 10) {
+            Celebracao celebracao = escala.celebracao(cenario.paroquiaA, comunidade, domingo(semanas),
+                    TipoCelebracao.MISSA_DOMINICAL);
+            Vaga leitura = escala.vaga(cenario.paroquiaA, celebracao, funcaoLeitura, 1);
+            Vaga som = escala.vaga(cenario.paroquiaA, celebracao, funcaoSom, 1);
+
+            sortearCelebracao(cenario.coordenadorPascom, celebracao)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.convidados.length()").value(2))
+                    .andExpect(jsonPath("$.vagasIncompletas.length()").value(0));
+
+            assertThat(usuariosAtivos(som)).as("Som, %d semanas", semanas).containsExactly(cenario.membro1Pascom.getId());
+            assertThat(usuariosAtivos(leitura)).as("Leitura, %d semanas", semanas)
+                    .hasSize(1).doesNotContain(cenario.membro1Pascom.getId());
+        }
     }
 
     @Test

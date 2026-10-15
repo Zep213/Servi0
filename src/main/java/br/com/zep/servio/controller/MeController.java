@@ -9,12 +9,16 @@ import br.com.zep.servio.service.leitura.LeituraEscalaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import br.com.zep.servio.service.FotoPerfilService;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +32,7 @@ import java.util.List;
 public class MeController {
 
     private final MeService meService;
+    private final FotoPerfilService fotoPerfilService;
     private final LeituraEscalaService leituraEscalaService;
 
     @GetMapping
@@ -38,6 +43,19 @@ public class MeController {
     @PutMapping
     public MeResponseDTO atualizar(@Valid @RequestBody MeUpdateDTO request) {
         return meService.atualizar(request);
+    }
+
+    /** Foto de perfil (parte "arquivo"): JPEG ou PNG, até 2 MB; devolve o mesmo corpo do GET. */
+    @PutMapping("/foto")
+    public MeResponseDTO enviarFoto(@RequestPart(value = "arquivo", required = false) MultipartFile arquivo) {
+        fotoPerfilService.salvar(arquivo);
+        return meService.obter();
+    }
+
+    @DeleteMapping("/foto")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerFoto() {
+        fotoPerfilService.remover();
     }
 
     /** Escalas do próprio usuário logado; sem período, de hoje a +60 dias. */
