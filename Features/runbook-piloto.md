@@ -172,6 +172,28 @@ param de funcionar. Na Opção B isso já está coberto pelo serviço systemd.
 4. Se o SMTP já estiver configurado, confirme que o e-mail de convite chega numa caixa real
    (não localhost/Mailpit) e que o link de dentro do e-mail abre a URL pública e funciona.
 
+## Conta de demonstração (somente leitura)
+
+Para deixar alguém experimentar o sistema sem risco de estragar os dados reais do piloto,
+preencha `SERVIO_DEMO_EMAIL`/`SERVIO_DEMO_SENHA` (e opcionalmente `SERVIO_DEMO_NOME`) no
+`.env.prod` e reinicie o `app`:
+
+```
+docker compose --env-file .env.prod up -d app
+```
+
+No próximo início, essa conta é criada automaticamente como ADMIN na mesma paróquia (vê tudo:
+pastorais, escalas, financeiro, auditoria), mas qualquer tentativa de alterar algo (criar,
+editar, excluir) é bloqueada pelo `SomenteLeituraFilter` — a pessoa só navega e olha. Passe a
+URL pública e essas credenciais pra quem for só dar uma olhada, sem usar a conta real do ADMIN.
+Deixe as duas variáveis em branco se não quiser essa conta.
+
+Tem também a versão com visão de **membro** (perfil SERVIDOR, entra como MEMBRO da primeira
+pastoral cadastrada): preencha `SERVIO_DEMO_MEMBRO_EMAIL`/`SERVIO_DEMO_MEMBRO_SENHA` (e
+`SERVIO_DEMO_MEMBRO_NOME` se quiser) e reinicie o `app` do mesmo jeito. Mesma trava de somente
+leitura — dá pra mostrar as duas pontas do sistema (quem coordena vs. quem é escalado) sem
+nenhuma das duas poder alterar nada.
+
 ## Encerrar o piloto / voltar pro ambiente de dev
 
 Opção A:
