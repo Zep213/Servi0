@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import tools.jackson.databind.ObjectMapper;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -57,6 +58,9 @@ class PrazoConviteIT {
 
     @Autowired
     MockMvc mvc;
+    /** O mesmo relógio (e fuso, servio.fuso) do serviço: o runner roda em UTC e o app em America/Fortaleza. */
+    @Autowired
+    Clock clock;
     @Autowired
     ObjectMapper json;
     @Autowired
@@ -94,8 +98,8 @@ class PrazoConviteIT {
         comunidade = escala.comunidade(cenario.paroquiaA);
     }
 
-    private static LocalDateTime agoraMais(Duration duracao) {
-        return LocalDateTime.now().plus(duracao).withSecond(0).withNano(0);
+    private LocalDateTime agoraMais(Duration duracao) {
+        return LocalDateTime.now(clock).plus(duracao).withSecond(0).withNano(0);
     }
 
     private Celebracao celebracaoEm(LocalDateTime inicio) {
@@ -137,7 +141,7 @@ class PrazoConviteIT {
 
         LocalDateTime prazo = prazoDa(escalar(vagaDe(celebracao), cenario.membro2Pascom));
 
-        assertThat(prazo).isBetween(LocalDateTime.now().plusHours(24).minusMinutes(2), LocalDateTime.now().plusHours(24).plusMinutes(2));
+        assertThat(prazo).isBetween(LocalDateTime.now(clock).plusHours(24).minusMinutes(2), LocalDateTime.now(clock).plusHours(24).plusMinutes(2));
         assertThat(prazo).isBeforeOrEqualTo(celebracao.getData().atTime(celebracao.getHora()));
     }
 
