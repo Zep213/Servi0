@@ -16,11 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -54,6 +56,10 @@ class PapelEncerraSessaoIT {
     UsuarioPastoralRepository usuarioPastoralRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    JdbcTemplate jdbc;
+
+    private static final long DIAS = 24L * 60 * 60;
 
     CenarioParoquia cenario;
 
@@ -67,6 +73,15 @@ class PapelEncerraSessaoIT {
         Cookie sessao = ApoioTeste.login(mvc, quem.getEmail(), CenarioParoquia.SENHA);
         mvc.perform(get("/api/me").cookie(sessao)).andExpect(status().isOk());
         return sessao;
+    }
+
+    /** Duração gravada para a sessão (SessaoDuracao, decidida no login): 60 dias só de membro, 7 com papel de gestão. */
+    private int intervaloDaSessao(Cookie sessao) {
+        // o Spring Session grava o id da sessão em Base64 no cookie; no banco ele fica como UUID puro
+        String sessionId = new String(java.util.Base64.getDecoder().decode(sessao.getValue()),
+                java.nio.charset.StandardCharsets.UTF_8);
+        return jdbc.queryForObject("select max_inactive_interval from spring_session where session_id = ?",
+                Integer.class, sessionId);
     }
 
     private void sessaoViva(Cookie sessao) throws Exception {
@@ -99,12 +114,14 @@ class PapelEncerraSessaoIT {
     void promoverMembroACoordenadorDerrubaASessaoENovoLoginFunciona() throws Exception {
         Long pascom = cenario.pascom.getId();
         Cookie sessao = entrar(cenario.membro2Pascom);
+        assertThat(intervaloDaSessao(sessao)).isEqualTo(60 * DIAS);
 
         pedir(cenario.padreA, put("/api/usuarios-pastorais/{id}", participacao(cenario.membro2Pascom, pascom)),
                 corpo(cenario.membro2Pascom, pascom, "COORDENADOR")).andExpect(status().isOk());
 
         sessaoMorta(sessao);
-        entrar(cenario.membro2Pascom);
+        // o novo login já pega a duração de quem tem papel de gestão
+        assertThat(intervaloDaSessao(entrar(cenario.membro2Pascom))).isEqualTo(7 * DIAS);
     }
 
     @Test
@@ -116,10 +133,14 @@ class PapelEncerraSessaoIT {
                 corpo(cenario.coordenadorEcc, ecc, "MEMBRO")).andExpect(status().isOk());
         sessaoMorta(sessao);
 
+        // virou só MEMBRO: o novo login volta a 60 dias
         Cookie novaSessao = entrar(cenario.coordenadorEcc);
+        assertThat(intervaloDaSessao(novaSessao)).isEqualTo(60 * DIAS);
         pedir(cenario.padreA, delete("/api/usuarios-pastorais/{id}", participacao(cenario.coordenadorEcc, ecc)), null)
                 .andExpect(status().isNoContent());
         sessaoMorta(novaSessao);
+        // sem nenhum papel na Pascom e sem outro: perfil SERVIDOR sem papel conta como membro (60 dias)
+        assertThat(intervaloDaSessao(entrar(cenario.coordenadorEcc))).isEqualTo(60 * DIAS);
     }
 
     @Test
