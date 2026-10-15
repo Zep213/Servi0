@@ -116,7 +116,8 @@ public class LeituraEscalaService {
             lista.add(new MembroPastoralDTO(up.getId(),
                     new Ref(up.getUsuario().getId(), up.getUsuario().getNome()),
                     up.getPapel(),
-                    veEmail ? up.getUsuario().getEmail() : null));
+                    veEmail ? up.getUsuario().getEmail() : null,
+                    up.getUsuario().estaAtivada()));
         }
         return lista;
     }
