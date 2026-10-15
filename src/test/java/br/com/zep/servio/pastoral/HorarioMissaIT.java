@@ -269,7 +269,7 @@ class HorarioMissaIT {
         como(cenario.coordenadorEcc, put("/api/pastorais/{id}/cobertura-missa", cenario.ecc.getId())
                 .content("{\"horarioMissaIds\":[" + dezoito.getId() + "]}")).andExpect(status().isOk());
 
-        Celebracao missaDasDez = celebracaoDe(dez, 40);
+        Celebracao missaDasDez = celebracaoDe(dez, 100);
         coberturaAutomaticaService.aplicarNaCriacao(missaDasDez, cenario.paroquiaA.getId());
 
         List<Vaga> vagas = vagaRepository.findByCelebracaoIdAndActiveTrue(missaDasDez.getId());
@@ -283,9 +283,9 @@ class HorarioMissaIT {
         ligarCoberturaComModelo(cenario.pascom, funcaoPascom);
         HorarioMissa dez = horarioDireto("10:00");
 
-        Celebracao gerada = celebracaoDe(dez, 41);
+        Celebracao gerada = celebracaoDe(dez, 101);
         coberturaAutomaticaService.aplicarNaCriacao(gerada, cenario.paroquiaA.getId());
-        Celebracao aMao = celebracaoDe(null, 42);
+        Celebracao aMao = celebracaoDe(null, 102);
         coberturaAutomaticaService.aplicarNaCriacao(aMao, cenario.paroquiaA.getId());
 
         assertThat(vagaRepository.findByCelebracaoIdAndActiveTrue(gerada.getId())).isEmpty();
@@ -295,12 +295,12 @@ class HorarioMissaIT {
     @Test
     void celebracaoMostraDeQualHorarioNasceu() throws Exception {
         HorarioMissa dez = horarioDireto("10:00");
-        Celebracao gerada = celebracaoDe(dez, 43);
+        Celebracao gerada = celebracaoDe(dez, 103);
 
         como(cenario.padreA, get("/api/celebracoes/{id}", gerada.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.horarioMissaId").value(dez.getId()));
-        como(cenario.padreA, get("/api/celebracoes/{id}", celebracaoDe(null, 44).getId()))
+        como(cenario.padreA, get("/api/celebracoes/{id}", celebracaoDe(null, 104).getId()))
                 .andExpect(jsonPath("$.horarioMissaId").doesNotExist());
     }
 }
