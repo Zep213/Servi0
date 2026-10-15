@@ -11,8 +11,8 @@
 ## 1. Acesso e combinados
 
 - [x] Dar acesso de escrita ao colaborador em `Zep213/Servi0` (Settings → Collaborators)
-- [ ] Proteger a branch `main`: merge só por PR, com 1 aprovação e o CI verde
-- [x] Decidir se o repositório fica privado já — adiantado para 14/10 (era previsto 15/02); repositório mudado para privado. Dependabot continua ativo; secret scanning/push protection nativos do GitHub saem do ar (exigiam ser público), mas o gitleaks do `ci.yml` continua rodando.
+- [x] Proteger a branch `main`: merge só por PR, com 1 aprovação e o CI verde (checks `build` e `frontend` obrigatórios)
+- [x] Decidir se o repositório fica privado já — voltado a **público** em 14/10: branch protection exige GitHub Pro em repo privado no plano free, então priorizamos a proteção da `main`. Secret scanning e push protection nativos do GitHub voltam a funcionar; gitleaks do `ci.yml` continua rodando também.
 - [ ] Combinar o fluxo de trabalho:
   - um branch por cartão (`feat/fila-email`, `fix/lembrete-token`)
   - PR pequeno; o outro revisa em até 48 horas
@@ -45,7 +45,7 @@
 
 ## 3. Repositório em dia
 
-- [ ] CI verde no `main` (`ci.yml`: gitleaks, testes, build da imagem, Trivy e job `frontend`)
+- [x] CI verde no `main` (`ci.yml`: gitleaks, testes, build da imagem, Trivy e job `frontend`)
 - [x] `Features/erros-conhecidos.md`: mover o item 13 (coordenador criar ADMIN) para Resolvidos; o `UsuarioService.exigirPodeDefinirPerfil` já impede
 - [x] `Features/features-implementadas.md`: tirar o item 13 de "Em desenvolvimento"
 - [x] `Features/features-futuras.md`: trocar pela ordem do cronograma (sprints 1 a 7) — feito para a sprint 1; sprints 2 a 7 pendentes do documento completo do cronograma
