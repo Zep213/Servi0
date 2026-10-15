@@ -262,7 +262,7 @@ public class EscalacaoService {
         alocacao.setOrigem(origem);
         alocacao.setEscaladoPor(usuarioLogadoReferencia());
         alocacao.setStatus(StatusConvite.PENDENTE);
-        alocacao.setDataLimiteResposta(conviteService.novoPrazo(vaga.getFuncao().getPastoral().getId()));
+        alocacao.setDataLimiteResposta(conviteService.novoPrazo(vaga.getFuncao().getPastoral().getId(), vaga.getCelebracao()));
         alocacaoRepository.save(alocacao);
         conviteService.emitir(alocacao, TipoNotificacao.CONVITE);
         return alocacao;
