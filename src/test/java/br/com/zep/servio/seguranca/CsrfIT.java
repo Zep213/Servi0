@@ -35,7 +35,7 @@ class CsrfIT {
         // cookie presente, mas sem o header: o CsrfFilter recusa antes de chegar no login
         mvc.perform(post("/api/auth/login").cookie(xsrf)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "qualquer@servio.dev")
+                        .param("login", "qualquer@servio.dev")
                         .param("senha", "qualquer1234"))
                 .andExpect(status().isForbidden());
     }
@@ -49,7 +49,7 @@ class CsrfIT {
         mvc.perform(post("/api/auth/login").cookie(xsrf)
                         .header("X-XSRF-TOKEN", xsrf.getValue())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "naoexiste@servio.dev")
+                        .param("login", "naoexiste@servio.dev")
                         .param("senha", "qualquer1234"))
                 .andExpect(status().isUnauthorized());
     }

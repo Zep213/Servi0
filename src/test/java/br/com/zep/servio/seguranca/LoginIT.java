@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -73,7 +74,7 @@ class LoginIT {
 
         mvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "padre@servio.dev")
+                        .param("login", "padre@servio.dev")
                         .param("senha", "senha12345"))
                 .andExpect(status().isNoContent())
                 .andExpect(cookie().exists("SERVIO_SESSION"))
@@ -86,14 +87,14 @@ class LoginIT {
 
         MvcResult semConta = mvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "naoexiste@servio.dev")
+                        .param("login", "naoexiste@servio.dev")
                         .param("senha", "qualquer1234"))
                 .andExpect(status().isUnauthorized())
                 .andReturn();
 
         MvcResult senhaErrada = mvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "existe@servio.dev")
+                        .param("login", "existe@servio.dev")
                         .param("senha", "senhaErrada1"))
                 .andExpect(status().isUnauthorized())
                 .andReturn();
@@ -109,14 +110,14 @@ class LoginIT {
         for (int i = 0; i < TentativasLogin.MAX_FALHAS; i++) {
             mvc.perform(post("/api/auth/login").with(csrf())
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .param("email", "bloqueio@servio.dev")
+                            .param("login", "bloqueio@servio.dev")
                             .param("senha", "senhaErrada1"))
                     .andExpect(status().isUnauthorized());
         }
 
         mvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "bloqueio@servio.dev")
+                        .param("login", "bloqueio@servio.dev")
                         .param("senha", "senha12345"))
                 .andExpect(status().isTooManyRequests())
                 .andExpect(header().exists("Retry-After"));
@@ -129,7 +130,7 @@ class LoginIT {
         // primeiro login "fixa" uma sessão válida, como se fosse a do atacante
         MvcResult primeiro = mvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "sessao@servio.dev")
+                        .param("login", "sessao@servio.dev")
                         .param("senha", "senha12345"))
                 .andExpect(status().isNoContent())
                 .andReturn();
@@ -139,7 +140,7 @@ class LoginIT {
         MvcResult segundo = mvc.perform(post("/api/auth/login")
                         .cookie(new Cookie("SERVIO_SESSION", idAntes)).with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "sessao@servio.dev")
+                        .param("login", "sessao@servio.dev")
                         .param("senha", "senha12345"))
                 .andExpect(status().isNoContent())
                 .andReturn();
@@ -154,7 +155,7 @@ class LoginIT {
 
         MvcResult login = mvc.perform(post("/api/auth/login").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "logout@servio.dev")
+                        .param("login", "logout@servio.dev")
                         .param("senha", "senha12345"))
                 .andExpect(status().isNoContent())
                 .andReturn();
@@ -165,5 +166,58 @@ class LoginIT {
 
         mvc.perform(get("/api/me").cookie(sessao))
                 .andExpect(status().isUnauthorized());
+    }
+
+    private Usuario usuarioComTelefone(String email, String telefone) {
+        criarUsuario(email, "senha12345", Perfil.SERVIDOR);
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCaseAndActiveTrue(email).orElseThrow();
+        usuario.setTelefone(telefone);
+        return usuarioRepository.saveAndFlush(usuario);
+    }
+
+    private org.springframework.test.web.servlet.ResultActions entrar(String login, String senha) throws Exception {
+        return mvc.perform(post("/api/auth/login").with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("login", login)
+                .param("senha", senha));
+    }
+
+    @Test
+    void entraComTelefoneEmTresFormatosNaMesmaConta() throws Exception {
+        Usuario usuario = usuarioComTelefone("fone@servio.dev", "+5583988124407");
+
+        for (String formato : new String[] {"(83) 9 8812-4407", "83988124407", "+55 83 98812-4407"}) {
+            MvcResult login = entrar(formato, "senha12345").andExpect(status().isNoContent()).andReturn();
+            mvc.perform(get("/api/me").cookie(login.getResponse().getCookie("SERVIO_SESSION")))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(usuario.getId()));
+        }
+    }
+
+    @Test
+    void telefoneInexistenteDa401ComAMesmaMensagem() throws Exception {
+        usuarioComTelefone("fone2@servio.dev", "+5583988124407");
+
+        String semConta = entrar("(11) 98888-7777", "senha12345")
+                .andExpect(status().isUnauthorized()).andReturn().getResponse().getContentAsString();
+        String senhaErrada = entrar("(83) 98812-4407", "senhaErrada1")
+                .andExpect(status().isUnauthorized()).andReturn().getResponse().getContentAsString();
+
+        assertThat(semConta).isEqualTo(senhaErrada).contains("E-mail, telefone ou senha inválidos");
+    }
+
+    @Test
+    void falhasPeloEmailEPeloTelefoneDaMesmaPessoaSomam() throws Exception {
+        usuarioComTelefone("soma@servio.dev", "+5583988124407");
+
+        for (int i = 0; i < 3; i++) {
+            entrar("soma@servio.dev", "senhaErrada1").andExpect(status().isUnauthorized());
+        }
+        for (int i = 0; i < 2; i++) {
+            entrar("83988124407", "senhaErrada1").andExpect(status().isUnauthorized());
+        }
+
+        entrar("soma@servio.dev", "senha12345").andExpect(status().isTooManyRequests());
+        entrar("(83) 98812-4407", "senha12345").andExpect(status().isTooManyRequests());
     }
 }
