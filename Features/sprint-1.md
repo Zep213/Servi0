@@ -276,3 +276,9 @@ Ver também: `sprint-0.md`.
       conta daquele e-mail; quem testa pares e-mail/telefone consegue descobrir se pertencem à mesma conta
 - [ ] (7) `Max-Age` do cookie é absoluto, não desliza (60 dias após o login); quem manda na sessão é o banco
       (`max_inactive_interval`, que desliza com o uso)
+- [ ] (8) `PUT /api/me`: 409 x 200 revela se um telefone existe no sistema. Mitigado com limite de 5 tentativas
+      por 15 min por usuário (429), mas quem tem conta ainda consegue testar números devagar
+- [ ] (9) Sem verificação por SMS, dá para reservar o telefone de outra pessoa (quem cadastra primeiro fica com
+      ele; o dono real só descobre ao receber 409). Verificação fica para quando houver envio de SMS
+- [ ] (10) Os tipos gerados do front (`frontend/src/api/generated`) não foram regenerados: rodar com
+      `OPENAPI_ENABLED=true`, conferir GET e PUT em `/v3/api-docs` e `npm run gen:api` quando houver Postgres
