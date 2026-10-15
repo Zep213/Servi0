@@ -2,6 +2,7 @@ package br.com.zep.servio.model;
 
 import br.com.zep.servio.model.enumerated.Aparencia;
 import br.com.zep.servio.model.enumerated.Perfil;
+import br.com.zep.servio.model.enumerated.StatusAtivacao;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -58,5 +59,13 @@ public class Usuario extends TenantEntity {
     /** Conta que ainda espera a ativação: sem senha e nunca ativada. */
     public boolean estaAtivada() {
         return senha != null || ativadoEm != null;
+    }
+
+    /** Tem senha: ATIVA. Sem senha e nunca ativada: PENDENTE. Sem senha mas já ativada: PROTEGIDA. */
+    public StatusAtivacao statusAtivacao() {
+        if (senha != null) {
+            return StatusAtivacao.ATIVA;
+        }
+        return ativadoEm != null ? StatusAtivacao.PROTEGIDA : StatusAtivacao.PENDENTE;
     }
 }
