@@ -87,6 +87,21 @@ public class UsuarioService extends CrudService<Usuario, UsuarioRequestDTO, Usua
         throw new AccessDeniedException("Você não tem permissão para criar ou alterar uma conta com este perfil");
     }
 
+    /**
+     * Conta de membro sem senha (ativada depois, pelo link do e-mail): SERVIDOR, e-mail único entre ativos e a
+     * mesma regra de quem pode criar conta de hoje. Não cria papel nem envia nada: quem chama faz isso.
+     */
+    @Transactional
+    public Usuario criarSemSenha(String nome, String email) {
+        Usuario usuario = new Usuario();
+        usuario.setNome(nome.trim());
+        usuario.setEmail(email.trim());
+        usuario.setPerfil(Perfil.SERVIDOR);
+        usuario.setParoquiaId(paroquiaId());
+        validar(usuario);
+        return repository.save(usuario);
+    }
+
     /** Para achar quem adicionar a uma pastoral: PADRE, ADMIN ou coordenador de alguma pastoral. */
     @Transactional(readOnly = true)
     /** Busca resumida por nome (parte do nome, sem diferenciar maiúsculas) dentro da paróquia. */
