@@ -195,9 +195,13 @@ Ler: `service/escalacao/EscalacaoService` (`sortear`, `membrosSorteaveis`, `RECU
 
 Cuidados com testes existentes:
 
-- [ ] `SorteioIT.soMembroESorteadoCoordenacaoECargosFicamDeFora` e `redesSociaisNaoSorteia` **deixam de valer** como
-      estão: reescrever. Novo sentido: "papel sem habilidade da vaga não é sorteado; com habilidade, é"
-- [ ] `tecnicoSorteiaComoOVice` e `viceSorteia` (quem pode **chamar** o sorteio) continuam como estão
+- [ ] `SorteioIT.soMembroESorteadoCoordenacaoECargosFicamDeFora` **deixa de valer** como está: reescrever. Novo sentido:
+      "papel sem habilidade da vaga não é sorteado; com habilidade, é" (virou
+      `quemNaoTemAHabilidadeNaoEhSorteadoSejaQualForOPapel` + `coordenacaoECargosComAHabilidadeSaoSorteados...`)
+- [ ] `redesSociaisNaoSorteia`, `tecnicoSorteiaComoOVice` e `viceSorteia` testam quem pode **chamar** o sorteio (redes
+      sociais 403; técnico e vice passam), não quem é sorteado: **continuam como estão**
+- [ ] `NotificacaoIT.vagaQueFicouAbertaAvisaOCoordenador` (vaga de 50 sorteada com a regra desligada) continua válida: com o
+      filtro fora há mais candidatos, mas a vaga segue incompleta
 - [ ] **O `SorteioIT` passa a rodar com a regra `HABILIDADE` ligada** (`@TestPropertySource`) e a semear habilidade para
       as 7 pessoas que hoje são "os sorteáveis" da Pascom (`membro1`, `membro2` e os 5 extras) nas funções que as vagas
       usam. Sem isso, tirar o filtro "só MEMBRO" faria **todos** os papéis da Pascom virarem candidatos (regra
