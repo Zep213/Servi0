@@ -10,6 +10,7 @@ import br.com.zep.servio.model.dto.RecuperacaoRequestDTO;
 import br.com.zep.servio.model.dto.RedefinirSenhaRequestDTO;
 import br.com.zep.servio.service.conta.AtivacaoContaService;
 import br.com.zep.servio.service.conta.LimiteContaPublica;
+import br.com.zep.servio.service.conta.ProtecaoContaService;
 import br.com.zep.servio.service.conta.RecuperacaoSenhaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -33,15 +34,18 @@ public class ContaPublicaController {
 
     private final AtivacaoContaService ativacaoContaService;
     private final RecuperacaoSenhaService recuperacaoSenhaService;
+    private final ProtecaoContaService protecaoContaService;
     private final LimiteContaPublica limite;
     private final Executor executor;
 
     /** Construtor escrito à mão: o Lombok não copia o @Qualifier (mesmo motivo do {@code FilaEmail}). */
     public ContaPublicaController(AtivacaoContaService ativacaoContaService,
-                                  RecuperacaoSenhaService recuperacaoSenhaService, LimiteContaPublica limite,
+                                  RecuperacaoSenhaService recuperacaoSenhaService,
+                                  ProtecaoContaService protecaoContaService, LimiteContaPublica limite,
                                   @Qualifier(AsyncConfig.EXECUTOR_EMAIL) Executor executor) {
         this.ativacaoContaService = ativacaoContaService;
         this.recuperacaoSenhaService = recuperacaoSenhaService;
+        this.protecaoContaService = protecaoContaService;
         this.limite = limite;
         this.executor = executor;
     }
@@ -94,7 +98,22 @@ public class ContaPublicaController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void redefinirSenha(@Valid @RequestBody RedefinirSenhaRequestDTO request, HttpServletRequest http) {
         exigirDentroDoLimite(http);
-        recuperacaoSenhaService.redefinir(request.token(), request.senha());
+        recuperacaoSenhaService.redefinir(request.token(), request.senha(), http.getHeader("User-Agent"));
+    }
+
+    @PostMapping("/protecao/detalhes")
+    public RecuperacaoDetalhesDTO detalhesDaProtecao(@Valid @RequestBody ConfirmacaoTokenRequestDTO request,
+                                                     HttpServletRequest http) {
+        exigirDentroDoLimite(http);
+        return protecaoContaService.detalhes(request.token());
+    }
+
+    /** "Não fui eu": zera a senha, derruba as sessões e manda o link de recuperação para o e-mail da conta. */
+    @PostMapping("/protecao")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void proteger(@Valid @RequestBody ConfirmacaoTokenRequestDTO request, HttpServletRequest http) {
+        exigirDentroDoLimite(http);
+        protecaoContaService.proteger(request.token());
     }
 
     private void exigirDentroDoLimite(HttpServletRequest http) {
