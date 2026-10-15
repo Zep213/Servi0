@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -139,9 +140,11 @@ class FotoPerfilIT {
         buscar(cenario.membro1Pascom, "/api/me").andExpect(jsonPath("$.fotoUrl").isString());
         String membros = buscar(cenario.coordenadorPascom, "/api/pastorais/" + cenario.pascom.getId() + "/membros")
                 .andReturn().getResponse().getContentAsString();
-        String fotoUrl = JsonPath.read(membros,
-                "$[?(@.usuario.id == " + cenario.membro1Pascom.getId() + ")].fotoUrl[0]");
-        assertThat(fotoUrl).startsWith("/api/fotos/" + cenario.membro1Pascom.getId());
+        // filtro do JsonPath devolve sempre uma lista, mesmo com um só item
+        List<String> fotoUrls = JsonPath.read(membros,
+                "$[?(@.usuario.id == " + cenario.membro1Pascom.getId() + ")].fotoUrl");
+        assertThat(fotoUrls).hasSize(1);
+        assertThat(fotoUrls.get(0)).startsWith("/api/fotos/" + cenario.membro1Pascom.getId());
     }
 
     @Test
