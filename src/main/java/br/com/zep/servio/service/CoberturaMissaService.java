@@ -7,17 +7,22 @@ import br.com.zep.servio.model.HorarioMissa;
 import br.com.zep.servio.model.Pastoral;
 import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.model.dto.HorarioMissaDTOs.CoberturaMissaItemDTO;
+import br.com.zep.servio.repository.CelebracaoRepository;
 import br.com.zep.servio.repository.CoberturaMissaRepository;
 import br.com.zep.servio.repository.HorarioMissaRepository;
 import br.com.zep.servio.repository.PastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
 import br.com.zep.servio.security.UsuarioLogado;
+import br.com.zep.servio.service.agenda.GeracaoMissasService;
+import br.com.zep.servio.service.escalacao.ConfiguracaoPastoralService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,6 +43,11 @@ public class CoberturaMissaService {
     private final PastoraisPermissao pastoraisPermissao;
     private final UsuarioLogado usuarioLogado;
     private final AuditLogService auditLogService;
+    private final GeracaoMissasService geracaoMissasService;
+    private final CoberturaAutomaticaService coberturaAutomaticaService;
+    private final ConfiguracaoPastoralService configuracaoPastoralService;
+    private final CelebracaoRepository celebracaoRepository;
+    private final Clock clock;
 
     @Transactional(readOnly = true)
     public List<CoberturaMissaItemDTO> listar(Long pastoralId) {
@@ -86,6 +96,17 @@ public class CoberturaMissaService {
                 nova.setHorarioMissa(horario);
                 nova.setParoquiaId(usuarioLogado.paroquiaId());
                 repository.save(nova);
+            }
+        }
+        // horário recém-coberto: garante as missas dele e dá as vagas da pastoral nas que já existem
+        for (HorarioMissa horario : horarios) {
+            if (jaCobertos.contains(horario.getId())) {
+                continue;
+            }
+            geracaoMissasService.gerar(horario);
+            if (configuracaoPastoralService.coberturaAutomaticaLigada(pastoralId)) {
+                coberturaAutomaticaService.aplicarFuturas(pastoral, celebracaoRepository
+                        .findByHorarioMissaIdAndDataGreaterThanEqualAndActiveTrue(horario.getId(), LocalDate.now(clock)));
             }
         }
         Usuario autor = usuarioRepository.findById(usuarioLogado.id()).orElseThrow();

@@ -17,6 +17,11 @@ public interface CelebracaoRepository extends TenantRepository<Celebracao> {
 
     List<Celebracao> findByParoquiaIdAndDataGreaterThanEqualAndActiveTrue(Long paroquiaId, LocalDate data);
 
+    /** Inclui a celebração desativada: missa cancelada não é recriada pela geração automática. */
+    boolean existsByHorarioMissaIdAndData(Long horarioMissaId, LocalDate data);
+
+    List<Celebracao> findByHorarioMissaIdAndDataGreaterThanEqualAndActiveTrue(Long horarioMissaId, LocalDate data);
+
     /**
      * Celebrações visíveis a quem não é PADRE/ADMIN (Parte 4): as que têm vaga de alguma
      * pastoral do usuário. DISTINCT porque uma celebração pode ter vagas de mais de uma
