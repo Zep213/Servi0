@@ -13,6 +13,8 @@ import br.com.zep.servio.model.dto.PainelDTO.ConvitePrazoDTO;
 import br.com.zep.servio.model.dto.PainelDTO.Pendencias;
 import br.com.zep.servio.model.dto.PainelDTO.RecusaSemSubstitutoDTO;
 import br.com.zep.servio.model.dto.PainelDTO.StatusPainel;
+import br.com.zep.servio.model.enumerated.PapelPastoral;
+import br.com.zep.servio.model.enumerated.Perfil;
 import br.com.zep.servio.model.enumerated.StatusAlteracaoPendente;
 import br.com.zep.servio.model.enumerated.StatusConvite;
 import br.com.zep.servio.repository.AlocacaoRepository;
@@ -111,14 +113,14 @@ public class PainelService {
     }
 
     /**
-     * Pendências da pastoral para o usuário logado (/api/me). Quem vê o painel (mesma regra do
-     * PainelController): convites vencendo + recusas sem substituto + alterações do vice aguardando.
-     * Membro: quantos convites PENDENTE dele naquela pastoral. Não lança 403/404: só conta.
+     * Pendências da pastoral para o usuário logado (/api/me). Quem vê o painel: convites vencendo + recusas
+     * sem substituto + alterações do vice aguardando. Membro: quantos convites PENDENTE dele naquela pastoral.
+     * Não lança 403/404: só conta. {@code veOPainel} vem de {@link #veOPainel}, já decidido pelo chamador.
      */
     @Transactional(readOnly = true)
-    public long contarPendencias(Long pastoralId) {
+    public long contarPendencias(Long pastoralId, boolean veOPainel) {
         Long paroquiaId = usuarioLogado.paroquiaId();
-        if (!pastoraisPermissao.temQualquerPapel(pastoralId, PAPEIS_QUE_VEEM.toArray(String[]::new))) {
+        if (!veOPainel) {
             return alocacaoRepository.contarDoUsuarioNaPastoral(paroquiaId, usuarioLogado.id(), pastoralId,
                     StatusConvite.PENDENTE);
         }
@@ -126,6 +128,11 @@ public class PainelService {
         return convitesVencendo(paroquiaId, pastoralId, agora).size()
                 + recusasSemSubstituto(paroquiaId, pastoralId, agora.toLocalDate()).size()
                 + alteracoesAguardando(paroquiaId, pastoralId).size();
+    }
+
+    /** Mesma regra do painel (ADMIN/PADRE passam; os demais pelo papel), sem consultar o banco. */
+    public static boolean veOPainel(Perfil perfil, PapelPastoral papel) {
+        return perfil == Perfil.ADMIN || perfil == Perfil.PADRE || PAPEIS_QUE_VEEM.contains(papel.name());
     }
 
     /**

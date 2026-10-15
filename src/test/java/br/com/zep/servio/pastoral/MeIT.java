@@ -127,6 +127,20 @@ class MeIT {
     }
 
     @Test
+    void telefoneGrandeDemaisDa400PelaValidacao() throws Exception {
+        putMe(cenario.membro1Pascom, "{\"telefone\":\"" + "9".repeat(41) + "\"}")
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void sextaTentativaDeTelefoneDa429() throws Exception {
+        for (int i = 0; i < 5; i++) {
+            putMe(cenario.membro1Pascom, "{\"telefone\":\"12345\"}").andExpect(status().isBadRequest());
+        }
+        putMe(cenario.membro1Pascom, "{\"telefone\":\"83988124407\"}").andExpect(status().isTooManyRequests());
+    }
+
+    @Test
     void telefoneVazioOuNuloNaoApaga() throws Exception {
         putMe(cenario.membro1Pascom, "{\"telefone\":\"83988124407\"}").andExpect(status().isOk());
 

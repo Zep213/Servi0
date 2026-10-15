@@ -1,7 +1,7 @@
 package br.com.zep.servio.service;
 
 import br.com.zep.servio.exception.ConflitoException;
-import br.com.zep.servio.exception.RegraNegocioException;
+import br.com.zep.servio.exception.ServioException;
 import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.model.dto.MeResponseDTO;
 import br.com.zep.servio.model.dto.MeUpdateDTO;
@@ -10,11 +10,13 @@ import br.com.zep.servio.model.enumerated.Perfil;
 import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.SessaoService;
+import br.com.zep.servio.security.TentativasLogin;
 import br.com.zep.servio.security.UsuarioLogado;
 import br.com.zep.servio.service.escalacao.PainelService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -43,7 +45,7 @@ class MeServiceTest {
     @BeforeEach
     void setUp() {
         service = new MeService(repository, mock(PasswordEncoder.class), usuarioLogado, mock(SessaoService.class),
-                usuarioPastoralRepository, mock(PainelService.class), auditLogService);
+                usuarioPastoralRepository, mock(PainelService.class), auditLogService, new TentativasLogin());
         usuario = new Usuario();
         usuario.setId(7L);
         usuario.setParoquiaId(1L);
@@ -73,9 +75,10 @@ class MeServiceTest {
 
     @Test
     void telefoneInvalidoLancaRegraDeNegocio() {
-        RegraNegocioException erro = assertThrows(RegraNegocioException.class,
+        ServioException erro = assertThrows(ServioException.class,
                 () -> service.atualizar(new MeUpdateDTO("12345", null, null)));
         assertEquals("Telefone inválido", erro.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, erro.getStatus());
     }
 
     @Test
@@ -115,6 +118,25 @@ class MeServiceTest {
         usuario.setTelefone("+5583988124407");
         service.atualizar(pular);
         assertEquals(0, usuario.getTelefonePulos());
+    }
+
+    @Test
+    void sextaTentativaDeTelefoneNoPeriodoDa429() {
+        MeUpdateDTO tentativa = new MeUpdateDTO("83988124407", null, null);
+        when(repository.existsByTelefoneAndActiveTrueAndIdNot("+5583988124407", 7L)).thenReturn(true);
+        for (int i = 0; i < TentativasLogin.MAX_FALHAS; i++) {
+            assertThrows(ConflitoException.class, () -> service.atualizar(tentativa));
+        }
+
+        ServioException erro = assertThrows(ServioException.class, () -> service.atualizar(tentativa));
+        assertEquals(HttpStatus.TOO_MANY_REQUESTS, erro.getStatus());
+    }
+
+    @Test
+    void pulosTemTeto() {
+        usuario.setTelefonePulos((short) 3);
+        service.atualizar(new MeUpdateDTO(null, null, true));
+        assertEquals(3, usuario.getTelefonePulos());
     }
 
     @Test
