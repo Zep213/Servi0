@@ -281,11 +281,16 @@ Ler: `controller/PastoralLeituraController` (`membros`), `service/leitura/Leitur
 
 - [ ] Enum `StatusAtivacao` (`model/enumerated`): `PENDENTE` (sem senha e nunca ativada: o link de ativação está
       esperando), `PROTEGIDA` (sem senha, mas já ativada: a pessoa usou "Proteger minha conta" e falta definir a senha
-      nova por e-mail), `ATIVA` (tem senha). Método `StatusAtivacao.de(Usuario)`; sem consulta nova
+      nova por e-mail), `ATIVA` (tem senha). Método `Usuario.statusAtivacao()` (implementado assim, em vez de `StatusAtivacao.de`); sem consulta nova.
+      **`PROTEGIDA` já está no enum**, embora nenhuma conta chegue nesse estado até o "Proteger minha conta" da sprint 2
+      (PR 30) entrar: o estado já é representável pelos dados, e assim o contrato do front não muda depois
 - [ ] `GET /api/pastorais/{pastoralId}/membros` **continua devolvendo lista** (não vira `Page`: o front atual
       depende disso) e ganha filtros opcionais, todos combináveis: `nome` (parte do nome, sem diferenciar maiúsculas
       nem acentos), `papel` (`PapelPastoral`), `status` (`StatusAtivacao`) e `habilidade` (id de função da
-      pastoral). Parâmetro inválido: 400. O filtro roda no banco (uma consulta), não em memória
+      pastoral). Parâmetro inválido: 400 (novo handler de `MethodArgumentTypeMismatchException`; antes seria 500).
+      **Implementado em memória, não no banco** (desvio do plano): os filtros rodam sobre a lista da pastoral já carregada
+      (uma consulta, dezenas de pessoas) e o de habilidade usa mais uma consulta da função pedida. Nome sem acento no banco
+      exigiria a extensão `unaccent` (migration) ou `translate` em HQL, que não deu para validar sem Docker. Sem N+1
 - [ ] `MembroPastoralDTO` ganha `statusAtivacao`; `ativada` (sprint 2) **continua** para o front que já o usa. O
       que cada papel vê, na mesma regra de hoje do e-mail: **`email` e `statusAtivacao` só para quem coordena** (ou
       PADRE/ADMIN, que valem como coordenador); os demais veem nome, papel e `fotoUrl`, sem contato nem status.
@@ -365,6 +370,8 @@ Dúvidas reais deste planejamento. Nenhuma foi decidida por palpite: a coluna "p
 | Guloso dinâmico (recalcular a cada vaga) x ordem calculada uma vez | Dinâmico: a ordem certa depende de quem já foi escolhido, e o custo é baixo (poucas vagas por celebração). Não é um solucionador ótimo; em casos raros um arranjo melhor existe e o guloso não acha (a pastoral completa pelo manual) | 4 |
 | `ativada` (boolean da sprint 2) e `email` aparecem para todos os papéis hoje? | Mantém como está nesta sprint. Revisão de privacidade (esconder `ativada`/`email` de quem não coordena) fica registrada, sem mudar comportamento fora do cartão | 5 |
 | Detalhe do membro mostra telefone para a coordenação? | Não nesta sprint: telefone de outra pessoa só aparece quando houver uma tela e uma regra de privacidade definidas. Fora do detalhe: nada de telefone em listas | 5 |
+| Filtros da lista de membros em memória em vez de no banco | Aceito: lista de uma pastoral tem dezenas de pessoas e vem em uma consulta. Se uma pastoral crescer muito, trocar o filtro de nome por `unaccent`/`translate` no banco (migration da extensão) e paginar | 5 |
+| `PROTEGIDA` no enum antes do PR 30 estar na `main` | Mantido: estado derivável dos dados (sem senha e já ativada); só passa a ocorrer quando o "Proteger minha conta" mergear | 5 |
 | Conta pendente (cadastrada e nunca ativada) não expira (já registrado na sprint 2) | O `StatusAtivacao.PENDENTE` deixa a coordenação **ver** quem está parado; o job de limpeza continua em aberto | 5 |
 | Nomes de rotas e de campos (sem o "Mapa de endpoints") | Proposta no "Contrato combinado"; confirmar com o colaborador antes de começar os cartões 1 e 5 | 1 a 5 |
 | `UsuarioFuncao.desativar` hoje é exclusão lógica e o histórico de quem tinha a habilidade se perde se alguém desmarcar e remarcar | Aceito: o `AuditLog` `HABILIDADE_ALTERADA` registra cada mudança | 1 |
