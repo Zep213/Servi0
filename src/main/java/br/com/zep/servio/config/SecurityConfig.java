@@ -49,7 +49,7 @@ public class SecurityConfig {
             "/api/pastorais/*/config/**", "/api/pastorais/*/financeiro/**", "/api/pastorais/*/reunioes/**",
             "/api/pastorais/*/modelos-vaga/**", "/api/alocacoes/**", "/api/usuarios-pastorais/**",
             "/api/celebracoes/**", "/api/vagas/**", "/api/pastorais/*/celebracoes/**", "/api/pastorais/*/painel",
-            "/api/pastorais/*/membros"
+            "/api/pastorais/*/membros", "/api/pastorais/*/membros/**"
     };
 
     private final TentativasLogin tentativasLogin;
@@ -121,6 +121,7 @@ public class SecurityConfig {
                         // públicas
                         .requestMatchers(HttpMethod.GET, "/api/auth/csrf").permitAll()
                         .requestMatchers("/api/confirmacoes/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/contas/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
 
                         // qualquer usuário logado

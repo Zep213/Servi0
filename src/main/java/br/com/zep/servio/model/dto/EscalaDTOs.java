@@ -39,6 +39,7 @@ public final class EscalaDTOs {
     /** Escala de uma pastoral numa celebração (GET /api/pastorais/{id}/celebracoes/{cid}/escala). */
     public record EscalaCelebracaoDTO(Long celebracaoId, List<VagaEscalaDTO> vagas) {}
 
-    /** Membro de uma pastoral. O e-mail só vem para COORDENADOR, PADRE e ADMIN (null para os demais). */
-    public record MembroPastoralDTO(Long usuarioPastoralId, Ref usuario, PapelPastoral papel, String email) {}
+    /** Membro de uma pastoral. O e-mail e {@code ativada} só vêm para COORDENADOR, PADRE e ADMIN (null para os demais). */
+    public record MembroPastoralDTO(Long usuarioPastoralId, Ref usuario, PapelPastoral papel, String email,
+                                    Boolean ativada) {}
 }

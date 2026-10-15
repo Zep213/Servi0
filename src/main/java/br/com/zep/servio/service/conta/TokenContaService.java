@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Tokens de ativação, recuperação de senha e proteção da conta. O token puro é devolvido só a quem
@@ -76,13 +77,31 @@ public class TokenContaService {
         return registro.getUsuario();
     }
 
+    /** Mesmas regras do {@link #consumir}, mas não usa o token: serve às telas que só mostram o link ("Olá, Maria"). */
+    @Transactional(readOnly = true)
+    public Usuario consultar(String token, TipoTokenConta tipo) {
+        TokenConta registro = repository.buscarPorHash(tokenConvite.hash(token))
+                .filter(t -> t.getTipo() == tipo && t.getUsadoEm() == null && t.getUsuario().isActive())
+                .orElseThrow(TokenContaInvalidoException::new);
+        if (!registro.getExpiraEm().isAfter(LocalDateTime.now(clock))) {
+            throw new TokenContaVencidoException();
+        }
+        return registro.getUsuario();
+    }
+
+    /** Quando o token pendente deste tipo foi emitido, se houver (limite de reenvio). */
+    @Transactional(readOnly = true)
+    public Optional<LocalDateTime> emitidoEm(Usuario usuario, TipoTokenConta tipo) {
+        return repository.findFirstByUsuarioIdAndTipoAndUsadoEmIsNull(usuario.getId(), tipo).map(TokenConta::getCriadoEm);
+    }
+
     /** Apaga todos os pendentes da pessoa, de qualquer tipo (usado quando a senha muda). */
     @Transactional
     public void invalidar(Usuario usuario) {
         repository.apagarPendentes(usuario.getId());
     }
 
-    private Duration prazoDe(TipoTokenConta tipo) {
+    public Duration prazoDe(TipoTokenConta tipo) {
         return switch (tipo) {
             case ATIVACAO -> prazoAtivacao;
             case RECUPERACAO -> prazoRecuperacao;

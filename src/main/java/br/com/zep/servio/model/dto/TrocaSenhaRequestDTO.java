@@ -1,9 +1,9 @@
 package br.com.zep.servio.model.dto;
 
+import br.com.zep.servio.util.validacao.SenhaBcrypt;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 public record TrocaSenhaRequestDTO(
     @NotBlank String senhaAtual,
-    @NotBlank @Size(min = 8, max = 72) String senhaNova
+    @NotBlank @SenhaBcrypt String senhaNova
 ) {}

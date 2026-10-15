@@ -4,6 +4,7 @@ import br.com.zep.servio.exception.ConflitoException;
 import br.com.zep.servio.exception.RegraNegocioException;
 import br.com.zep.servio.exception.ServioException;
 import br.com.zep.servio.mapper.UsuarioPastoralMapper;
+import br.com.zep.servio.model.Usuario;
 import br.com.zep.servio.model.UsuarioPastoral;
 import br.com.zep.servio.model.dto.UsuarioPastoralRequestDTO;
 import br.com.zep.servio.model.dto.UsuarioPastoralResponseDTO;
@@ -121,7 +122,7 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
      * mensagem explícita em vez do "não encontrado" genérico — só quem já não é padre/ADMIN
      * cai aqui (eles sempre passam em {@code visivel()}).
      */
-    private void exigirGestor(Long pastoralId, PapelPastoral papelAlvo) {
+    public void exigirGestor(Long pastoralId, PapelPastoral papelAlvo) {
         if (papelAlvo == PapelPastoral.COORDENADOR) {
             if (!pastoraisPermissao.ehAdmin() && !pastoraisPermissao.ehPadre()) {
                 throw new AccessDeniedException("Só o padre ou o ADMIN atribuem o papel de coordenador");
@@ -134,6 +135,21 @@ public class UsuarioPastoralService extends CrudService<UsuarioPastoral, Usuario
         if (!pastoraisPermissao.temPapel(pastoralId, PapelPastoral.COORDENADOR.name())) {
             throw new AccessDeniedException("Só o coordenador desta pastoral (ou padre/ADMIN) atribui papéis nela");
         }
+    }
+
+    /**
+     * Papel de uma conta recém-criada (cadastro de membro numa operação só): as mesmas regras do POST
+     * /api/usuarios-pastorais (quem pode atribuir, secretários e cargos únicos), na transação de quem chama.
+     */
+    @Transactional
+    public UsuarioPastoral criarParaConta(Usuario usuario, Long pastoralId, PapelPastoral papel) {
+        UsuarioPastoral entidade = new UsuarioPastoral();
+        entidade.setUsuario(usuario);
+        entidade.setPastoral(referencia(pastoralRepository, pastoralId, "Pastoral"));
+        entidade.setPapel(papel);
+        entidade.setParoquiaId(paroquiaId());
+        validar(entidade);
+        return repository.save(entidade);
     }
 
     private void resolverRelacoes(UsuarioPastoralRequestDTO request, UsuarioPastoral entity) {

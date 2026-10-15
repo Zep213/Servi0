@@ -27,6 +27,9 @@ public interface TokenContaRepository extends JpaRepository<TokenConta, Long> {
     @Query("select t from TokenConta t join fetch t.usuario where t.tokenHash = :hash")
     Optional<TokenConta> buscarPorHash(@Param("hash") String hash);
 
+    /** O índice parcial garante no máximo um pendente por tipo e pessoa. */
+    Optional<TokenConta> findFirstByUsuarioIdAndTipoAndUsadoEmIsNull(Long usuarioId, TipoTokenConta tipo);
+
     @Modifying
     @Query("delete from TokenConta t where t.usuario.id = :usuarioId and t.tipo = :tipo and t.usadoEm is null")
     void apagarPendentes(@Param("usuarioId") Long usuarioId, @Param("tipo") TipoTokenConta tipo);
