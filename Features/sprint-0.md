@@ -69,8 +69,25 @@
 
 **Back-end (Zep)**
 
-- [ ] Ler o fluxo atual de e-mail (`NotificacaoListener`, `EnvioEscalacao`, `LembretesJob`) para planejar a fila de e-mails
-- [ ] Ler o fluxo de login (`UsuarioDetailsService`, `LoginRateLimitFilter`, `LoginHandlers`, `SessaoService`) para planejar o login por telefone
+- [x] Ler o fluxo atual de e-mail (`NotificacaoListener`, `EnvioEscalacao`, `LembretesJob`) para planejar a fila de e-mails — ver notas abaixo
+- [x] Ler o fluxo de login (`UsuarioDetailsService`, `LoginRateLimitFilter`, `LoginHandlers`, `SessaoService`) para planejar o login por telefone — ver notas abaixo
+
+> **Notas para a sprint 1 (fila de e-mails):** hoje o envio é direto — `EnvioEscalacao.enviarSeguro` chama
+> `Notificador.enviar` numa thread do `emailExecutor` (fila em memória, `AsyncConfig`, capacidade 200); se o SMTP
+> falhar ou a aplicação reiniciar, o e-mail é perdido (só loga). A deduplicação já existe via
+> `notificacao_enviada` (índice único por alocação+tipo), então uma fila persistida pode reaproveitar esse
+> registro como "a enviar" em vez de "já enviado". Achado importante: `LembretesJob.lembretesDeResposta` troca
+> o token do convite a cada lembrete (`tokenConvite.gerar()` + novo hash), isso **invalida o link anterior** de
+> propósito — é exatamente o comportamento que a sprint 1 quer mudar ("lembrete sem invalidar o link").
+>
+> **Notas para a sprint 1 (login por telefone):** `UsuarioDetailsService.loadUserByUsername` hoje busca só por
+> e-mail (`findByEmailIgnoreCaseAndActiveTrue`); `Usuario` ainda não tem campo de telefone. O nome do campo do
+> formulário está hardcoded como `email` em três lugares que precisam mudar junto
+> (`SecurityConfig.usernameParameter("email")`, `LoginRateLimitFilter.doFilterInternal`,
+> `LoginHandlers.falha`) — os três leem `request.getParameter("email")`. `TentativasLogin.chaveEmail` e
+> `SessaoService.encerrarTodas` também usam o e-mail como chave (via `getUsername()`/`getName()` do principal);
+> se o login por telefone não normalizar para o mesmo e-mail como identidade da sessão, essas duas chaves
+> podem furar.
 
 ## 5. Contrato da sprint 1
 
