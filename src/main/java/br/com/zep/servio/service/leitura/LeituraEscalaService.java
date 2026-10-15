@@ -20,6 +20,7 @@ import br.com.zep.servio.repository.PastoralRepository;
 import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.VagaRepository;
 import br.com.zep.servio.security.PastoraisPermissao;
+import br.com.zep.servio.service.FotoPerfilService;
 import br.com.zep.servio.security.UsuarioLogado;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -52,6 +53,7 @@ public class LeituraEscalaService {
     private final PastoralRepository pastoralRepository;
     private final UsuarioPastoralRepository usuarioPastoralRepository;
     private final PastoraisPermissao pastoraisPermissao;
+    private final FotoPerfilService fotoPerfilService;
     private final UsuarioLogado usuarioLogado;
     private final Clock clock;
 
@@ -112,11 +114,15 @@ public class LeituraEscalaService {
         exigirPastoralVisivel(pastoralId, paroquiaId);
         boolean veEmail = pastoraisPermissao.temPapel(pastoralId, "COORDENADOR");
         List<MembroPastoralDTO> lista = new ArrayList<>();
-        for (UsuarioPastoral up : usuarioPastoralRepository.membrosDaPastoral(paroquiaId, pastoralId)) {
+        List<UsuarioPastoral> participacoes = usuarioPastoralRepository.membrosDaPastoral(paroquiaId, pastoralId);
+        Map<Long, String> fotos = fotoPerfilService.fotoUrls(
+                participacoes.stream().map(up -> up.getUsuario().getId()).toList());
+        for (UsuarioPastoral up : participacoes) {
             lista.add(new MembroPastoralDTO(up.getId(),
                     new Ref(up.getUsuario().getId(), up.getUsuario().getNome()),
                     up.getPapel(),
-                    veEmail ? up.getUsuario().getEmail() : null));
+                    veEmail ? up.getUsuario().getEmail() : null,
+                    fotos.get(up.getUsuario().getId())));
         }
         return lista;
     }

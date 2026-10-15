@@ -40,5 +40,6 @@ public final class EscalaDTOs {
     public record EscalaCelebracaoDTO(Long celebracaoId, List<VagaEscalaDTO> vagas) {}
 
     /** Membro de uma pastoral. O e-mail só vem para COORDENADOR, PADRE e ADMIN (null para os demais). */
-    public record MembroPastoralDTO(Long usuarioPastoralId, Ref usuario, PapelPastoral papel, String email) {}
+    public record MembroPastoralDTO(Long usuarioPastoralId, Ref usuario, PapelPastoral papel, String email,
+                                    String fotoUrl) {}
 }
