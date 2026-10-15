@@ -236,8 +236,9 @@ Ler: `service/escalacao/EscalacaoService` (`sortearCelebracao`, `sortear`, `trav
       dinâmico): a cada rodada, entre as vagas que ainda faltam preencher, avaliar os candidatos de cada uma (já sem
       quem foi escolhido nas rodadas anteriores, porque `UmaVagaPorCelebracaoRegra` os impede) e sortear **a de menor
       folga**, onde `folga = elegíveis disponíveis - faltam`. Empate: menos elegíveis primeiro; persistindo, menor id
-      (resultado determinístico para a mesma semente). Vaga com `folga < 0` (já se sabe que ficará incompleta) também
-      entra, pela mesma ordem (a pessoa rara vai para onde ela ainda completa uma vaga, não para a que já é perdida)
+      (resultado determinístico para a mesma semente). Vaga com `folga < 0` (já se sabe que ficará incompleta) vai **por
+      último**, depois de todas as que ainda dá para completar: ordenar só por folga mandaria a mais perdida para a
+      frente e ela gastaria a pessoa rara, que deve ir para onde ainda completa uma vaga (`SorteioService.sortearPorAperto`)
 - [ ] O custo é de `N` vagas por celebração avaliando `N` vezes cada (as vagas de uma pastoral por celebração são
       poucas, em geral menos de 10); se medir mal, reaproveitar a avaliação da rodada anterior e recalcular só o que
       mudou. Medir antes de otimizar
