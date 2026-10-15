@@ -134,20 +134,21 @@ testes `pastoral/{SorteioIT, AlocacaoRegrasIT, EscalacaoManualIT, UmaVagaPorCele
       mesmo `PUT /api/pastorais/{id}/config/HABILIDADE` das demais regras. Ver Pendente/decisões (piloto sem habilidades
       cadastradas)
 - [ ] Efeito em todo lugar que usa o catálogo, sem código novo: `GET /api/vagas/{id}/candidatos` mostra quem não tem
-      a habilidade como impedido; `POST /api/alocacoes` (escalação manual) barra com 409 quem não tem a habilidade,
-      e o coordenador pode forçar (`forcar`, só ele), igual às demais regras; o sorteio ignora quem tem impedimento
+      a habilidade como impedido; `POST /api/vagas/{id}/escalar` e `POST /api/alocacoes` (escalação manual) barram com **422** (`RegraNegocioException`,
+      o mesmo das demais regras) quem não tem a habilidade, e o coordenador pode forçar (`forcar`, só ele); o sorteio ignora quem tem impedimento
 
 Cuidados com testes existentes — **este é o cartão que mais mexe nos testes**:
 
-- [ ] Nenhum IT ou cenário de hoje cria `usuario_funcao`. Com a regra ligada por padrão, todo teste que escala ou
-      sorteia **pelo caminho real** (`POST /api/alocacoes`, `POST .../sortear`, `GET .../candidatos`) passaria a ver
-      todo mundo impedido. Solução central, em vez de editar cada teste: `CenarioParoquia.criar()` passa a dar a
-      **cada membro de uma pastoral a habilidade de todas as funções daquela pastoral** (uma linha `usuario_funcao`
-      por par), e `CenarioEscalacao` ganha um helper `habilidade(usuario, funcao)` e `semHabilidade(usuario, funcao)`
-      para os testes novos. Procurar com `grep -rn "alocacoes\|sortear\|candidatos\|escalar(" src/test` os testes
-      que exercitam o caminho real: `SorteioIT`, `AlocacaoRegrasIT`, `EscalacaoManualIT`, `ConvitePublicoIT`,
-      `AlteracaoPendenteIT`, `NotificacaoIT`, `PainelIT`, `LeituraIT`, `ConviteRespostaIT`, `JobsIT` (os que montam
-      alocação direto por `escala.alocacao(...)` não passam pela regra e não precisam de nada)
+- [ ] Nenhum IT ou cenário de hoje cria `usuario_funcao`, e vários ITs escalam pessoas que **nem são da pastoral**
+      (`PermissaoPorPapelIT.candidatoFresco()`, `AlteracaoPendenteIT`, `AlocacaoRegrasIT`, `ConviteRespostaIT` criam
+      `new Usuario()` soltos; `SorteioIT` cria membros e cargos no meio dos testes). `CenarioParoquia` tem 22 pontos de
+      construção. Dar habilidade a cada membro no cenário **não basta** e semear cada fábrica, sem Docker local, é
+      arriscado. **Decisão (aprovada no PR 38): interruptor de implantação**
+      `servio.escalacao.habilidade-ligada-por-padrao` (`true` em produção; `RegraElegibilidade.ligadaPorPadrao()` e o
+      `ConfiguracaoPastoralService.ativa`/`PastoralConfigService.efetivas` o respeitam quando a pastoral nunca
+      configurou). Só o `application-test.properties` o põe em `false`, então nenhum IT antigo muda; a regra é testada
+      **ligada** em `HabilidadeRegraIT` (`@TestPropertySource`) e em `HabilidadeRegraTest`. `CenarioParoquia` ganha
+      `habilitar(...)` e `habilitarTodos(...)` para os testes que precisam de habilidade
 - [ ] `ConfiguracaoPastoralServiceTest`/`/api/regras/catalogo`: o catálogo ganha mais uma regra; acertar os asserts
       de tamanho/lista
 - [ ] Testes de unidade das regras existentes não mudam
@@ -157,8 +158,8 @@ Testes novos — `HabilidadeRegraTest` (unitário, repositório mockado) e casos
 - [ ] `HabilidadeRegraTest`: com habilidade ativa → sem impedimento; sem linha → "Não tem a habilidade desta vaga";
       com a linha **desativada** → impedido
 - [ ] `candidatos` de uma vaga de som: quem só tem a habilidade de leitura aparece com o motivo; quem tem som, elegível
-- [ ] `POST /api/alocacoes` de quem não tem a habilidade: 409 com o motivo; com `forcar` pelo coordenador: 201; pelo
-      vice com `forcar`: 403 (a regra de forçar não muda)
+- [ ] `POST /api/vagas/{id}/escalar` de quem não tem a habilidade: 422 com o motivo; com `forcar` pelo coordenador: 201;
+      pelo vice com `forcar`: 403 (a regra de forçar não muda)
 - [ ] Sorteio só convida quem tem a habilidade; se ninguém tem, a vaga volta em `incompletas` e sai o
       `VagaSemElegiveisEvent` (aviso ao coordenador)
 - [ ] Pastoral que desliga `HABILIDADE` na configuração volta a sortear qualquer membro
@@ -197,7 +198,10 @@ Cuidados com testes existentes:
 - [ ] `SorteioIT.soMembroESorteadoCoordenacaoECargosFicamDeFora` e `redesSociaisNaoSorteia` **deixam de valer** como
       estão: reescrever. Novo sentido: "papel sem habilidade da vaga não é sorteado; com habilidade, é"
 - [ ] `tecnicoSorteiaComoOVice` e `viceSorteia` (quem pode **chamar** o sorteio) continuam como estão
-- [ ] Os demais testes do `SorteioIT` dependem de `CenarioParoquia` ter dado habilidade (cartão 2)
+- [ ] **O `SorteioIT` passa a rodar com a regra `HABILIDADE` ligada** (`@TestPropertySource`) e a semear habilidade para
+      as 7 pessoas que hoje são "os sorteáveis" da Pascom (`membro1`, `membro2` e os 5 extras) nas funções que as vagas
+      usam. Sem isso, tirar o filtro "só MEMBRO" faria **todos** os papéis da Pascom virarem candidatos (regra
+      desligada nos ITs) e as contagens do teste (7 convidados, `isSubsetOf(membrosPascom)`) quebrariam
 
 Testes novos — em `SorteioIT`:
 
@@ -323,7 +327,7 @@ Testes novos — `MembrosStatusIT`:
 - [ ] `GET/PUT /api/pastorais/{id}/membros/{usuarioId}/habilidades` (`PUT` com `{ funcaoIds: [] }`)
 - [ ] `GET /api/regras/catalogo`: nova regra `HABILIDADE` (sem parâmetros); `GET /api/pastorais/{id}/config` e
       `PUT /api/pastorais/{id}/config/HABILIDADE` passam a poder ligar e desligar `HABILIDADE`
-- [ ] `GET /api/vagas/{id}/candidatos` e `POST /api/alocacoes`: motivo novo "Não tem a habilidade desta vaga" (409
+- [ ] `GET /api/vagas/{id}/candidatos` e `POST /api/alocacoes`: motivo novo "Não tem a habilidade desta vaga" (422
       na escalação manual, forçável pelo coordenador)
 - [ ] `POST .../sortear`: sorteia todos os papéis com a habilidade; vagas voltam em `incompletas` quando ninguém tem
       a habilidade
@@ -350,6 +354,7 @@ Dúvidas reais deste planejamento. Nenhuma foi decidida por palpite: a coluna "p
 |---|---|---|
 | "Técnico" também como habilidade na escala (som, telão)? (prazo 23/11; já decidido como "só como cargo" em `features-futuras.md`) | Só como cargo: não nasce função "Técnico" no catálogo. Quem faz som/telão é uma função comum com a habilidade marcada para quem sabe | 2, 3 |
 | Regra `HABILIDADE` ligada por padrão: uma pastoral que ainda não cadastrou habilidades **não sorteia ninguém** até cadastrar | Ligada por padrão (igual às outras regras). Não há dado em produção ainda (piloto só em 15/02) e o `runbook-piloto.md` ganha o passo "cadastrar habilidades". Alternativa: nascer **desligada** e o coordenador ligar quando terminar de cadastrar (mais segura para quem já usa o sistema, mas o "pronto quando" deixa de valer sozinho) | 2 |
+| Os ITs antigos rodam com a regra `HABILIDADE` **desligada** (`servio.escalacao.habilidade-ligada-por-padrao=false` só no `application-test.properties`), então **não exercitam a interação com a regra ligada**; só `HabilidadeRegraIT`, `HabilidadeRegraTest` e (a partir do cartão 3) o `SorteioIT` a exercitam | Aceito nesta sprint: evita semear habilidade em ~10 ITs sem Docker local e com CI instável. **Tarefa futura:** quando houver Docker local ou CI estável, ligar a regra em todos os ITs (remover a linha do `application-test.properties`) e semear habilidade em cada fábrica de usuário/cenário | 2 |
 | Quem marca habilidade: só o coordenador da pastoral, ou também o vice? E a própria pessoa ("eu sei fazer som")? | Só coordenador (e padre/admin). Vice e a própria pessoa ficam para depois: a própria pessoa pedir exige um fluxo de aprovação | 1 |
 | Sem a restrição "só MEMBRO", coordenação e cargos passam a ser sorteáveis desde que tenham a habilidade. Alguma pastoral quer que a coordenação **nunca** seja sorteada, mesmo com habilidade? | Não: quem tem a habilidade é sorteável. Se for necessário, é um parâmetro da pastoral (`papeisSorteaveis` em `pastoral_config`), fora desta sprint | 3 |
 | Guloso dinâmico (recalcular a cada vaga) x ordem calculada uma vez | Dinâmico: a ordem certa depende de quem já foi escolhido, e o custo é baixo (poucas vagas por celebração). Não é um solucionador ótimo; em casos raros um arranjo melhor existe e o guloso não acha (a pastoral completa pelo manual) | 4 |
