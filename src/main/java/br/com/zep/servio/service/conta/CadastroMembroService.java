@@ -51,6 +51,7 @@ public class CadastroMembroService {
     private final UsuarioPastoralRepository usuarioPastoralRepository;
     private final PastoralRepository pastoralRepository;
     private final TokenContaService tokenContaService;
+    private final LimiteCadastroMembro limiteCadastro;
     private final FilaEmail filaEmail;
     private final AuditLogService auditLogService;
     private final UsuarioLogado usuarioLogado;
@@ -65,6 +66,10 @@ public class CadastroMembroService {
         Pastoral pastoral = pastoral(pastoralId);
         // antes de criar qualquer coisa: pastoral fora do alcance dá 404, sem permissão dá 403
         usuarioPastoralService.exigirGestor(pastoralId, papel);
+        if (!limiteCadastro.permitir(usuarioLogado.id())) {
+            throw new ServioException("Muitos cadastros em pouco tempo. Tente novamente mais tarde.",
+                    HttpStatus.TOO_MANY_REQUESTS);
+        }
 
         Usuario usuario = usuarioService.criarSemSenha(request.nome(), request.email());
         UsuarioPastoral participacao = usuarioPastoralService.criarParaConta(usuario, pastoralId, papel);
