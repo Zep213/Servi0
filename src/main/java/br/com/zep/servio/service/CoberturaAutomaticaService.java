@@ -5,6 +5,7 @@ import br.com.zep.servio.model.ModeloVaga;
 import br.com.zep.servio.model.Pastoral;
 import br.com.zep.servio.model.Vaga;
 import br.com.zep.servio.model.enumerated.TipoCelebracaoModelo;
+import br.com.zep.servio.repository.CoberturaMissaRepository;
 import br.com.zep.servio.repository.ModeloVagaRepository;
 import br.com.zep.servio.repository.PastoralRepository;
 import br.com.zep.servio.repository.VagaRepository;
@@ -28,11 +29,13 @@ public class CoberturaAutomaticaService {
     private final ModeloVagaRepository modeloVagaRepository;
     private final VagaRepository vagaRepository;
     private final ConfiguracaoPastoralService configuracaoPastoralService;
+    private final CoberturaMissaRepository coberturaMissaRepository;
 
     @Transactional
     public void aplicarNaCriacao(Celebracao celebracao, Long paroquiaId) {
         for (Pastoral pastoral : pastoralRepository.findByParoquiaIdAndActiveTrue(paroquiaId)) {
-            if (!configuracaoPastoralService.coberturaAutomaticaLigada(pastoral.getId())) {
+            if (!configuracaoPastoralService.coberturaAutomaticaLigada(pastoral.getId())
+                    || !cobre(pastoral, celebracao)) {
                 continue;
             }
             for (ModeloVaga modelo : modeloVagaRepository.findByPastoralIdAndActiveTrue(pastoral.getId())) {
@@ -46,6 +49,9 @@ public class CoberturaAutomaticaService {
         List<ModeloVaga> modelos = modeloVagaRepository.findByPastoralIdAndActiveTrue(pastoral.getId());
         int criadas = 0;
         for (Celebracao celebracao : celebracoesFuturas) {
+            if (!cobre(pastoral, celebracao)) {
+                continue;
+            }
             for (ModeloVaga modelo : modelos) {
                 if (aplicarModelo(modelo, celebracao)) {
                     criadas++;
@@ -53,6 +59,18 @@ public class CoberturaAutomaticaService {
             }
         }
         return criadas;
+    }
+
+    /**
+     * Celebração criada à mão (sem horário fixo) vale para toda pastoral, como sempre foi. A gerada de um horário
+     * fixo só dá vaga à pastoral que escolheu cobrir aquele horário; quem não escolheu nenhum não recebe nada.
+     */
+    private boolean cobre(Pastoral pastoral, Celebracao celebracao) {
+        if (celebracao.getHorarioMissa() == null) {
+            return true;
+        }
+        return coberturaMissaRepository.existsByPastoralIdAndHorarioMissaIdAndActiveTrue(
+                pastoral.getId(), celebracao.getHorarioMissa().getId());
     }
 
     private boolean aplicarModelo(ModeloVaga modelo, Celebracao celebracao) {
