@@ -72,4 +72,22 @@ class MassAssignmentIT {
                                 + "\"aparencia\":\"ESCURO\"}"))
                 .andExpect(status().isBadRequest());
     }
+
+    /** O cadastro de membro sem senha só aceita nome, e-mail e papel: perfil, senha ou paróquia no corpo é 400. */
+    @Test
+    void cadastroDeMembroNaoAceitaCamposAlemDoDto() throws Exception {
+        Paroquia paroquia = ApoioTeste.criarParoquia(paroquiaRepository, "Paróquia Mass Assignment Membro");
+        ApoioTeste.criarUsuario(usuarioRepository, passwordEncoder, paroquia.getId(),
+                "admin.membro@servio.dev", "senha12345", Perfil.ADMIN);
+        Cookie sessao = ApoioTeste.login(mvc, "admin.membro@servio.dev", "senha12345");
+
+        mvc.perform(post("/api/pastorais/{id}/membros", 1L).cookie(sessao).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nome\":\"Novo\",\"email\":\"novo.membro@servio.dev\",\"perfil\":\"ADMIN\"}"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(post("/api/contas/ativar").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"token\":\"abc\",\"senha\":\"senha12345\",\"perfil\":\"ADMIN\"}"))
+                .andExpect(status().isBadRequest());
+    }
 }

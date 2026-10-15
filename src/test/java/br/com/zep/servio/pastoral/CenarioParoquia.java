@@ -4,12 +4,14 @@ import br.com.zep.servio.model.Funcao;
 import br.com.zep.servio.model.Paroquia;
 import br.com.zep.servio.model.Pastoral;
 import br.com.zep.servio.model.Usuario;
+import br.com.zep.servio.model.UsuarioFuncao;
 import br.com.zep.servio.model.UsuarioPastoral;
 import br.com.zep.servio.model.enumerated.PapelPastoral;
 import br.com.zep.servio.model.enumerated.Perfil;
 import br.com.zep.servio.repository.FuncaoRepository;
 import br.com.zep.servio.repository.ParoquiaRepository;
 import br.com.zep.servio.repository.PastoralRepository;
+import br.com.zep.servio.repository.UsuarioFuncaoRepository;
 import br.com.zep.servio.repository.UsuarioPastoralRepository;
 import br.com.zep.servio.repository.UsuarioRepository;
 import br.com.zep.servio.security.UsuarioPrincipal;
@@ -117,6 +119,29 @@ public class CenarioParoquia {
         funcaoBarracaEcc = funcao(paroquiaA, ecc, "Barraca");
 
         return this;
+    }
+
+    /**
+     * Dá a habilidade de cada função informada a todos os membros ativos da pastoral dela, de qualquer papel
+     * (as pessoas já criadas até aqui). Só os testes da regra HABILIDADE precisam: nos demais ITs a regra nasce
+     * desligada ({@code servio.escalacao.habilidade-ligada-por-padrao=false} no application-test).
+     */
+    public CenarioParoquia habilitarTodos(UsuarioFuncaoRepository repositorio, Funcao... funcoes) {
+        for (Funcao funcao : funcoes) {
+            for (UsuarioPastoral membro : usuarioPastoralRepository.findMembrosAtivosComUsuario(
+                    funcao.getPastoral().getId(), funcao.getParoquiaId())) {
+                habilitar(repositorio, membro.getUsuario(), funcao);
+            }
+        }
+        return this;
+    }
+
+    public UsuarioFuncao habilitar(UsuarioFuncaoRepository repositorio, Usuario usuario, Funcao funcao) {
+        UsuarioFuncao habilidade = new UsuarioFuncao();
+        habilidade.setUsuario(usuario);
+        habilidade.setFuncao(funcao);
+        habilidade.setParoquiaId(funcao.getParoquiaId());
+        return repositorio.save(habilidade);
     }
 
     /** Mais uma pessoa da paróquia A na Pascom, com o papel dado. */

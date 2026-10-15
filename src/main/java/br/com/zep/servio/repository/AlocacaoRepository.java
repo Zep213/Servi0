@@ -29,6 +29,13 @@ public interface AlocacaoRepository extends TenantRepository<Alocacao> {
     /** Só quem tem o token (guardado como SHA-256) acha a alocação; alocação inativa não conta. */
     Optional<Alocacao> findByTokenHashAndActiveTrue(String tokenHash);
 
+    /** Convites ainda sem resposta de uma celebração: o prazo muda quando a data ou a hora dela muda. */
+    @Query("""
+            select a from Alocacao a
+            where a.vaga.celebracao.id = :celebracaoId and a.active = true and a.status = :status
+            """)
+    List<Alocacao> pendentesDaCelebracao(@Param("celebracaoId") Long celebracaoId, @Param("status") StatusConvite status);
+
     /** Acha pelo token atual ou pelo anterior (o do e-mail que o lembrete substituiu). */
     @Query("""
             select a from Alocacao a

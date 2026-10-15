@@ -35,9 +35,14 @@ public class ConfiguracaoPastoralService {
         return regras;
     }
 
-    /** true se a pastoral não desativou explicitamente a regra. */
+    /** O que a pastoral configurou; se nunca configurou, o padrão da regra (ligada, salvo interruptor de implantação). */
     public boolean ativa(Long pastoralId, String codigoRegra) {
-        return configuracao(pastoralId, codigoRegra).map(PastoralConfig::isAtiva).orElse(true);
+        return configuracao(pastoralId, codigoRegra).map(PastoralConfig::isAtiva)
+                .orElseGet(() -> regras.stream()
+                        .filter(regra -> codigoRegra.equals(regra.codigo()))
+                        .findFirst()
+                        .map(RegraElegibilidade::ligadaPorPadrao)
+                        .orElse(true));
     }
 
     /** Parâmetros efetivos da regra para a pastoral: o que ela configurou, ou o padrão da regra. */
