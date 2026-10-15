@@ -1,0 +1,10 @@
+Olá, [[${nome}]]!
+
+[[${convidadoPor}]] criou uma conta para você no Servio, na pastoral [[${pastoral}]].
+
+Escolha a sua senha até [[${prazo}]], no endereço:
+[[${link}]]
+
+Se você não esperava este e-mail, pode ignorá-lo: nada acontece sem a sua senha.
+
+Servio · mensagem automática, não responda.
